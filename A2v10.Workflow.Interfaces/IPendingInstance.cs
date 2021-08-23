@@ -4,9 +4,9 @@ using System;
 
 namespace A2v10.Workflow.Interfaces
 {
-	public interface IIdentity
+	public interface IPendingInstance
 	{
-		String Id { get; }
-		Int32 Version { get; }
+		Guid InstanceId { get; }
+		String EventKey { get; }
 	}
 }

@@ -9,7 +9,6 @@ namespace A2v10.Workflow
 		public WorkflowException(String message)
 			: base(message)
 		{
-
 		}
 	}
 }

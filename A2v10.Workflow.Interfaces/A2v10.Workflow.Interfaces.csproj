@@ -7,7 +7,7 @@
 		<PackageId>A2v10.Workflow.Interfaces</PackageId>
 		<Authors>Oleksandr Kukthin</Authors>
 		<Company>Oleksandr Kukthin</Company>
-		<Description>A2v10 Platform core</Description>
+		<Description>A2v10 workflow abstractions</Description>
 		<Copyright>Copyright © 2015-2021 Oleksandr Kukthin. All rights reserved.</Copyright>
 		<RepositoryType>github</RepositoryType>
 		<PackageTags>A2v10 Platform Workflow</PackageTags>

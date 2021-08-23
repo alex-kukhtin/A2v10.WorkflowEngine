@@ -2,9 +2,9 @@
 
 namespace A2v10.Workflow.Interfaces
 {
-	public interface IWorkflow
+	public interface IStorable
 	{
-		IWorkflowIdentity Identity { get; }
-		IActivity Root { get; }
+		void Store(IActivityStorage storage);
+		void Restore(IActivityStorage storage);
 	}
 }
