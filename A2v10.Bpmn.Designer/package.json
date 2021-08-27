@@ -1,0 +1,13 @@
+{
+	"name": "a2v10.bpmn.designer",
+	"version": "0.0.0",
+	"description": "A2v10.Bpmn.Designer",
+	"main": "main.js",
+	"private": true,
+	"author": {
+		"name": "Oleksandr Kukhtin"
+	},
+	"devDependencies": {
+		"electron": "13.2.2"
+	}
+}

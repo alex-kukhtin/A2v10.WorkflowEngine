@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A2v10.Workflow.SqlServer", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A2v10.Workflow.SqlServer.Tests", "A2v10.Workflow.SqlServer.Tests\A2v10.Workflow.SqlServer.Tests.csproj", "{72C20496-D428-4C5F-BFDF-1C70BE80E732}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "A2v10.Bpmn.Designer", "A2v10.Bpmn.Designer\A2v10.Bpmn.Designer.njsproj", "{851986AF-D4E7-49C0-80F2-D91F6A3B018A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{72C20496-D428-4C5F-BFDF-1C70BE80E732}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72C20496-D428-4C5F-BFDF-1C70BE80E732}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72C20496-D428-4C5F-BFDF-1C70BE80E732}.Release|Any CPU.Build.0 = Release|Any CPU
+		{851986AF-D4E7-49C0-80F2-D91F6A3B018A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{851986AF-D4E7-49C0-80F2-D91F6A3B018A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{851986AF-D4E7-49C0-80F2-D91F6A3B018A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{851986AF-D4E7-49C0-80F2-D91F6A3B018A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
