@@ -18,6 +18,7 @@ as
 begin
 	set nocount on;
 	set transaction isolation level read committed;
+	truncate table a2wf.[Workflows];
 	truncate table a2wf.[Catalog];
 end
 go

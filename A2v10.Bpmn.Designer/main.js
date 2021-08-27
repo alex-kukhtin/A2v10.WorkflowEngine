@@ -1,7 +1,6 @@
 
 'use strict';
 
-// Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu, dialog, MenuItem } = require('electron')
 const fs = require('fs');
 const path = require('path');
@@ -13,13 +12,13 @@ function createWindow() {
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,
-			enableRemoteModule: true//,
+			enableRemoteModule: true //,
 			//preload: path.join(__dirname, 'preload.js')
 		}
 	});
 
 	// and load the index.html of the app.
-	mainWindow.loadFile('index.html')
+	mainWindow.loadFile('index.html');
 
 	// Open the DevTools.
 	//mainWindow.webContents.openDevTools()
