@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>BPMN Editor</title>
+	<link rel="stylesheet" href="/css/bpmn/diagram-js.css">
+	<link rel="stylesheet" href="/css/bpmn/bpmn-font/bpmn.css">
+	<link rel="stylesheet" href="/css/bpmn/bpmn-js-properties-panel.css">
+	<link rel="stylesheet" href="/css/editor.css">
+</head>
+<body>
+	<div class="editor-canvas" id="canvas"></div>
+	<div class="properties-panel-parent" id="js-properties-panel"></div>
+
+	<script type="text/javascript" src="/dist/bpmn-editor.js"></script>
+	<script type="text/javascript">
+		(async function () {
+			const bpmnModeler = window.Modeler;
+			let wf = await fetch('/workflows/default.bpmn');
+			bpmnModeler.importXML(await wf.text());
+		})();
+	</script>
+</body>
+</html>

@@ -1,14 +1,14 @@
 
 'use strict';
 
-const { app, BrowserWindow, Menu, dialog, MenuItem } = require('electron')
-const fs = require('fs');
-const path = require('path');
+const { app, BrowserWindow, dialog, Menu} = require('electron')
+
+const { mainMenu } = require('./mainmenu');
 
 function createWindow() {
 	const mainWindow = new BrowserWindow({
-		width: 1024,
-		height: 768,
+		width: 1300,
+		height: 800,
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,
@@ -22,9 +22,24 @@ function createWindow() {
 
 	// Open the DevTools.
 	//mainWindow.webContents.openDevTools()
+
+	mainWindow.on('close', (ev) => {
+		let res = dialog.showMessageBoxSync({
+			title: 'Exit application',
+			type:'question',
+			message: 'Are you sure?',
+			buttons: ['Save', 'Close', 'Cancel']
+		});
+		console.dir(res);
+		//ev.preventDefault();
+	})
 }
 
+const menu = Menu.buildFromTemplate(mainMenu);
+Menu.setApplicationMenu(menu);
+
 app.whenReady().then(() => {
+
 	createWindow();
 
 	app.on('activate', function () {

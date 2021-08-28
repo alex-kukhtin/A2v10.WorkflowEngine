@@ -1,5 +1,4 @@
-/// <binding ProjectOpened='watch, watch:tasks' />
-
+/// <binding />
 module.exports = function (grunt) {
 	grunt.initConfig({
 		clean: ['/dist/*'],

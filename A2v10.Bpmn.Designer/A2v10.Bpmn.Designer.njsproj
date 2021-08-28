@@ -30,12 +30,39 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="css\bpmn\bpmn-font\bpmn.css" />
+    <Content Include="css\bpmn\bpmn-js-properties-panel.css" />
+    <Content Include="css\bpmn\diagram-js.css" />
+    <Content Include="css\bpmn\font\bpmn.eot" />
+    <Content Include="css\bpmn\font\bpmn.svg" />
+    <Content Include="css\bpmn\font\bpmn.ttf" />
+    <Content Include="css\bpmn\font\bpmn.woff" />
+    <Content Include="css\bpmn\font\bpmn.woff2" />
+    <Content Include="css\editor.css" />
+    <Content Include="css\editor.min.css" />
+    <Content Include="dist\bpmn-editor.js" />
+    <Content Include="dist\bpmn-editor.min.js" />
+    <Content Include="dist\bpmn-viewer.js" />
+    <Content Include="dist\bpmn-viewer.min.js" />
     <Content Include="index.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="main.js" />
+    <Content Include="designer.js" />
+    <Content Include="mainmenu.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="workflows\default.bpmn" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="css\" />
+    <Folder Include="css\bpmn\" />
+    <Folder Include="css\bpmn\bpmn-font\" />
+    <Folder Include="css\bpmn\font\" />
+    <Folder Include="dist\" />
+    <Folder Include="workflows\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
 </Project>
