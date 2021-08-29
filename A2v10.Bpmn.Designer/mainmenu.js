@@ -15,7 +15,7 @@ const mainMenu = [
 			},
 			{
 				label: 'Save As...',
-				click: (mi, bw) => send('FILE.SAVEAS', bw)
+				click: (mi, bw) => send('FILE.SAVE', bw, {saveAs: true})
 			},
 			{ type: 'separator' },
 			{ role: 'quit' }
@@ -32,8 +32,8 @@ const mainMenu = [
 	}
 ];
 
-function send(chanell, bw) {
-	bw.webContents.send(chanell);
+function send(chanell, bw, arg) {
+	bw.webContents.send(chanell, arg);
 }
 
 module.exports = {

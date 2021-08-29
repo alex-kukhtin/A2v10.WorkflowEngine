@@ -2,7 +2,7 @@
 'use strict';
 
 const { app, BrowserWindow, dialog, Menu, ipcMain } = require('electron')
-const path = require('path');
+const pathtool = require('path');
 const fs = require('fs');
 
 const { mainMenu } = require('./mainmenu');
@@ -11,7 +11,12 @@ let mainWindow = null;
 
 const currentFile = {
 	name: 'Untitled.bpmn',
-	path: ''
+	path: '',
+	setPath(fullPath) {
+		this.path = fullPath;
+		this.name = pathtool.basename(fullPath);
+	},
+	isEmpty() { return !this.path; }
 };
 
 function createWindow() {
@@ -22,7 +27,7 @@ function createWindow() {
 			nodeIntegration: true,
 			contextIsolation: false,
 			enableRemoteModule: true //,
-			//preload: path.join(__dirname, 'preload.js')
+			//preload: pathtool.join(__dirname, 'preload.js')
 		}
 	});
 
@@ -71,14 +76,31 @@ ipcMain.on('R.FILE.OPEN', (ev) => {
 		]
 	});
 	if (!file) {
-		ev.returnValue = null;
+		ev.returnValue = { cancel: true };
 		return;
 	}
-	currentFile.path = file[0];
-	currentFile.name = path.basename(currentFile.path);
+	currentFile.setPath(file[0])
 	var fileData = fs.readFileSync(currentFile.path, { encoding: 'UTF-8' });
-	ev.returnValue = { data: fileData, name: currentFile.name };
+	ev.returnValue = { data: fileData, cancel: false, name: currentFile.name };
 });
+
+function doSave(data, opts) {
+	if (currentFile.isEmpty() || opts?.saveAs) {
+		var fullPath = dialog.showSaveDialogSync(mainWindow, {
+			properties: ['dontAddToRecent'],
+			defaultPath: currentFile.name,
+			filters: [
+				{ name: 'Bpmn files', extensions: ["bpmn"] },
+				{ name: 'All files', extensions: ["*"] }
+			]
+		});
+		if (!fullPath)
+			return {cancel: true }
+		currentFile.setPath(fullPath);
+	}
+	fs.writeFileSync(currentFile.path, data);
+	return { cancel: false, name: currentFile.name };
+}
 
 function ensureSaved(data) {
 	let r = dialog.showMessageBoxSync(mainWindow, {
@@ -87,21 +109,18 @@ function ensureSaved(data) {
 		message: `Do you want to save changes to '${currentFile.name}'?`,
 		buttons: ['Save', "Don't save", 'Cancel']
 	});
-	if (r === 0) {
-		// save file (data)
-		return 'saved';
-	} else if (r === 1)
-		return 'continue';
-	else
-		return 'cancel';
+	if (r === 0) // save
+		return doSave(data, { saveAs: false });
+	else if (r === 1) // don't save
+		return { cancel: false };
+	else // cancel
+		return { cancel: true };
 }
 
 ipcMain.on('R.FILE.CHECKSAVE', (ev, arg) => {
 	ev.returnValue = ensureSaved(arg.data);
 });
 
-ipcMain.on('RENDER.TESTSYNC', (ev, arg) => {
-	console.dir(arg);
-	ev.returnValue = 'return value';
+ipcMain.on('R.FILE.SAVE', (ev, arg) => {
+	ev.returnValue = doSave(arg.data, { saveAs: arg.saveAs });
 });
-
