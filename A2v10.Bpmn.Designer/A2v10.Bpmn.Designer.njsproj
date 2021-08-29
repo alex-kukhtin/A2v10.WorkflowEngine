@@ -49,6 +49,7 @@
     </Content>
     <Content Include="main.js" />
     <Content Include="designer.js" />
+    <Content Include="document.js" />
     <Content Include="mainmenu.js">
       <SubType>Code</SubType>
     </Content>

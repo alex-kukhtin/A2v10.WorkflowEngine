@@ -1,36 +1,23 @@
+// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 'use strict';
 
-const { app, BrowserWindow, dialog, Menu, ipcMain } = require('electron')
-const pathtool = require('path');
-const fs = require('fs');
+const { app, BrowserWindow, dialog, Menu} = require('electron')
 
 const { mainMenu } = require('./mainmenu');
-
-let mainWindow = null;
-
-const currentFile = {
-	name: 'Untitled.bpmn',
-	path: '',
-	setPath(fullPath) {
-		this.path = fullPath;
-		this.name = pathtool.basename(fullPath);
-	},
-	isEmpty() { return !this.path; }
-};
+const document = require('./document');
 
 function createWindow() {
-	mainWindow = new BrowserWindow({
+	let mainWindow = new BrowserWindow({
 		width: 1300,
 		height: 800,
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,
-			enableRemoteModule: true //,
-			//preload: pathtool.join(__dirname, 'preload.js')
+			enableRemoteModule: true
 		}
 	});
-
+	document.setMainWindow(mainWindow);
 	// and load the index.html of the app.
 	mainWindow.loadFile('index.html');
 
@@ -38,24 +25,30 @@ function createWindow() {
 	//mainWindow.webContents.openDevTools()
 
 	mainWindow.on('close', (ev, bw) => {
+		if (!document.isModified())
+			return;
 		let res = dialog.showMessageBoxSync({
 			title: 'Exit application',
-			type:'question',
-			message: 'Are you sure?',
-			buttons: ['Save', 'Close', 'Cancel']
+			type: 'question',
+			message: `The document '${document.file.name}' has unsaved changes.\nDo you want to quit without saving?`,
+			buttons: ['Disard changes', 'Cancel']
 		});
-		console.dir(res);
-		//ev.preventDefault();
-	})
+		switch (res) {
+			case 0: // Discard changes
+				break;
+			case 1: // cancel
+				ev.preventDefault();
+				break;
+		}
+	});
 }
 
 const menu = Menu.buildFromTemplate(mainMenu);
 Menu.setApplicationMenu(menu);
 
+
 app.whenReady().then(() => {
-
 	createWindow();
-
 	app.on('activate', function () {
 		if (BrowserWindow.getAllWindows().length === 0)
 			createWindow()
@@ -67,60 +60,3 @@ app.on('window-all-closed', function () {
 		app.quit()
 });
 
-ipcMain.on('R.FILE.OPEN', (ev) => {
-	var file = dialog.showOpenDialogSync(mainWindow, {
-		properties: ['openFile'],
-		filters: [
-			{ name: 'Bpmn files', extensions: ["bpmn"] },
-			{ name: 'All files', extensions: ["*"] }
-		]
-	});
-	if (!file) {
-		ev.returnValue = { cancel: true };
-		return;
-	}
-	currentFile.setPath(file[0])
-	var fileData = fs.readFileSync(currentFile.path, { encoding: 'UTF-8' });
-	ev.returnValue = { data: fileData, cancel: false, name: currentFile.name };
-});
-
-function doSave(data, opts) {
-	if (currentFile.isEmpty() || opts?.saveAs) {
-		var fullPath = dialog.showSaveDialogSync(mainWindow, {
-			properties: ['dontAddToRecent'],
-			defaultPath: currentFile.name,
-			filters: [
-				{ name: 'Bpmn files', extensions: ["bpmn"] },
-				{ name: 'All files', extensions: ["*"] }
-			]
-		});
-		if (!fullPath)
-			return {cancel: true }
-		currentFile.setPath(fullPath);
-	}
-	fs.writeFileSync(currentFile.path, data);
-	return { cancel: false, name: currentFile.name };
-}
-
-function ensureSaved(data) {
-	let r = dialog.showMessageBoxSync(mainWindow, {
-		title: 'Save changes?',
-		type: 'question',
-		message: `Do you want to save changes to '${currentFile.name}'?`,
-		buttons: ['Save', "Don't save", 'Cancel']
-	});
-	if (r === 0) // save
-		return doSave(data, { saveAs: false });
-	else if (r === 1) // don't save
-		return { cancel: false };
-	else // cancel
-		return { cancel: true };
-}
-
-ipcMain.on('R.FILE.CHECKSAVE', (ev, arg) => {
-	ev.returnValue = ensureSaved(arg.data);
-});
-
-ipcMain.on('R.FILE.SAVE', (ev, arg) => {
-	ev.returnValue = doSave(arg.data, { saveAs: arg.saveAs });
-});
