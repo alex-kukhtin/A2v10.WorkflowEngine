@@ -5,7 +5,8 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
 #canvas {
-  height: 100%; }
+  height: 100%;
+  border-top: 1px solid #ccc; }
 
 *, :before, :after {
   box-sizing: border-box; }
@@ -18,6 +19,7 @@
   width: 290px;
   z-index: 10;
   border-left: 1px solid #ccc;
+  border-top: 1px solid #ccc;
   overflow: auto; }
 
 .properties-panel-parent:empty {

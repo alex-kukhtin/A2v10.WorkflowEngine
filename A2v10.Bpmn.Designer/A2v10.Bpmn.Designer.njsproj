@@ -40,10 +40,10 @@
     <Content Include="css\bpmn\font\bpmn.woff2" />
     <Content Include="css\editor.css" />
     <Content Include="css\editor.min.css" />
-    <Content Include="dist\bpmn-editor.js" />
-    <Content Include="dist\bpmn-editor.min.js" />
-    <Content Include="dist\bpmn-viewer.js" />
-    <Content Include="dist\bpmn-viewer.min.js" />
+    <Content Include="js\bpmn-editor.js" />
+    <Content Include="js\bpmn-editor.min.js" />
+    <Content Include="js\bpmn-viewer.js" />
+    <Content Include="js\bpmn-viewer.min.js" />
     <Content Include="index.html">
       <SubType>Code</SubType>
     </Content>
@@ -62,7 +62,7 @@
     <Folder Include="css\bpmn\" />
     <Folder Include="css\bpmn\bpmn-font\" />
     <Folder Include="css\bpmn\font\" />
-    <Folder Include="dist\" />
+    <Folder Include="js\" />
     <Folder Include="workflows\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />

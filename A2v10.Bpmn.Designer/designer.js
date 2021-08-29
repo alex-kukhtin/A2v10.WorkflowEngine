@@ -18,12 +18,13 @@ async function start() {
 
 start();
 
-window.__getCurrentXml = async function () {
-	return bpmnModeler.saveXML();
-};
-
-window.__clearCommandStack = async function () {
-	return commandStack.clear();
+window.__electronInterop = {
+	async getCurrentXml() {
+		return bpmnModeler.saveXML();
+	},
+	async clearCommandStack() {
+		return commandStack.clear();
+	}
 };
 
 ipcRenderer.on("FILE.SETCONTENT", (ev, arg) => {

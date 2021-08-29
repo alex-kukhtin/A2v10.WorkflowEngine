@@ -1,3 +1,5 @@
+$border-color: #ccc;
+
 html, body {
 	height: 100%;
 	margin: 0;
@@ -7,6 +9,7 @@ html, body {
 
 #canvas {
 	height:100%;
+	border-top:1px solid $border-color;
 }
 
 *, :before, :after {
@@ -20,7 +23,8 @@ html, body {
 	right: 0;
 	width: 290px;
 	z-index: 10;
-	border-left: 1px solid #ccc;
+	border-left: 1px solid $border-color;
+	border-top:1px solid $border-color;
 	overflow: auto;
 }
 

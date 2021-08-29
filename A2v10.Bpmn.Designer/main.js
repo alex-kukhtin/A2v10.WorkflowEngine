@@ -11,6 +11,7 @@ function createWindow() {
 	let mainWindow = new BrowserWindow({
 		width: 1300,
 		height: 800,
+		icon: __dirname + '/favicon.ico',
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,

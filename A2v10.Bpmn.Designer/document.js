@@ -39,16 +39,15 @@ const document = {
 	setFileSaved() {
 		this.file.modified = false;
 		this.setTitle();
-		this.mainWindow.webContents.executeJavaScript('window.__clearCommandStack();');
 	},
 	setTitle() {
 		this.mainWindow.setTitle(`${this.file.name} - A2v10 Bpmn Designer${this.file.modified ? ' *' : ''}`)
 	},
 	async getContent() {
-		return await this.mainWindow.webContents.executeJavaScript('window.__getCurrentXml();');
+		return await this.mainWindow.webContents.executeJavaScript('window.__electronInterop.getCurrentXml();');
 	},
 	async clearCommandStack() {
-		return await this.mainWindow.webContents.executeJavaScript('window.__clearCommandStack();');
+		return await this.mainWindow.webContents.executeJavaScript('window.__electronInterop.clearCommandStack();');
 	}
 };
 

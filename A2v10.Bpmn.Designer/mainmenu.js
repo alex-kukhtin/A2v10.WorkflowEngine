@@ -118,7 +118,7 @@ async function fileSave() {
 }
 
 async function fileSaveAs() {
-	let cont = setCurrentName();
+	let cont = await setCurrentName();
 	if (!cont)
 		return;
 	await saveCurrentFile();
