@@ -1,11 +1,13 @@
+// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+
+using System;
+using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
 
 
 using A2v10.Workflow.Interfaces;
-using System.Threading.Tasks;
-using System;
 
 namespace A2v10.Workflow.SqlServer.Tests
 {
