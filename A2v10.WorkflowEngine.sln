@@ -19,6 +19,8 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "A2v10.Bpmn.Designer", "A2v1
 EndProject
 Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "A2v10.Bpmn.Editor", "A2v10.Bpmn.Editor\A2v10.Bpmn.Editor.njsproj", "{6976ADA0-CA49-428B-A7BD-5766365F2801}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A2v10.Workflow.WebHost", "A2v10.Workflow.WebHost\A2v10.Workflow.WebHost.csproj", "{F9DE67B8-1AEC-4850-8AB2-43C1D74A6111}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{6976ADA0-CA49-428B-A7BD-5766365F2801}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6976ADA0-CA49-428B-A7BD-5766365F2801}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6976ADA0-CA49-428B-A7BD-5766365F2801}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9DE67B8-1AEC-4850-8AB2-43C1D74A6111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9DE67B8-1AEC-4850-8AB2-43C1D74A6111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9DE67B8-1AEC-4850-8AB2-43C1D74A6111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9DE67B8-1AEC-4850-8AB2-43C1D74A6111}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
