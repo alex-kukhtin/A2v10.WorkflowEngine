@@ -14,17 +14,23 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="A2v10.Data.Core" Version="10.0.7265" />
+	  <None Remove="SqlScripts\a2v10_workflow.sql" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="SqlScripts\a2v10_workflow.sql">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="A2v10.Data.Core" Version="10.0.7266" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\A2v10.Workflow.Interfaces\A2v10.Workflow.Interfaces.csproj" />
 	  <ProjectReference Include="..\A2v10.Workflow.Serialization\A2v10.Workflow.Serialization.csproj" />
 	  <ProjectReference Include="..\A2v10.Workflow\A2v10.Workflow.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="SqlScripts\" />
 	</ItemGroup>
 
 </Project>

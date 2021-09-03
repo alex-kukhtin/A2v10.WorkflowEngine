@@ -1,0 +1,24 @@
+BPMN
+=====
+1. Task parallel, sequence, loop
+2. RemoveBookmak for Cancel activity
+
+Designer
+========
+1. Add/Remove buttons css (wrapper & remove position:absolute)
+2. Properties expressions. f.e: timeDuration = ${Duration}
+3. About
+
+Engine
+======
+MultiTenant
+
+WebHost
+=======
+1. UseNewtonsoft() & CamelCase names
+
+
+SqlServer.Tests
+===============
+1. Deal with sql.scripts (Prepare database)
+2. 

@@ -14,14 +14,24 @@ namespace A2v10.Workflow.SqlServer
 	public class SqlServerInstanceStorage : IInstanceStorage
 	{
 		private readonly IDbContext _dbContext;
+		private readonly IDbIdentity _dbIdentity;
 		private readonly IWorkflowStorage _workflowStorage;
 		private readonly ISerializer _serializer;
 
-		public SqlServerInstanceStorage(IDbContext dbContext, IWorkflowStorage workflowStorage, ISerializer serializer)
+		public SqlServerInstanceStorage(IDbContext dbContext, IDbIdentity dbIdentity, IWorkflowStorage workflowStorage, ISerializer serializer)
 		{
 			_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 			_workflowStorage = workflowStorage ?? throw new ArgumentNullException(nameof(workflowStorage));
 			_serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+			_dbIdentity = dbIdentity;
+		}
+
+		void SetIdentityParams(ExpandoObject eo)
+		{
+			if (_dbIdentity.TenantId.HasValue)
+				eo.Set("TenantId", _dbIdentity.TenantId);
+			if (_dbIdentity.UserId.HasValue)
+				eo.Set("UserId", _dbIdentity.UserId);
 		}
 
 		#region IInstanceStorage
@@ -31,7 +41,7 @@ namespace A2v10.Workflow.SqlServer
 			{
 				{ "Id", instanceId }
 			};
-
+			SetIdentityParams(prms);
 			var eo = await _dbContext.ReadExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Load]", prms);
 			if (eo == null)
 				throw new SqlServerStorageException($"Instance '{instanceId}' not found");
@@ -63,6 +73,7 @@ namespace A2v10.Workflow.SqlServer
 				{ "WorkflowId", instance.Workflow.Identity.Id },
 				{ "ExecutionStatus", instance.ExecutionStatus.ToString() }
 			};
+			SetIdentityParams(ieo);
 			await _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Create]", ieo);
 		}
 
@@ -95,6 +106,7 @@ namespace A2v10.Workflow.SqlServer
 				foreach (var defer in instanceData.Deferred.Where(d => d.Type == DeferredElementType.Sql))
 				{
 					var epxParam = defer.Parameters.Clone();
+					SetIdentityParams(epxParam);
 					epxParam.Add("InstanceId", instance.Id);
 					epxParam.Add("Activity", defer.Refer);
 					batches.Add(new BatchProcedure(defer.Name, epxParam));
