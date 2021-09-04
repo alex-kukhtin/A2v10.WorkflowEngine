@@ -35,6 +35,8 @@ namespace A2v10.Workflow.SqlServer.Tests
 
 			collection.UseSimpleDbContext();
 
+			collection.AddSingleton<IDbIdentity, UserIdentity>();
+
 			collection.AddSingleton<IWorkflowStorage, SqlServerWorkflowStorage>()
 			.AddSingleton<IInstanceStorage, SqlServerInstanceStorage>()
 			.AddSingleton<IWorkflowCatalog, SqlServerWorkflowCatalog>()
