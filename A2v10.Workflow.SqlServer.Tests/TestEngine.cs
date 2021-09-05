@@ -2,6 +2,7 @@
 
 using System;
 using System.Threading.Tasks;
+using System.Dynamic;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -54,10 +55,14 @@ namespace A2v10.Workflow.SqlServer.Tests
 		}
 
 
-		public static Task PrepareDatabase()
+		public static Task PrepareDatabase(String id)
 		{
 			var dbContext = ServiceProvider().GetService<IDbContext>();
-			return dbContext.ExecuteExpandoAsync(null, "a2wf_test.[Tests.Prepare]", null);
+			var prms = new ExpandoObject()
+			{
+				{ "Id", id }
+			};
+			return dbContext.ExecuteExpandoAsync(null, "a2wf_test.[Tests.Prepare]", prms);
 		}
 	}
 }

@@ -26,10 +26,10 @@ namespace A2v10.Workflow.SqlServer.Tests
 		[TestMethod]
 		public async Task Publish()
 		{
-			await TestEngine.PrepareDatabase();
+			var id = "Publish_Workflow1";
+			await TestEngine.PrepareDatabase(id);
 			var storage = _serviceProvider.GetService<IWorkflowStorage>();
 			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
-			var id = "Workflow1";
 			await catalog.SaveAsync(new WorkflowDescriptor()
 			{
 				Id = id,
@@ -44,10 +44,10 @@ namespace A2v10.Workflow.SqlServer.Tests
 		[TestMethod]
 		public async Task PublishVersions()
 		{
-			await TestEngine.PrepareDatabase();
+			var id = "Publish_Workflow2";
+			await TestEngine.PrepareDatabase(id);
 			var storage = _serviceProvider.GetService<IWorkflowStorage>();
 			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
-			var id = "Workflow1";
 			var text1 = "<test></test>";
 			var format = "text/xml";
 			var text2 = "<test><inner/></test>";
