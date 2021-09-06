@@ -41,7 +41,9 @@ namespace A2v10.Workflow.SqlServer.Tests
 			collection.AddSingleton<IWorkflowStorage, SqlServerWorkflowStorage>()
 			.AddSingleton<IInstanceStorage, SqlServerInstanceStorage>()
 			.AddSingleton<IWorkflowCatalog, SqlServerWorkflowCatalog>()
-			.AddSingleton<IXamlReaderService, WorkflowXamlReaderService>();
+			.AddSingleton<IScriptNativeObjectProvider, AppScriptNativeObjects>();
+
+			collection.AddSingleton<IXamlReaderService, WorkflowXamlReaderService>();
 
 			collection.AddSingleton<ISerializer, WorkflowSerializer>()
 			.AddScoped<IWorkflowEngine, WorkflowEngine>()
