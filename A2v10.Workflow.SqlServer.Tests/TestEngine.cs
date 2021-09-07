@@ -7,7 +7,6 @@ using System.Dynamic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
-using A2v10.System.Xaml;
 using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.Serialization;
 
@@ -35,21 +34,22 @@ namespace A2v10.Workflow.SqlServer.Tests
 			collection.AddSingleton<IConfiguration>(TestConfig.GetRoot());
 
 			collection.UseSimpleDbContext();
+			collection.UseSqlServerWorkflow();
 
 			collection.AddSingleton<IDbIdentity, UserIdentity>();
 
-			collection.AddSingleton<IWorkflowStorage, SqlServerWorkflowStorage>()
-			.AddSingleton<IInstanceStorage, SqlServerInstanceStorage>()
-			.AddSingleton<IWorkflowCatalog, SqlServerWorkflowCatalog>()
-			.AddSingleton<IScriptNativeObjectProvider, AppScriptNativeObjects>();
+			//collection.AddSingleton<IWorkflowStorage, SqlServerWorkflowStorage>()
+			//.AddSingleton<IInstanceStorage, SqlServerInstanceStorage>()
+			//.AddSingleton<IWorkflowCatalog, SqlServerWorkflowCatalog>()
+			collection.AddSingleton<IScriptNativeObjectProvider, AppScriptNativeObjects>();
 
-			collection.AddSingleton<IXamlReaderService, WorkflowXamlReaderService>();
+			//collection.AddSingleton<IXamlReaderService, WorkflowXamlReaderService>();
 
-			collection.AddSingleton<ISerializer, WorkflowSerializer>()
-			.AddScoped<IWorkflowEngine, WorkflowEngine>()
-			.AddScoped<IDeferredTarget, WorkflowDeferred>();
+			collection.AddSingleton<ISerializer, WorkflowSerializer>();
+			//.AddScoped<IWorkflowEngine, WorkflowEngine>()
+			//.AddScoped<IDeferredTarget, WorkflowDeferred>();
 
-			collection.AddScoped<ITracker, InstanceTracker>();
+			//collection.AddScoped<ITracker, InstanceTracker>();
 
 			_provider = collection.BuildServiceProvider();
 
