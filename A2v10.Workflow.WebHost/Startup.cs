@@ -1,16 +1,11 @@
+// Copyright © 2021 Alex Kukhtin. All rights reserved.
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace A2v10.Workflow.WebHost
 {
@@ -26,8 +21,15 @@ namespace A2v10.Workflow.WebHost
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.UseSimpleDbContext();
+			services.UseWorkflowEngine();
 
-			services.AddControllers();
+			services.AddControllers()
+			.AddNewtonsoftJson(opts =>
+			{
+				opts.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+				opts.UseCamelCasing(processDictionaryKeys: false);
+			});
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "A2v10.Workflow.WebHost", Version = "v1" });

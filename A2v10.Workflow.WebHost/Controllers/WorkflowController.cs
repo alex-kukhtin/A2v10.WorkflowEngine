@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// Copyright © 2021 Alex Kukhtin. All rights reserved.
+
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+using A2v10.Workflow.Interfaces;
+using A2v10.Workflow.WebHost.Models;
 
 namespace A2v10.Workflow.WebHost.Controllers
 {
@@ -11,32 +14,43 @@ namespace A2v10.Workflow.WebHost.Controllers
 	[Route("workflow/[action]")]
 	public class WorkflowController : ControllerBase
 	{
-		private static readonly string[] Summaries = new[]
-		{
-			"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-		};
-
 		private readonly ILogger<WorkflowController> _logger;
+		private readonly IWorkflowEngine _engine;
 
-		public WorkflowController(ILogger<WorkflowController> logger)
+		public WorkflowController(ILogger<WorkflowController> logger, IWorkflowEngine engine)
 		{
 			_logger = logger;
+			_engine = engine;
 		}
 
 		[HttpPost]
 		[ActionName("create")]
 		[Consumes("application/json")]
-		public ActionResult Create()
+		public async Task<ActionResult> Create([FromBody] CreateRequest rq)
 		{
-			return Ok(0);
+			_logger.LogInformation("Workflow.Create. Id:{Workflow}, Version:{Version}", rq.Workflow, rq.Version);
+			var res = await _engine.CreateAsync(new WorkflowIdentity()
+			{
+				Id = rq.Workflow,
+				Version = rq.Version
+			});
+			return Ok(new CreateResponse()
+			{
+				InstanceId = res.Id
+			});
 		}
 
 		[HttpPost]
-		[ActionName("start")]
+		[ActionName("run")]
 		[Consumes("application/json")]
-		public ActionResult Start()
+		public async Task<ActionResult> Run(RunRequest rq)
 		{
-			return Ok(1);
+			var res = await _engine.RunAsync(rq.InstanceId, rq.Parameters);
+			return Ok(new RunResponse()
+			{
+				ExecutionStatus = res.ExecutionStatus.ToString(),
+				Result = res.Result
+			});
 		}
 
 		[HttpPost]

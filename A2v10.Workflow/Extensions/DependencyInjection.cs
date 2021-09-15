@@ -7,7 +7,7 @@ using A2v10.Workflow.Interfaces;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-	public static class DependencyInjection
+	public static class WorkflowDependencyInjection
 	{
 		public static IServiceCollection UseWorkflow(this IServiceCollection coll)
 		{

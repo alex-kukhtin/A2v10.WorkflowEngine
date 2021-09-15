@@ -46,6 +46,8 @@ namespace A2v10.Workflow.SqlServer
 		public async Task<IWorkflow> LoadAsync(IWorkflowIdentity identity)
 		{
 			var eo = await LoadWorkflowAsync(identity);
+			if (eo == null)
+				throw new SqlServerStorageException($"Workflow not found. (Id:'{identity.Id}', Version={identity.Version})");
 			var wf = new Workflow()
 			{
 				Identity = new WorkflowIdentity()
@@ -61,6 +63,8 @@ namespace A2v10.Workflow.SqlServer
 		public async Task<String> LoadSourceAsync(IWorkflowIdentity identity)
 		{
 			var eo = await LoadWorkflowAsync(identity);
+			if (eo == null)
+				throw new SqlServerStorageException($"Workflow not found. (Id:'{identity.Id}', Version={identity.Version})");
 			return eo.Get<String>("Text");
 		}
 

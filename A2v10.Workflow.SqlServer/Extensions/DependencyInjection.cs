@@ -5,7 +5,7 @@ using A2v10.Workflow.SqlServer;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-	public static class DependencyInjection
+	public static class WorkflowSqlDependencyInjection
 	{
 		public static IServiceCollection UseSqlServerWorkflow(this IServiceCollection coll)
 		{
