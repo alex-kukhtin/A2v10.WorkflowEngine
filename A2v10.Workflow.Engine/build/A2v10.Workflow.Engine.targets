@@ -6,4 +6,11 @@
 	<Target Name="CopySqlFiles" BeforeTargets="Build">
 		<Copy SourceFiles="@(SqlFiles)" DestinationFolder="$(ProjectDir)\SqlFiles" />
 	</Target>
+	<ItemGroup>
+		<None Remove="SqlScripts\**\*.sql"/>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="SqlScripts\**\*.sql"/>
+	</ItemGroup>
 </Project>
+
