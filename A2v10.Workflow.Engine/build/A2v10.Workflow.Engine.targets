@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+	<ItemGroup>
+		<SqlFiles Include="$(MSBuildThisFileDirectory)..\contentFiles\SqlScripts\*" />
+	</ItemGroup>
+	<Target Name="CopySqlFiles" BeforeTargets="Build">
+		<Copy SourceFiles="@(SqlFiles)" DestinationFolder="$(ProjectDir)\SqlFiles" />
+	</Target>
+</Project>
