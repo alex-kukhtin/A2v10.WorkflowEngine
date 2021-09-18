@@ -1,4 +1,4 @@
-// Copyright � 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 'use strict';
 
@@ -13,6 +13,8 @@ function createWindow() {
 		height: 800,
 		icon: __dirname + '/favicon.ico',
 		webPreferences: {
+			preload: 'preload.js',
+			sandbox: false,
 			nodeIntegration: true,
 			contextIsolation: false,
 			enableRemoteModule: true

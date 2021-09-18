@@ -40,6 +40,7 @@
     <Content Include="css\bpmn\font\bpmn.woff2" />
     <Content Include="css\editor.css" />
     <Content Include="css\editor.min.css" />
+    <Content Include="favicon.ico" />
     <Content Include="js\bpmn-editor.js" />
     <Content Include="js\bpmn-editor.min.js" />
     <Content Include="js\bpmn-viewer.js" />
@@ -54,6 +55,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="package.json" />
+    <Content Include="preload.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="README.md" />
     <Content Include="workflows\default.bpmn" />
   </ItemGroup>

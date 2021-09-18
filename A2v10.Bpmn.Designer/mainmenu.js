@@ -1,6 +1,8 @@
-// Copyright � 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 'use strict';
+
+const version = '10.1.8036'
 
 const { dialog } = require('electron')
 const fs = require('fs');
@@ -41,6 +43,12 @@ const mainMenu = [
 			{ role: 'forceReload' },
 			{ type: 'separator' },
 			{ role: 'toggleDevTools' }
+		]
+	},
+	{
+		label: 'Help',
+		submenu: [
+			{label: 'About...', click: showAbout}
 		]
 	}
 ];
@@ -122,4 +130,16 @@ async function fileSaveAs() {
 	if (!cont)
 		return;
 	await saveCurrentFile();
+}
+
+function showAbout(mi, bw) {
+	dialog.showMessageBox(bw, {
+		message: 'About A2v10 BPMN Designer',
+		type: 'info',
+		detail: 'version: ' + version +
+			'\n\nCopyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.' +
+			'\n\npowered by https://bpmn.io',
+		title: 'A2v10.Bpmn.Designer',
+		icon: __dirname + '/favicon.ico'
+	});
 }
