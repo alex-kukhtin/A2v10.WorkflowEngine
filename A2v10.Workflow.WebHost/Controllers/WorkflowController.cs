@@ -26,9 +26,8 @@ namespace A2v10.Workflow.WebHost.Controllers
 		[HttpPost]
 		[ActionName("create")]
 		[Consumes("application/json")]
-		public async Task<ActionResult> Create([FromBody] CreateRequest rq)
+		public async Task<IActionResult> Create([FromBody] CreateRequest rq)
 		{
-			_logger.LogInformation("Workflow.Create. Id:{Workflow}, Version:{Version}", rq.Workflow, rq.Version);
 			var res = await _engine.CreateAsync(new WorkflowIdentity()
 			{
 				Id = rq.Workflow,
@@ -43,14 +42,14 @@ namespace A2v10.Workflow.WebHost.Controllers
 		[HttpPost]
 		[ActionName("run")]
 		[Consumes("application/json")]
-		public async Task<ActionResult> Run(RunRequest rq)
+		public async Task<RunResponse> Run(RunRequest rq)
 		{
 			var res = await _engine.RunAsync(rq.InstanceId, rq.Parameters);
-			return Ok(new RunResponse()
+			return new RunResponse()
 			{
 				ExecutionStatus = res.ExecutionStatus.ToString(),
 				Result = res.Result
-			});
+			};
 		}
 
 		[HttpPost]

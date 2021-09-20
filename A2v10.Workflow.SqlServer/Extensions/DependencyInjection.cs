@@ -11,9 +11,9 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			coll.UseWorkflow();
 
-			coll.AddSingleton<IWorkflowStorage, SqlServerWorkflowStorage>()
-			.AddSingleton<IInstanceStorage, SqlServerInstanceStorage>()
-			.AddSingleton<IWorkflowCatalog, SqlServerWorkflowCatalog>();
+			coll.AddScoped<IWorkflowStorage, SqlServerWorkflowStorage>()
+			.AddScoped<IInstanceStorage, SqlServerInstanceStorage>()
+			.AddScoped<IWorkflowCatalog, SqlServerWorkflowCatalog>();
 			return coll;
 		}
 	}
