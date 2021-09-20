@@ -4,11 +4,12 @@ using System;
 using System.Dynamic;
 using System.Threading.Tasks;
 
+using A2v10.Runtime.Interfaces;
 using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Engine
 {
-	public class WorkflowInvokeTarget //: IRuntimeInvokeTarget ???
+	public class WorkflowInvokeTarget : IRuntimeInvokeTarget
 	{
 		private readonly IWorkflowEngine _engine;
 
