@@ -14,12 +14,19 @@ Engine
 2. Expected: Number, params: {x:"5"} - convert it to {x: 5}
 3. Properties expressions: timeDuration = ${Duration}
 
+
 WebHost
 =======
-2. 
+2. Handle Exceptions
 
+SqlServer
+1. Add Exception procedures
 
 SqlServer.Tests
 ===============
 1. Deal with sql.scripts (Prepare database)
-2. 
+2. Test Exceptions
+
+Nuget
+====
+SqlScripts/SqlFiles - разобраться с content & copy
