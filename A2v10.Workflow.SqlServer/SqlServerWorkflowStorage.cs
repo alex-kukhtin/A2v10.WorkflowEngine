@@ -64,7 +64,7 @@ namespace A2v10.Workflow.SqlServer
 		{
 			var eo = await LoadWorkflowAsync(identity);
 			if (eo == null)
-				throw new SqlServerStorageException($"Workflow not found. (Id:'{identity.Id}', Version={identity.Version})");
+				throw new SqlServerStorageException($"LoadSource. Workflow not found. (Id:'{identity.Id}', Version={identity.Version})");
 			return eo.Get<String>("Text");
 		}
 
@@ -87,25 +87,21 @@ namespace A2v10.Workflow.SqlServer
 
 		public async Task<IWorkflowIdentity> PublishAsync(IWorkflowCatalog catalog, String id)
 		{
-			if (catalog is SqlServerWorkflowCatalog)
-			{
-				var prms = new ExpandoObject() {
-					{ "Id", id }
-				};
-				SetIdentityParams(prms);
-				var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Catalog.Publish]", prms);
+			var prms = new ExpandoObject() {
+				{ "Id", id }
+			};
+			SetIdentityParams(prms);
+			var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Catalog.Publish]", prms);
 
-				return new WorkflowIdentity()
-				{
-					Id = res.Get<String>("Id"),
-					Version = res.Get<Int32>("Version")
-				};
-			}
-			else
+			if (res == null)
+				throw new SqlServerStorageException($"Publish. Workflow not found. (Id:'{id}')");
+
+
+			return new WorkflowIdentity()
 			{
-				var wf = await catalog.LoadBodyAsync(id);
-				return await PublishAsync(id, wf.Body, wf.Format);
-			}
+				Id = res.Get<String>("Id"),
+				Version = res.Get<Int32>("Version")
+			};
 		}
 	}
 }

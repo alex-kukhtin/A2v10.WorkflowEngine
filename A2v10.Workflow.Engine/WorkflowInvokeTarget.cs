@@ -26,6 +26,7 @@ namespace A2v10.WorkflowEngine
 			public const String Result = nameof(Result);
 			public const String Body = nameof(Body);
 			public const String Format = nameof(Format);
+			public const String Version = nameof(Version);
 		}
 
 		public WorkflowInvokeTarget(IWorkflowEngine engine, IWorkflowStorage storage, IWorkflowCatalog catalog)
@@ -87,6 +88,16 @@ namespace A2v10.WorkflowEngine
 			return new ExpandoObject();
 		}
 
+		public async Task<ExpandoObject> PublishAsync(String workflowId)
+		{
+			var res = await _storage.PublishAsync(_catalog, workflowId);
+			return new ExpandoObject()
+			{
+				{ Properties.WorkflowId, res.Id},
+				{ Properties.Version, res.Version }
+			};
+		}
+
 		public async Task<ExpandoObject> InvokeAsync(String method, ExpandoObject parameters)
 		{
 			return method switch
@@ -105,7 +116,7 @@ namespace A2v10.WorkflowEngine
 				),
 				"Start" => await StartAsync(
 					parameters.Get<String>(Properties.WorkflowId),
-					parameters.Get<Int32>("Version"),
+					parameters.Get<Int32>(Properties.Version),
 					parameters.Get<ExpandoObject>(Properties.Args)
 				),
 				"Save" => await SaveAsync(
@@ -113,12 +124,10 @@ namespace A2v10.WorkflowEngine
 					parameters.Get<String>(Properties.Format),
 					parameters.Get<String>(Properties.Body)
 				),
-				/*
-				"Publish" => await PublishAsync() {
-					parameters.Get<String>(Properties.WorkflowId),
-				},
-				*/
-				_ => throw new WorkflowException($"Invalid target method '{method}'")
+				"Publish" => await PublishAsync(
+					parameters.Get<String>(Properties.WorkflowId)
+				),
+				_ => throw new WorkflowException($"Invalid target method '{method}'. Expected: Save, Publish, Create, Run, Start, Resume")
 			};
 		}
 	}

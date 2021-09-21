@@ -61,20 +61,22 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var id = "SimpleTarget";
 			await TestEngine.PrepareDatabase(id);
 
+			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
+
 			var format = "xaml";
-			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
 			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");
-			await catalog.SaveAsync(new WorkflowDescriptor()
+
+			await target.InvokeAsync("Save", new ExpandoObject()
 			{
-				Id= id,
-				Body = xaml,
-				Format = format
+				{ "WorkflowId", id },
+				{ "Format", format },
+				{ "Body", xaml }
 			});
 
-			var storage = _serviceProvider.GetService<IWorkflowStorage>();
-			await storage.PublishAsync(catalog, id);
-
-			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
+			await target.InvokeAsync("Publish", new ExpandoObject()
+			{
+				{"WorkflowId", id }
+			});
 
 			var res = await target.InvokeAsync("Start", new ExpandoObject()
 			{

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project>
 	<ItemGroup>
-		<SqlFiles Include="$(MSBuildThisFileDirectory)..\contentFiles\SqlScripts\*" />
+		<SqlFiles Include="$(MSBuildThisFileDirectory)..\content\SqlScripts\*" />
 	</ItemGroup>
 	<Target Name="CopySqlFiles" BeforeTargets="Build">
-		<Copy SourceFiles="@(SqlFiles)" DestinationFolder="$(ProjectDir)\SqlFiles" />
+		<Copy SourceFiles="@(SqlFiles)" DestinationFolder="$(ProjectDir)\SqlScripts" />
 	</Target>
 	<ItemGroup>
 		<None Remove="SqlScripts\**\*.sql"/>
