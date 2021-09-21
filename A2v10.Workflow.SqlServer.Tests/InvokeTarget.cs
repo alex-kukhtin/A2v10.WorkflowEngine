@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 
 using A2v10.Runtime.Interfaces;
+using A2v10.Workflow.Interfaces;
+using System.IO;
+using A2v10.Data;
 
 namespace A2v10.Workflow.SqlServer.Tests
 {
@@ -57,8 +60,33 @@ namespace A2v10.Workflow.SqlServer.Tests
 		{
 			var id = "SimpleTarget";
 			await TestEngine.PrepareDatabase(id);
+
+			var format = "xaml";
+			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");
+			await catalog.SaveAsync(new WorkflowDescriptor()
+			{
+				Id= id,
+				Body = xaml,
+				Format = format
+			});
+
+			var storage = _serviceProvider.GetService<IWorkflowStorage>();
+			await storage.PublishAsync(catalog, id);
+
 			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
 
+			var res = await target.InvokeAsync("Start", new ExpandoObject()
+			{
+				{"WorkflowId", id },
+				{"Args", new ExpandoObject()
+					{ 
+						{"X", 5 } 
+					} 
+				}
+			});
+
+			Assert.AreEqual(10.0, res.Eval<Double>("Result.X"));
 		}
 	}
 }

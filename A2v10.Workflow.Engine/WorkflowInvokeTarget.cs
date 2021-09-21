@@ -14,17 +14,25 @@ namespace A2v10.WorkflowEngine
 	{
 		private readonly IWorkflowEngine _engine;
 		private readonly IWorkflowStorage _storage;
+		private readonly IWorkflowCatalog _catalog;
 
-		const String WorkflowIdProperty = "WorkflowId";
-		const String InstanceIdProperty = "InstanceId";
-		const String ArgsProperty = "Args";
-		const String ReplyProperty = "Reply";
-		const String ResultProperty = "Result";
+		public static class Properties
+		{
+			public const String WorkflowId = nameof(WorkflowId);
+			public const String InstanceId = nameof(InstanceId);
+			public const String Args = nameof(Args);
+			public const String Bookmark = nameof(Bookmark);
+			public const String Reply = nameof(Reply);
+			public const String Result = nameof(Result);
+			public const String Body = nameof(Body);
+			public const String Format = nameof(Format);
+		}
 
-		public WorkflowInvokeTarget(IWorkflowEngine engine, IWorkflowStorage storage)
+		public WorkflowInvokeTarget(IWorkflowEngine engine, IWorkflowStorage storage, IWorkflowCatalog catalog)
 		{
 			_engine = engine;
 			_storage = storage;
+			_catalog = catalog;
 		}
 
 		public async Task<ExpandoObject> CreateAsync(String workflowId, Int32 version = 0)
@@ -37,7 +45,7 @@ namespace A2v10.WorkflowEngine
 
 			return new ExpandoObject()
 			{
-				{ InstanceIdProperty, res.Id }
+				{ Properties.InstanceId, res.Id }
 			};
 		}
 
@@ -46,8 +54,8 @@ namespace A2v10.WorkflowEngine
 			var res = await _engine.RunAsync(instanceId, args);
 			return new ExpandoObject()
 			{
-				{ InstanceIdProperty, res.Id },
-				{ ResultProperty, res.Result}
+				{ Properties.InstanceId, res.Id },
+				{ Properties.Result, res.Result}
 			};
 		}
 
@@ -56,16 +64,27 @@ namespace A2v10.WorkflowEngine
 			var res = await _engine.ResumeAsync(instanceId, bookmark, reply);
 			return new ExpandoObject()
 			{
-				{ InstanceIdProperty, res.Id },
-				{ ResultProperty, res.Result}
+				{ Properties.InstanceId, res.Id },
+				{ Properties.Result, res.Result}
 			};
 		}
 
 		public async Task<ExpandoObject> StartAsync(String workflowId, Int32 version, ExpandoObject args)
 		{
 			var resCreate = await CreateAsync(workflowId, version);
-			var instId = resCreate.Get<Guid>(InstanceIdProperty);
+			var instId = resCreate.Get<Guid>(Properties.InstanceId);
 			return await RunAsync(instId, args);
+		}
+
+		public async Task<ExpandoObject> SaveAsync(String workflowId, String format, String body)
+		{
+			await _catalog.SaveAsync(new WorkflowDescriptor()
+			{
+				Id = workflowId,
+				Format = format,
+				Body = body
+			});
+			return new ExpandoObject();
 		}
 
 		public async Task<ExpandoObject> InvokeAsync(String method, ExpandoObject parameters)
@@ -73,22 +92,32 @@ namespace A2v10.WorkflowEngine
 			return method switch
 			{
 				"Create" => await CreateAsync(
-					parameters.Get<String>(WorkflowIdProperty)
+					parameters.Get<String>(Properties.WorkflowId)
 				),
 				"Run" => await RunAsync(
-					parameters.Get<Guid>(InstanceIdProperty),
-					parameters.Get<ExpandoObject>(ArgsProperty)
+					parameters.Get<Guid>(Properties.InstanceId),
+					parameters.Get<ExpandoObject>(Properties.Args)
 				),
 				"Resume" => await ResumeAsync(
-					parameters.Get<Guid>(InstanceIdProperty),
-					parameters.Get<String>("Bookmark"),
-					parameters.Get<ExpandoObject>(ReplyProperty)
+					parameters.Get<Guid>(Properties.InstanceId),
+					parameters.Get<String>(Properties.Bookmark),
+					parameters.Get<ExpandoObject>(Properties.Reply)
 				),
 				"Start" => await StartAsync(
-					parameters.Get<String>(WorkflowIdProperty),
+					parameters.Get<String>(Properties.WorkflowId),
 					parameters.Get<Int32>("Version"),
-					parameters.Get<ExpandoObject>(ArgsProperty)
+					parameters.Get<ExpandoObject>(Properties.Args)
 				),
+				"Save" => await SaveAsync(
+					parameters.Get<String>(Properties.WorkflowId),
+					parameters.Get<String>(Properties.Format),
+					parameters.Get<String>(Properties.Body)
+				),
+				/*
+				"Publish" => await PublishAsync() {
+					parameters.Get<String>(Properties.WorkflowId),
+				},
+				*/
 				_ => throw new WorkflowException($"Invalid target method '{method}'")
 			};
 		}
