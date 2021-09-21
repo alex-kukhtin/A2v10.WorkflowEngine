@@ -11,6 +11,9 @@ using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.Serialization;
 
 using A2v10.Data.Interfaces;
+using A2v10.Runtime.Interfaces;
+
+using A2v10.WorkflowEngine;
 
 namespace A2v10.Workflow.SqlServer.Tests
 {
@@ -38,6 +41,8 @@ namespace A2v10.Workflow.SqlServer.Tests
 			collection.AddSingleton<IDbIdentity, UserIdentity>();
 			collection.AddSingleton<IScriptNativeObjectProvider, AppScriptNativeObjects>();
 			collection.AddSingleton<ISerializer, WorkflowSerializer>();
+
+			collection.AddSingleton<IRuntimeInvokeTarget, WorkflowInvokeTarget>();
 
 			_provider = collection.BuildServiceProvider();
 

@@ -26,7 +26,7 @@ begin
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
 	delete from a2wf.InstanceVariablesGuid 
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
-
+	
 	delete from a2wf.[Instances] where WorkflowId = @Id;
 
 	delete from a2wf.[Workflows] where Id=@Id;
