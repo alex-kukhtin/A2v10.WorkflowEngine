@@ -46,6 +46,9 @@ const document = {
 	async getContent() {
 		return await this.mainWindow.webContents.executeJavaScript('window.__electronInterop.getCurrentXml();');
 	},
+	async getThumb() {
+		return await this.mainWindow.webContents.executeJavaScript('window.__electronInterop.getCurrentSvg();');
+	},
 	async clearCommandStack() {
 		return await this.mainWindow.webContents.executeJavaScript('window.__electronInterop.clearCommandStack();');
 	}

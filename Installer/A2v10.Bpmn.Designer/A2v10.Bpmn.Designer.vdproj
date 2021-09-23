@@ -646,6 +646,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -2754,15 +2762,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:A2v10.Bpmn.Designer"
-        "ProductCode" = "8:{64C951FA-33DE-4511-9E32-5BA684B0B70D}"
-        "PackageCode" = "8:{030CC2EC-B1A6-487F-A8C5-375035D841E9}"
+        "ProductCode" = "8:{358BFBFD-AA54-45B2-9E1D-E559934C535A}"
+        "PackageCode" = "8:{EA512A91-64D9-4234-B2B1-AA55C0646D16}"
         "UpgradeCode" = "8:{8A965950-0BA8-40A7-B6AE-DBDC34F9E90C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:10.1.8045"
+        "ProductVersion" = "8:10.1.8046"
         "Manufacturer" = "8:Oleksandr Kukhtin"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

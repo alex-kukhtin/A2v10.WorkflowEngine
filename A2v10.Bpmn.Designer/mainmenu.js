@@ -2,7 +2,7 @@
 
 'use strict';
 
-const version = '10.1.8036'
+const version = '10.1.8046'
 
 const { dialog } = require('electron')
 const fs = require('fs');
@@ -11,6 +11,11 @@ const document = require('./document');
 
 const FILE_FILTERS = [
 	{ name: 'Bpmn files', extensions: ["bpmn"] },
+	{ name: 'All files', extensions: ["*"] }
+];
+
+const THUMB_FILTERS = [
+	{ name: 'Svg files', extensions: ["svg"] },
 	{ name: 'All files', extensions: ["*"] }
 ];
 
@@ -31,6 +36,10 @@ const mainMenu = [
 			{
 				label: 'Save As...',
 				click: fileSaveAs
+			},
+			{
+				label: 'Export...',
+				click: fileExport
 			},
 			{ type: 'separator' },
 			{ role: 'quit' }
@@ -58,7 +67,7 @@ module.exports = {
 };
 
 async function setCurrentName() {
-	var res = await dialog.showSaveDialog(document.mainWindow, {
+	const res = await dialog.showSaveDialog(document.mainWindow, {
 		properties: ['dontAddToRecent'],
 		defaultPath: document.file.name,
 		filters: FILE_FILTERS
@@ -123,6 +132,20 @@ async function fileOpen(mi, bw) {
 
 async function fileSave() {
 	await saveCurrentFile();
+}
+
+async function fileExport() {
+	const fileName = document.file.name.replace('.bpmn', '.svg');
+	const res = await dialog.showSaveDialog(document.mainWindow, {
+		properties: ['dontAddToRecent'],
+		defaultPath: fileName,
+		filters: THUMB_FILTERS
+	});
+	if (res.canceled)
+		return;
+	const content = await document.getThumb();
+	fs.writeFileSync(res.filePath, content.svg);
+	return true;
 }
 
 async function fileSaveAs() {

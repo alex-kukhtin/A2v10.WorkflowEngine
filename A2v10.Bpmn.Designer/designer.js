@@ -22,6 +22,9 @@ window.__electronInterop = {
 	async getCurrentXml() {
 		return bpmnModeler.saveXML();
 	},
+	async getCurrentSvg() {
+		return bpmnModeler.saveSVG();
+	},
 	async clearCommandStack() {
 		return commandStack.clear();
 	}
