@@ -22,7 +22,7 @@ namespace A2v10.Workflow.Tests.Runtime
 				Id = "Ref0",
 				Variables = new List<IVariable>()
 				{
-					new Variable() {Name = "x", Dir= VariableDirection.InOut}
+					new Variable() {Name = "x", Dir= VariableDirection.InOut, Type=VariableType.Number}
 				},
 				Activities = new List<IActivity>()
 				{

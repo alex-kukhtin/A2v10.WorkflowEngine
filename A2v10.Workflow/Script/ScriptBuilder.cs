@@ -65,7 +65,7 @@ namespace A2v10.Workflow
 			{
 				var args = variables.Where(v => v.IsArgument).ToList();
 				if (args.Count != 0)
-					mtds.Add($"Arguments: (_arg_) => {{ {String.Join("; ", args.Select(x => $"{x.Name} = _arg_.{x.Name}"))}; }}");
+					mtds.Add($"Arguments: (_arg_) => {{ {String.Join("; ", args.Select(x => $"{x.Name} = {x.Modifier}_arg_.{x.Name}"))}; }}");
 			}
 			// result - Out, InOut
 			{
@@ -91,16 +91,22 @@ namespace A2v10.Workflow
 
 		public void BuildExecute(String name, String expression)
 		{
+			if (String.IsNullOrEmpty(expression))
+				return;
 			AddMethod(_activity.Id, $"{name}: () => {{{expression};}}");
 		}
 
 		public void BuildExecuteResult(String name, String expression)
 		{
+			if (String.IsNullOrEmpty(expression))
+				return;
 			AddMethod(_activity.Id, $"{name}: (reply) => {{{expression};}}");
 		}
 
 		public void BuildEvaluate(String name, String expression)
 		{
+			if (String.IsNullOrEmpty(expression))
+				return;
 			AddMethod(_activity.Id, $"{name}: () => {{ return {expression};}}");
 		}
 

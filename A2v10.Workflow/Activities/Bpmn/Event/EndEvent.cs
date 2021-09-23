@@ -13,7 +13,8 @@ namespace A2v10.Workflow.Bpmn
 	{
 		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
 		{
-			context.Execute(Id, nameof(Script));
+			if (!String.IsNullOrEmpty(Script))
+				context.Execute(Id, nameof(Script));
 
 			Parent.KillToken(token);
 			if (onComplete != null)

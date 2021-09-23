@@ -73,7 +73,7 @@ namespace A2v10.Workflow.Tests.Serialization
 				Id = "Ref0",
 				Variables = new List<IVariable>()
 				{
-					new Variable() {Name = "x", Dir= VariableDirection.InOut}
+					new Variable() {Name = "x", Dir= VariableDirection.InOut, Type=VariableType.Number}
 				},
 				Activities = new List<IActivity>()
 				{

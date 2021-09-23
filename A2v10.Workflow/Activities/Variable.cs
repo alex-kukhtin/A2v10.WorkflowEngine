@@ -15,6 +15,13 @@ namespace A2v10.Workflow
 		public Boolean External { get; set; }
 		public String Value { get; set; }
 
+		public String Modifier => Type switch {
+			VariableType.Number or VariableType.BigInt => "+",
+			VariableType.String => "''+",
+			VariableType.Boolean => "!!",
+			_ => ""
+		};
+
 		public Boolean IsArgument => Dir == VariableDirection.In || Dir == VariableDirection.InOut;
 		public Boolean IsResult => Dir == VariableDirection.Out || Dir == VariableDirection.InOut;
 

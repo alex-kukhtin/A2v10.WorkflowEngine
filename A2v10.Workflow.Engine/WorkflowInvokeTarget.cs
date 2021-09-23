@@ -38,6 +38,8 @@ namespace A2v10.WorkflowEngine
 
 		public async Task<ExpandoObject> CreateAsync(String workflowId, Int32 version = 0)
 		{
+			if (String.IsNullOrEmpty(workflowId))
+				throw new WorkflowException($"Start. WorkflowId is required");
 			var res = await _engine.CreateAsync(new WorkflowIdentity()
 			{
 				Id = workflowId,
@@ -52,6 +54,8 @@ namespace A2v10.WorkflowEngine
 
 		public async Task<ExpandoObject> RunAsync(Guid instanceId, ExpandoObject args)
 		{
+			if (instanceId == Guid.Empty)
+				throw new WorkflowException($"Run. InstanceId is required");
 			var res = await _engine.RunAsync(instanceId, args);
 			return new ExpandoObject()
 			{
@@ -62,6 +66,8 @@ namespace A2v10.WorkflowEngine
 
 		public async Task<ExpandoObject> ResumeAsync(Guid instanceId, String bookmark, Object reply)
 		{
+			if (instanceId == Guid.Empty)
+				throw new WorkflowException($"Resume. InstanceId is required");
 			var res = await _engine.ResumeAsync(instanceId, bookmark, reply);
 			return new ExpandoObject()
 			{
@@ -72,6 +78,8 @@ namespace A2v10.WorkflowEngine
 
 		public async Task<ExpandoObject> StartAsync(String workflowId, Int32 version, ExpandoObject args)
 		{
+			if (String.IsNullOrEmpty(workflowId))
+				throw new WorkflowException($"Start. WorkflowId is required");
 			var resCreate = await CreateAsync(workflowId, version);
 			var instId = resCreate.Get<Guid>(Properties.InstanceId);
 			return await RunAsync(instId, args);

@@ -26,7 +26,8 @@ namespace A2v10.Workflow.Bpmn
 		{
 			CompleteTask(context);
 			context.RemoveBookmark(bookmark);
-			context.ExecuteResult(Id, nameof(Script), result);
+			if (!String.IsNullOrEmpty(Script))
+				context.ExecuteResult(Id, nameof(Script), result);
 			return CompleteBody(context);
 		}
 

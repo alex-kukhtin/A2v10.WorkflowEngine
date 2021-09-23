@@ -15,7 +15,8 @@ namespace A2v10.Workflow
 
 		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
 		{
-			context.Execute(Id, nameof(Script));
+			if (!String.IsNullOrEmpty(Script))
+				context.Execute(Id, nameof(Script));
 			if (onComplete != null)
 				return onComplete(context, this);
 			return ValueTask.CompletedTask;

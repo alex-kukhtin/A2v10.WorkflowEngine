@@ -32,13 +32,28 @@ namespace A2v10.Workflow.SqlServer.Tests
 		{
 			var id = "DummyWorkflow";
 			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
-			await Assert.ThrowsExceptionAsync<SqlServerStorageException>(() =>
+			var ex = await Assert.ThrowsExceptionAsync<SqlServerStorageException>(() =>
 			{
 				return target.InvokeAsync("Start", new ExpandoObject()
 				{
 					{ "WorkflowId", id }
 				});
-			}, $"Workflow not found. (Id:'{id}', Version=0");
+			});
+			Assert.AreEqual($"Workflow not found. (Id:'{id}', Version:0)", ex.Message);
+		}
+
+		[TestMethod]
+		public async Task RunWorkflow_Error()
+		{
+			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
+			var ex = await Assert.ThrowsExceptionAsync<WorkflowException>(() =>
+			{
+				return target.InvokeAsync("Run", new ExpandoObject()
+				{
+					{ "x", "5" }
+				});
+			});
+			Assert.AreEqual("Run. InstanceId is required", ex.Message);
 		}
 
 		[TestMethod]
@@ -46,13 +61,14 @@ namespace A2v10.Workflow.SqlServer.Tests
 		{
 			var id = "DummyWorkflow";
 			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
-			await Assert.ThrowsExceptionAsync<SqlServerStorageException>(() =>
+			var ex = await Assert.ThrowsExceptionAsync<SqlServerStorageException>(() =>
 			{
 				return target.InvokeAsync("Create", new ExpandoObject()
 				{
 					{ "WorkflowId", id }
 				});
-			}, $"Workflow not found. (Id:'{id}', Version=0");
+			});
+			Assert.AreEqual($"Workflow not found. (Id:'{id}', Version:0)", ex.Message);
 		}
 
 		[TestMethod]
