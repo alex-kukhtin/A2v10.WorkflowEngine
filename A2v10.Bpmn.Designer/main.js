@@ -11,6 +11,7 @@ function createWindow() {
 	let mainWindow = new BrowserWindow({
 		width: 1300,
 		height: 800,
+		title: 'A2v10 Bpmn Designer',
 		icon: __dirname + '/favicon.ico',
 		webPreferences: {
 			preload: 'preload.js',
@@ -47,6 +48,7 @@ function createWindow() {
 }
 
 const menu = Menu.buildFromTemplate(mainMenu);
+
 Menu.setApplicationMenu(menu);
 
 

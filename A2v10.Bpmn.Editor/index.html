@@ -16,7 +16,7 @@
 	<script type="text/javascript" src="/dist/bpmn-editor.js"></script>
 	<script type="text/javascript">
 		(async function () {
-			const bpmnModeler = window.Modeler;
+			const bpmnModeler = window.BpmnModeler.create("canvas", "js-properties-panel");
 			let wf = await fetch('/workflows/default.bpmn');
 			bpmnModeler.importXML(await wf.text());
 		})();

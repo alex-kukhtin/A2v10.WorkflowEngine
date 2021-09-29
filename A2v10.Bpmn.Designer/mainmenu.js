@@ -2,7 +2,7 @@
 
 'use strict';
 
-const version = '10.1.8046'
+const version = '10.1.8047'
 
 const { dialog } = require('electron')
 const fs = require('fs');
@@ -35,10 +35,12 @@ const mainMenu = [
 			},
 			{
 				label: 'Save As...',
+				accelerator: 'CmdOrCtrl+Shift+S',
 				click: fileSaveAs
 			},
 			{
 				label: 'Export...',
+				accelerator: 'CmdOrCtrl+E',
 				click: fileExport
 			},
 			{ type: 'separator' },
@@ -57,7 +59,11 @@ const mainMenu = [
 	{
 		label: 'Help',
 		submenu: [
-			{label: 'About...', click: showAbout}
+			{
+				label: 'About...',
+				accelerator: 'F1',
+				click: showAbout
+			}
 		]
 	}
 ];
@@ -161,7 +167,7 @@ function showAbout(mi, bw) {
 		type: 'info',
 		detail: 'version: ' + version +
 			'\n\nCopyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.' +
-			'\n\npowered by https://bpmn.io',
+			'\n\nPowered by https://bpmn.io',
 		title: 'A2v10.Bpmn.Designer',
 		icon: __dirname + '/favicon.ico'
 	});

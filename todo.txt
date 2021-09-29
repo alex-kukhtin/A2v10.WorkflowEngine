@@ -7,7 +7,7 @@ Designer
 ========
 1. Add/Remove buttons css (wrapper & remove position:absolute)
 2. Properties expressions. f.e: timeDuration = ${Duration}
-3. SaveAs => Ctrl + Shift + S, About => F1
+4. fileName in command line
 
 
 Engine

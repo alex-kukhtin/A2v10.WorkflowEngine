@@ -4,12 +4,13 @@
 
 const { ipcRenderer } = require('electron');
 
-const bpmnModeler = window.Modeler;
+const builder = window.BpmnModeler;
+
+const bpmnModeler = builder.create('canvas', 'js-properties-panel');
 const commandStack = bpmnModeler.get("commandStack");
 
-async function start() {
-	let wf = await fetch('./workflows/default.bpmn');
-	bpmnModeler.importXML(await wf.text());
+function start() {
+	bpmnModeler.importXML(builder.defaultXml);
 	bpmnModeler.on('commandStack.changed', (ev) => {
 		let modified = commandStack.canUndo();
 		ipcRenderer.send('FILE.MODIFIED', { modified });

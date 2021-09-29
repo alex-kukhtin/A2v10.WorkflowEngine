@@ -183,12 +183,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_61F4DB04EA81438C8533A4AA968770FF"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_621D9827E79E444A9F0AC12BA39F940A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1222,26 +1216,6 @@
             "TargetName" = "8:LICENSE"
             "Tag" = "8:"
             "Folder" = "8:_CD79DD19E4E846CB96A0426BD91CFE9E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_61F4DB04EA81438C8533A4AA968770FF"
-            {
-            "SourcePath" = "8:..\\..\\A2v10.Bpmn.Designer\\workflows\\default.bpmn"
-            "TargetName" = "8:default.bpmn"
-            "Tag" = "8:"
-            "Folder" = "8:_3058F61DB93740FBBE46D0814017121D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2652,17 +2626,6 @@
                             "Property" = "8:_A9190342E14742508C0919B53A8750EA"
                                 "Folders"
                                 {
-                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_3058F61DB93740FBBE46D0814017121D"
-                                    {
-                                    "Name" = "8:workflows"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "Property" = "8:_DCBC81E472724C8A96A70BBA805DF33E"
-                                        "Folders"
-                                        {
-                                        }
-                                    }
                                     "{9EF0B969-E518-4E46-987F-47570745A589}:_AE9F4B9EA45C4F31BBF3BBB494AEF9E0"
                                     {
                                     "Name" = "8:js"
