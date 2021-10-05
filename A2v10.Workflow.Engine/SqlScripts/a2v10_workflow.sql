@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2021 Alex Kukhtin
 
-Last updated : 21 sep 2021
-module version : 8033
+Last updated : 05 oct 2021
+module version : 8048
 */
 ------------------------------------------------
 set nocount on;
@@ -22,7 +22,7 @@ begin
 		[Body] nvarchar(max) null,
 		[Thumb] varbinary(max) null,
 		ThumbFormat nvarchar(32) null,
-		[Hash] nvarchar(255) null,
+		[Hash] varbinary(64) null,
 		DateCreated datetime not null constraint DF_Catalog_DateCreated default(getutcdate()),
 		constraint PK_Catalog primary key clustered (Id)
 	);
@@ -37,7 +37,7 @@ begin
 		[Version] int not null,
 		[Format] nvarchar(32) not null,
 		[Text] nvarchar(max) null,
-		[Hash] nvarchar(255) null,
+		[Hash] varbinary(64) null,
 		DateCreated datetime not null constraint DF_Workflows_DateCreated default(getutcdate()),
 		constraint PK_Workflows primary key clustered (Id, [Version]) with (fillfactor = 70)
 	);
@@ -167,20 +167,23 @@ create or alter procedure a2wf.[Catalog.Save]
 @UserId bigint = null,
 @Id nvarchar(255),
 @Body nvarchar(max),
-@Format nvarchar(32),
-@Hash nvarchar(255)
+@Format nvarchar(32)
 as
 begin
 	set nocount on;
 	set transaction isolation level read committed;
-	declare @savedHash nvarchar(255);
+
+	declare @savedHash varbinary(64);
+	declare @newHash varbinary(64);
+
 	begin tran;
-		select @savedHash = [Hash] from a2wf.[Catalog] where Id=@Id;
+		select @savedHash = hashbytes(N'SHA2_256', Body) from a2wf.[Catalog] where Id=@Id;
+		select @newHash = hashbytes(N'SHA2_256', @Body);
 		if @savedHash is null
 			insert into a2wf.[Catalog] (Id, [Format], Body, [Hash]) 
-			values (@Id, @Format, @Body, @Hash)
-		else if @savedHash <> @Hash
-			update a2wf.[Catalog] set Body = @Body, [Hash]=@Hash where Id=@Id;
+			values (@Id, @Format, @Body, @newHash)
+		else if @savedHash <> @newHash
+			update a2wf.[Catalog] set Body = @Body, [Hash]=@newHash where Id=@Id;
 	commit tran;
 end
 go
@@ -193,7 +196,7 @@ begin
 	set nocount on;
 	set transaction isolation level read committed;
 
-	declare @hash nvarchar(255);
+	declare @hash varbinary(64);
 	declare @version int;
 	begin tran;
 		select top(1) @hash = [Hash], @version=[Version] 

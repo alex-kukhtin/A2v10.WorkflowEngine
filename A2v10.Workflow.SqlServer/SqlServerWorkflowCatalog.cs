@@ -32,15 +32,11 @@ namespace A2v10.Workflow.SqlServer
 
 		public Task SaveAsync(IWorkflowDescriptor workflow)
 		{
-			using var sha = SHA256.Create();
-			var hash = Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(workflow.Body)));
-
 			var eo = new ExpandoObject();
 			eo.Set("Id", workflow.Id);
 			eo.Set("Body", workflow.Body);
 			eo.Set("Format", workflow.Format);
 			eo.Set("ThumbFormat", workflow.ThumbFormat);
-			eo.Set("Hash", hash);
 			return _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Catalog.Save]", eo);
 		}
 	}
