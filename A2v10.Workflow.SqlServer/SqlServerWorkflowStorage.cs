@@ -24,14 +24,6 @@ namespace A2v10.Workflow.SqlServer
 
 		private String DataSource => String.IsNullOrEmpty(_dbIdentity.Segment) ? null : _dbIdentity.Segment;
 
-		void SetIdentityParams(ExpandoObject eo)
-		{
-			if (_dbIdentity.TenantId.HasValue)
-				eo.Set("TenantId", _dbIdentity.TenantId);
-			if (_dbIdentity.UserId.HasValue)
-				eo.Set("UserId", _dbIdentity.UserId);
-		}
-
 		public Task<ExpandoObject> LoadWorkflowAsync(IWorkflowIdentity identity)
 		{
 			var prms = new ExpandoObject()
@@ -39,7 +31,7 @@ namespace A2v10.Workflow.SqlServer
 				{ "Id", identity.Id },
 				{ "Version", identity.Version }
 			};
-			SetIdentityParams(prms);
+			_dbIdentity.SetIdentityParams(prms);
 			return _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Workflow.Load]", prms);
 		}
 
@@ -75,7 +67,7 @@ namespace A2v10.Workflow.SqlServer
 				{ "Format", format },
 				{ "Text", text }
 			};
-			SetIdentityParams(prms);
+			_dbIdentity.SetIdentityParams(prms);
 			var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Workflow.Publish]", prms);
 
 			return new WorkflowIdentity()
@@ -90,7 +82,7 @@ namespace A2v10.Workflow.SqlServer
 			var prms = new ExpandoObject() {
 				{ "Id", id }
 			};
-			SetIdentityParams(prms);
+			_dbIdentity.SetIdentityParams(prms);
 			var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Catalog.Publish]", prms);
 
 			if (res == null)

@@ -26,14 +26,6 @@ namespace A2v10.Workflow.SqlServer
 			_dbIdentity = dbIdentity;
 		}
 
-		void SetIdentityParams(ExpandoObject eo)
-		{
-			if (_dbIdentity.TenantId.HasValue)
-				eo.Set("TenantId", _dbIdentity.TenantId);
-			if (_dbIdentity.UserId.HasValue)
-				eo.Set("UserId", _dbIdentity.UserId);
-		}
-
 		#region IInstanceStorage
 		public async Task<IInstance> Load(Guid instanceId)
 		{
@@ -41,7 +33,7 @@ namespace A2v10.Workflow.SqlServer
 			{
 				{ "Id", instanceId }
 			};
-			SetIdentityParams(prms);
+			_dbIdentity.SetIdentityParams(prms);
 			var eo = await _dbContext.ReadExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Load]", prms);
 			if (eo == null)
 				throw new SqlServerStorageException($"Instance '{instanceId}' not found");
@@ -73,7 +65,7 @@ namespace A2v10.Workflow.SqlServer
 				{ "WorkflowId", instance.Workflow.Identity.Id },
 				{ "ExecutionStatus", instance.ExecutionStatus.ToString() }
 			};
-			SetIdentityParams(ieo);
+			_dbIdentity.SetIdentityParams(ieo);
 			await _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Create]", ieo);
 		}
 
@@ -106,7 +98,7 @@ namespace A2v10.Workflow.SqlServer
 				foreach (var defer in instanceData.Deferred.Where(d => d.Type == DeferredElementType.Sql))
 				{
 					var epxParam = defer.Parameters.Clone();
-					SetIdentityParams(epxParam);
+					_dbIdentity.SetIdentityParams(epxParam);
 					epxParam.Add("InstanceId", instance.Id);
 					epxParam.Add("Activity", defer.Refer);
 					batches.Add(new BatchProcedure(defer.Name, epxParam));

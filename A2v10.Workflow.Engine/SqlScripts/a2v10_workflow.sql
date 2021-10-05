@@ -572,3 +572,15 @@ begin
 	values (@InstanceId, @Kind, @Action, @Message, 0);
 end
 go
+
+/*
+drop table a2wf.InstanceBookmarks;
+drop table a2wf.InstanceTrack;
+drop table a2wf.InstanceEvents;
+drop table a2wf.InstanceVariablesGuid;
+drop table a2wf.InstanceVariablesString;
+drop table a2wf.InstanceVariablesInt;
+drop table a2wf.Instances;
+drop table a2wf.Workflows;
+drop table a2wf.Catalog;
+*/

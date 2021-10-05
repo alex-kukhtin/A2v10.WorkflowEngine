@@ -2,8 +2,6 @@
 
 using System;
 using System.Dynamic;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 using A2v10.Data.Interfaces;
@@ -14,15 +12,23 @@ namespace A2v10.Workflow.SqlServer
 	public class SqlServerWorkflowCatalog : IWorkflowCatalog
 	{
 		private readonly IDbContext _dbContext;
+		private readonly IDbIdentity _dbIdentity;
 
-		public SqlServerWorkflowCatalog(IDbContext dbContext)
+		public SqlServerWorkflowCatalog(IDbContext dbContext, IDbIdentity dbIdentity)
 		{
 			_dbContext = dbContext;
+			_dbIdentity = dbIdentity;
 		}
 
 		public Task<WorkflowElem> LoadBodyAsync(String id)
 		{
-			return _dbContext.LoadAsync<WorkflowElem>(null, $"{SqlDefinitions.SqlSchema}.[Catalog.Load]", new { Id = id });
+			var prms = new ExpandoObject()
+			{
+				{"Id", id }
+			};
+			_dbIdentity.SetIdentityParams(prms);
+			return _dbContext.LoadAsync<WorkflowElem>(null, $"{SqlDefinitions.SqlSchema}.[Catalog.Load]", prms);
+
 		}
 
 		public Task<WorkflowThumbElem> LoadThumbAsync(string id)
@@ -32,12 +38,15 @@ namespace A2v10.Workflow.SqlServer
 
 		public Task SaveAsync(IWorkflowDescriptor workflow)
 		{
-			var eo = new ExpandoObject();
-			eo.Set("Id", workflow.Id);
-			eo.Set("Body", workflow.Body);
-			eo.Set("Format", workflow.Format);
-			eo.Set("ThumbFormat", workflow.ThumbFormat);
-			return _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Catalog.Save]", eo);
+			var prms = new ExpandoObject()
+			{
+				{ "Id", workflow.Id },
+				{ "Body", workflow.Body},
+				{ "Format", workflow.Format},
+				{ "ThumbFormat", workflow.ThumbFormat }
+			};
+			_dbIdentity.SetIdentityParams(prms);
+			return _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Catalog.Save]", prms);
 		}
 	}
 }
