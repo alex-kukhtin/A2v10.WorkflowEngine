@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2021 Alex Kukhtin
 
-Last updated : 05 oct 2021
-module version : 8048
+Last updated : 02 nov 2021
+module version : 8049
 */
 ------------------------------------------------
 set nocount on;
@@ -218,6 +218,19 @@ begin
 			select Id, [Version] from @retval;
 		end
 	commit tran;
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[Catalog.SaveAndPublish]
+@Id nvarchar(255),
+@Body nvarchar(max),
+@Format nvarchar(32)
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+	exec a2wf.[Catalog.Save] null, @Id=@Id, @Body=@Body, @Format=@Format;
+	exec a2wf.[Catalog.Publish] null, @Id = @Id;
 end
 go
 ------------------------------------------------
