@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2021 Alex Kukhtin
 
-Last updated : 02 nov 2021
-module version : 8049
+Last updated : 03 nov 2021
+module version : 8050
 */
 ------------------------------------------------
 set nocount on;
@@ -583,6 +583,18 @@ begin
 	set transaction isolation level read committed;
 	insert into a2wf.InstanceTrack(InstanceId, Kind, [Action], [Message], RecordNumber)
 	values (@InstanceId, @Kind, @Action, @Message, 0);
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[Instance.Pending.Load]
+as
+begin
+	set nocount on;
+	set transaction isolation level read uncommitted;
+	-- timers
+	select InstanceId, EventKey = [Event] , Kind
+	from a2wf.InstanceEvents
+	where Pending <= getutcdate() and Kind=N'T' order by Pending;
 end
 go
 
