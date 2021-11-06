@@ -8,7 +8,7 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	public class ScriptTask : BpmnTask, IScriptable
+	public class ScriptTask : BpmnTask
 	{
 		// bpmn:script
 		public String Script => Children.OfType<A2v10.Workflow.Bpmn.Script>().FirstOrDefault()?.Text;
@@ -21,12 +21,9 @@ namespace A2v10.Workflow.Bpmn
 			return CompleteBody(context);
 		}
 
-		#region IScriptable
-		public void BuildScript(IScriptBuilder builder)
+		public override void BuildScriptBody(IScriptBuilder builder)
 		{
 			builder.BuildExecute(nameof(Script), Script);
 		}
-		#endregion
-
 	}
 }

@@ -7,7 +7,7 @@ import cmdHelper from 'bpmn-js-properties-panel/lib/helper/CmdHelper';
 
 
 export default function globalScriptProps(group, element, bpmnFactory, translate) {
-	if (is(element, "bpmn:Collaboration")) {
+	if (is(element, "bpmn:Collaboration") || is(element, "bpmn:Process")) {
 		let textBox = entryFactory.textBox(translate, {
 			id: 'script',
 			label: translate('Global Script'),

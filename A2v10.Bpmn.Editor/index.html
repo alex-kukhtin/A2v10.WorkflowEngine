@@ -13,12 +13,21 @@
 	<div class="editor-canvas" id="canvas"></div>
 	<div class="properties-panel-parent" id="js-properties-panel"></div>
 
+	<div style="position:absolute;bottom:20px;left:20px">
+		<button id="logBtn">LOG</button>
+	</div>
+
 	<script type="text/javascript" src="/dist/bpmn-editor.js"></script>
 	<script type="text/javascript">
 		(async function () {
 			const bpmnModeler = window.BpmnModeler.create("canvas", "js-properties-panel");
 			let wf = await fetch('/workflows/default.bpmn');
 			bpmnModeler.importXML(await wf.text());
+			document.getElementById('logBtn').addEventListener('click', async () => {
+				console.dir(bpmnModeler);
+				let xml = await bpmnModeler.saveXML();
+				console.log(xml.xml);
+			});
 		})();
 	</script>
 </body>

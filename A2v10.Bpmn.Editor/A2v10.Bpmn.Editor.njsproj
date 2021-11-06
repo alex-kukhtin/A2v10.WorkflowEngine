@@ -47,6 +47,7 @@
     <Content Include="app\provider\lib\factory\textInputEntryFactory.js" />
     <Content Include="app\provider\lib\factory\validationAwareTextInput.js" />
     <Content Include="app\provider\workflow\index.js" />
+    <Content Include="app\provider\workflow\parts\bpmn\loopProps.js" />
     <Content Include="app\provider\workflow\parts\bpmn\conditionalProps.js" />
     <Content Include="app\provider\workflow\parts\bpmn\documentationProps.js" />
     <Content Include="app\provider\workflow\parts\bpmn\eventProps.js" />

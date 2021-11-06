@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using A2v10.System.Xaml;
 using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.Serialization;
+using System.Threading.Tasks;
 
 namespace A2v10.Workflow.Tests
 {
@@ -38,6 +39,26 @@ namespace A2v10.Workflow.Tests
 			_provider = collection.BuildServiceProvider();
 
 			return _provider;
+		}
+
+
+		public static async ValueTask<IInstance> SimpleRun(String id, String text)
+		{
+			var sp = ServiceProvider();
+			var wfs = sp.GetService<IWorkflowStorage>();
+			var wfc = sp.GetService<IWorkflowCatalog>();
+
+			await wfc.SaveAsync(new WorkflowDescriptor()
+			{
+				Id = id,
+				Body = text,
+				Format = "xaml"
+			});
+			var ident = await wfs.PublishAsync(wfc, id);
+
+			var wfe = sp.GetService<IWorkflowEngine>();
+			var inst = await wfe.CreateAsync(ident);
+			return await wfe.RunAsync(inst, null);
 		}
 	}
 }

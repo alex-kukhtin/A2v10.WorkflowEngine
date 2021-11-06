@@ -9,7 +9,7 @@ namespace A2v10.Workflow.Bpmn
 {
 	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 
-	public class BpmnTask : FlowElement, IStorable, ICanComplete
+	public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoopable
 	{
 
 		protected ExecutingAction _onComplete;
@@ -48,7 +48,6 @@ namespace A2v10.Workflow.Bpmn
 			foreach (var ev in Parent.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
 				await ev.ExecuteAsync(context, Parent.NewToken(), EventComplete);
 
-			// loop here
 			await ExecuteBody(context);
 		}
 
@@ -62,6 +61,12 @@ namespace A2v10.Workflow.Bpmn
 
 		protected virtual ValueTask CompleteBody(IExecutionContext context)
 		{
+			if (HasLoop && CanCountinue(context))
+			{
+				context.Schedule(this, _onComplete, _token);
+				return ValueTask.CompletedTask;
+			}
+
 			if (Outgoing == null)
 			{
 				if (_onComplete != null)
@@ -97,6 +102,10 @@ namespace A2v10.Workflow.Bpmn
 			return CompleteBody(context);
 		}
 
+		public virtual void BuildScriptBody(IScriptBuilder builder)
+		{
+		}
+
 		[StoreName("OnEventComplete")]
 		protected virtual ValueTask EventComplete(IExecutionContext context, IActivity activity)
 		{
@@ -109,5 +118,29 @@ namespace A2v10.Workflow.Bpmn
 			foreach (var ev in Parent.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
 				context.RemoveEvent(ev.Id);
 		}
+
+		#region IScriptable
+		public void BuildScript(IScriptBuilder builder)
+		{
+			if (HasLoop)
+			{
+				builder.BuildEvaluate("LoopCondition", "X");
+			}
+			BuildScriptBody(builder);
+		}
+		#endregion
+
+		#region ILoopable
+		public Boolean HasLoop => Children != null && Children.OfType<StandardLoopCharacteristics>().Any();
+
+		public Boolean CanCountinue(IExecutionContext context)
+		{
+			if (!HasLoop) 
+				return false;
+			var d = context.Evaluate<Double>(Id, "LoopCondition");
+			return d > 0;
+		}
 	}
+	#endregion
 }
+

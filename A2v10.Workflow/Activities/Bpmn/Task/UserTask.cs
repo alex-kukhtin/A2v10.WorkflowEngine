@@ -8,7 +8,7 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	public class UserTask : BpmnTask, IScriptable
+	public class UserTask : BpmnTask
 	{
 		// wf:Script here
 		public String Script => ExtensionElements<A2v10.Workflow.Script>()?.FirstOrDefault()?.Text;
@@ -31,11 +31,9 @@ namespace A2v10.Workflow.Bpmn
 			return CompleteBody(context);
 		}
 
-		#region IScriptable
-		public void BuildScript(IScriptBuilder builder)
+		public override void BuildScriptBody(IScriptBuilder builder)
 		{
 			builder.BuildExecuteResult(nameof(Script), Script);
 		}
-		#endregion
 	}
 }

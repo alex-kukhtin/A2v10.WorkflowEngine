@@ -4,6 +4,7 @@ import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivato
 
 import documentationProps from '../workflow/parts/bpmn/documentationProps';
 import conditionalProps from '../workflow/parts/bpmn/conditionalProps';
+import loopProps from '../workflow/parts/bpmn/loopProps';
 import idProps from '../workflow/parts/bpmn/idProps';
 import processProps from '../workflow/parts/bpmn/processProps';
 import nameProps from '../workflow/parts/bpmn/nameProps';
@@ -35,10 +36,27 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 		label: 'Details',
 		entries: []
 	};
+
 	linkProps(detailsGroup, element, translate);
 	eventProps(detailsGroup, element, bpmnFactory, elementRegistry, translate);
 	scriptProps(detailsGroup, element, bpmnFactory, translate);
 	conditionalProps(detailsGroup, element, bpmnFactory, translate);
+
+	var loopGroup = {
+		id: 'loopinstance',
+		label: 'Loop',
+		entries: []
+	};
+
+	loopProps(loopGroup, element, bpmnFactory, translate);
+
+	var multiInstanceGroup = {
+		id: 'multiinstance',
+		label: 'Multi Instance',
+		entries: []
+	};
+	// todo: multi instance group
+
 
 	var documentationGroup = {
 		id: 'documentation',
@@ -51,6 +69,8 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 	return [
 		generalGroup,
 		detailsGroup,
+		loopGroup,
+		multiInstanceGroup,
 		documentationGroup
 	];
 }

@@ -2,7 +2,6 @@
 import entryFactory from '../../lib/factory/entryFactory';
 
 import { validateId } from 'bpmn-js-properties-panel/lib/Utils';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { isAny } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 
 import extensionElementsImpl from './impl/extensionElements';
