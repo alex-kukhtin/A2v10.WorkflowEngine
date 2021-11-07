@@ -2717,7 +2717,7 @@ var _entryFactory = _interopRequireDefault(require("../../../lib/factory/entryFa
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// todo: loopMaximum 
+// todo: loopMaximum, multiInstance in another file
 
 /**
 	<StandardLoopCharacteristics testBefore = "false", loopMaximum="5">
@@ -2799,18 +2799,51 @@ module.exports = function (group, element, bpmnFactory, translate) {
 
     set(elem, values, node) {
       let loopDef = getLoopDefinition(elem);
-
-      if (loopDef) {
-        let vals = {
-          testBefore: values && values.testBefore ? true : false
-        };
-        return _CmdHelper.default.updateBusinessObject(elem, loopDef, vals);
-      }
-
-      return [];
+      if (!loopDef) return [];
+      let vals = {
+        testBefore: values && values.testBefore ? true : false
+      };
+      return _CmdHelper.default.updateBusinessObject(elem, loopDef, vals);
     }
 
   }));
+
+  let loopMaxEntry = _entryFactory.default.validationAwareTextField(translate, {
+    id: 'loop-maximum',
+    label: 'Loop Maximum',
+    modelProperty: 'loopMaximum'
+  });
+
+  loopMaxEntry.get = function (elem, node) {
+    let loopDef = getLoopDefinition(elem);
+    return loopDef ? {
+      loopMaximum: loopDef.loopMaximum || ""
+    } : {};
+  };
+
+  loopMaxEntry.set = function (elem, values, node) {
+    let loopDef = getLoopDefinition(elem);
+    if (!loopDef) return [];
+    let fixVal = parseFloat(values.loopMaximum);
+    if (isNaN(fixVal)) fixVal = 0;
+    let vals = {
+      loopMaximum: fixVal ? fixVal.toFixed(0) : ''
+    };
+    vals.loopMaximum;
+    return _CmdHelper.default.updateBusinessObject(elem, loopDef, vals);
+  };
+
+  loopMaxEntry.validate = function (elem, values) {
+    let lm = values.loopMaximum;
+    if (lm == '') return {};
+    let f = parseFloat(lm);
+    if (!isNaN(f)) return {};
+    return {
+      loopMaximum: 'The value must be a number'
+    };
+  };
+
+  group.entries.push(loopMaxEntry);
 };
 
 },{"../../../lib/factory/entryFactory":8,"bpmn-js-properties-panel/lib/helper/CmdHelper":54,"bpmn-js-properties-panel/lib/helper/ElementHelper":55,"bpmn-js/lib/features/modeling/util/ModelingUtil":160,"bpmn-js/lib/util/ModelUtil":189}],32:[function(require,module,exports){

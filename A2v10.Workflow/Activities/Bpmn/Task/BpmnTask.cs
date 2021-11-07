@@ -14,6 +14,7 @@ namespace A2v10.Workflow.Bpmn
 
 		protected ExecutingAction _onComplete;
 		protected IToken _token;
+		protected Int32 _loopCounter;
 
 		public Boolean IsComplete { get; protected set; }
 
@@ -22,12 +23,15 @@ namespace A2v10.Workflow.Bpmn
 		#region IStorable 
 		const String ON_COMPLETE = "OnComplete";
 		const String TOKEN = "Token";
+		const String LOOP_COUNTER = "LoopCounter";
 
 		public virtual void Store(IActivityStorage storage)
 		{
 			if (!CanInduceIdle) return;
 			storage.SetCallback(ON_COMPLETE, _onComplete);
 			storage.SetToken(TOKEN, _token);
+			if (HasLoop)
+				storage.Set<Int32>(LOOP_COUNTER, _loopCounter);
 		}
 
 		public virtual void Restore(IActivityStorage storage)
@@ -35,18 +39,23 @@ namespace A2v10.Workflow.Bpmn
 			if (!CanInduceIdle) return;
 			_onComplete = storage.GetCallback(ON_COMPLETE);
 			_token = storage.GetToken(TOKEN);
+			if (HasLoop)
+				_loopCounter = storage.Get<Int32>(LOOP_COUNTER);
 		}
 		#endregion
-
 
 
 		public override async ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
 		{
 			_onComplete = onComplete;
 			_token = token;
-			// boundary events
-			foreach (var ev in Parent.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
-				await ev.ExecuteAsync(context, Parent.NewToken(), EventComplete);
+			if (_loopCounter == 0)
+			{
+				// boundary events
+				foreach (var ev in Parent.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
+					await ev.ExecuteAsync(context, Parent.NewToken(), EventComplete);
+			}
+			_loopCounter += 1;
 
 			await ExecuteBody(context);
 		}
@@ -63,10 +72,15 @@ namespace A2v10.Workflow.Bpmn
 		{
 			if (HasLoop && CanCountinue(context))
 			{
+				IsComplete = false;
 				context.Schedule(this, _onComplete, _token);
 				return ValueTask.CompletedTask;
 			}
+			return DoCompleteBody(context);
+		}
 
+		ValueTask DoCompleteBody(IExecutionContext context) 
+		{ 
 			if (Outgoing == null)
 			{
 				if (_onComplete != null)
@@ -92,6 +106,7 @@ namespace A2v10.Workflow.Bpmn
 					context.Schedule(targetFlow, _onComplete, Parent.NewToken());
 				}
 			}
+			CompleteTask(context);
 			if (_onComplete != null)
 				return _onComplete(context, this);
 			return ValueTask.CompletedTask;
@@ -124,21 +139,27 @@ namespace A2v10.Workflow.Bpmn
 		{
 			if (HasLoop)
 			{
-				builder.BuildEvaluate("LoopCondition", "X");
+				var expr = LoopCharacteristics?.LoopCondition;
+				if (String.IsNullOrEmpty(expr))
+					expr = "true";
+				builder.BuildEvaluate(LoopConditionEval, expr);
 			}
 			BuildScriptBody(builder);
 		}
 		#endregion
 
+		public String LoopConditionEval => $"{Id}_Loop";
+		public StandardLoopCharacteristics LoopCharacteristics => Children?.OfType<StandardLoopCharacteristics>().FirstOrDefault();
+
 		#region ILoopable
+
 		public Boolean HasLoop => Children != null && Children.OfType<StandardLoopCharacteristics>().Any();
 
 		public Boolean CanCountinue(IExecutionContext context)
 		{
 			if (!HasLoop) 
 				return false;
-			var d = context.Evaluate<Double>(Id, "LoopCondition");
-			return d > 0;
+			return context.Evaluate<Boolean>(Id, LoopConditionEval);
 		}
 	}
 	#endregion

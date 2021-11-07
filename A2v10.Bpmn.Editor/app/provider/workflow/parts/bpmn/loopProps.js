@@ -77,7 +77,7 @@ module.exports = function (group, element, bpmnFactory, translate) {
 				commands.push(cmdHelper.updateBusinessObject(element, loopDef, { loopCondition: expr }));
 			}
 			else
-				commands.push(cmdHelper.updateBusinessObject(element, loopCond, { body: values.body } ));
+				commands.push(cmdHelper.updateBusinessObject(element, loopCond, { body: values.body }));
 			return commands;
 		}
 	});
@@ -94,15 +94,44 @@ module.exports = function (group, element, bpmnFactory, translate) {
 		},
 		set(elem, values, node) {
 			let loopDef = getLoopDefinition(elem);
-			if (loopDef) {
-				let vals = {
-					testBefore: values && values.testBefore ? true : false
-				};
-				return cmdHelper.updateBusinessObject(elem, loopDef, vals);
-			}
-			return [];
+			if (!loopDef) return [];
+			let vals = {
+				testBefore: values && values.testBefore ? true : false
+			};
+			return cmdHelper.updateBusinessObject(elem, loopDef, vals);
 		}
 	}));
+
+	let loopMaxEntry = entryFactory.validationAwareTextField(translate, {
+		id: 'loop-maximum',
+		label: 'Loop Maximum',
+		modelProperty: 'loopMaximum'
+	});
+	loopMaxEntry.get = function(elem, node) {
+		let loopDef = getLoopDefinition(elem);
+		return loopDef ? { loopMaximum: loopDef.loopMaximum || "" } : {};
+	};
+	loopMaxEntry.set = function(elem, values, node) {
+		let loopDef = getLoopDefinition(elem);
+		if (!loopDef) return [];
+		let fixVal = parseFloat(values.loopMaximum);
+		if (isNaN(fixVal))
+			fixVal = 0;
+		let vals = {
+			loopMaximum: fixVal ? fixVal.toFixed(0) : ''
+		};
+		return cmdHelper.updateBusinessObject(elem, loopDef, vals);
+	};
+	loopMaxEntry.validate = function(elem, values) {
+		let lm = values.loopMaximum;
+		if (lm == '') return {};
+		let f = parseFloat(lm);
+		if (!isNaN(f)) return {};
+		return {
+			loopMaximum: 'The value must be a number'
+		};
+	};
+	group.entries.push(loopMaxEntry);
 };
 
 
