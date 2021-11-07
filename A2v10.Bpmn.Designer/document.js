@@ -17,6 +17,11 @@ const document = {
 			this.path = fullPath;
 			this.name = pathtool.basename(fullPath);
 			this.modified = false;
+		},
+		setDefaultName() {
+			this.path = '';
+			this.name = DEFAULT_NAME;
+			this.modified = false;
 		}
 	},
 	isUntitled() {
@@ -34,6 +39,10 @@ const document = {
 	},
 	setFileName(fullPath) {
 		this.file.setFileName(fullPath);
+		this.setTitle();
+	},
+	setNewName() {
+		this.file.setDefaultName();
 		this.setTitle();
 	},
 	setFileSaved() {

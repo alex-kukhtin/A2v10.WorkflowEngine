@@ -35,3 +35,6 @@ ipcRenderer.on("FILE.SETCONTENT", (ev, arg) => {
 	bpmnModeler.importXML(arg.content);
 });
 
+ipcRenderer.on("FILE.SETNEW", (ev, arg) => {
+	bpmnModeler.importXML(builder.defaultXml);
+});

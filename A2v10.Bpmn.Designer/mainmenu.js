@@ -24,6 +24,11 @@ const mainMenu = [
 		label: 'File',
 		submenu: [
 			{
+				label: 'New',
+				accelerator: 'CmdOrCtrl+N',
+				click: fileNew
+			},
+			{
 				label: 'Open...',
 				accelerator: 'CmdOrCtrl+O',
 				click: fileOpen
@@ -116,6 +121,16 @@ async function tryToSaveCurrentFile() {
 		case 2: // cancel
 			return false; // cancel
 	}
+}
+
+async function fileNew(mi, bw) {
+	if (document.isModified()) {
+		// try to save current document
+		let cont = await tryToSaveCurrentFile();
+		if (!cont) return;
+	}
+	bw.webContents.send('FILE.SETNEW');
+	document.setNewName();
 }
 
 async function fileOpen(mi, bw) {

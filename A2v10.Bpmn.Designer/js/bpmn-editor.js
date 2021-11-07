@@ -2817,7 +2817,7 @@ module.exports = function (group, element, bpmnFactory, translate) {
   loopMaxEntry.get = function (elem, node) {
     let loopDef = getLoopDefinition(elem);
     return loopDef ? {
-      loopMaximum: loopDef.loopMaximum || ""
+      loopMaximum: loopDef.loopMaximum
     } : {};
   };
 
@@ -2827,15 +2827,14 @@ module.exports = function (group, element, bpmnFactory, translate) {
     let fixVal = parseFloat(values.loopMaximum);
     if (isNaN(fixVal)) fixVal = 0;
     let vals = {
-      loopMaximum: fixVal ? fixVal.toFixed(0) : ''
+      loopMaximum: fixVal ? fixVal.toFixed(0) : undefined
     };
-    vals.loopMaximum;
     return _CmdHelper.default.updateBusinessObject(elem, loopDef, vals);
   };
 
   loopMaxEntry.validate = function (elem, values) {
     let lm = values.loopMaximum;
-    if (lm == '') return {};
+    if (!lm) return {};
     let f = parseFloat(lm);
     if (!isNaN(f)) return {};
     return {

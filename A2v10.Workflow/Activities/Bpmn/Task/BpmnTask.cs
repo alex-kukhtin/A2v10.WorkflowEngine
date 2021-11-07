@@ -49,6 +49,13 @@ namespace A2v10.Workflow.Bpmn
 		{
 			_onComplete = onComplete;
 			_token = token;
+
+			if (HasLoop && TestBefore && !CanCountinue(context))
+			{
+				await DoCompleteBody(context);
+				return;
+			}
+
 			if (_loopCounter == 0)
 			{
 				// boundary events
@@ -70,7 +77,7 @@ namespace A2v10.Workflow.Bpmn
 
 		protected virtual ValueTask CompleteBody(IExecutionContext context)
 		{
-			if (HasLoop && CanCountinue(context))
+			if (HasLoop && (TestBefore || CanCountinue(context)))
 			{
 				IsComplete = false;
 				context.Schedule(this, _onComplete, _token);
@@ -150,6 +157,8 @@ namespace A2v10.Workflow.Bpmn
 
 		public String LoopConditionEval => $"{Id}_Loop";
 		public StandardLoopCharacteristics LoopCharacteristics => Children?.OfType<StandardLoopCharacteristics>().FirstOrDefault();
+		public Boolean TestBefore => LoopCharacteristics?.TestBefore ?? false;
+		public Int32 LoopMaximum => LoopCharacteristics?.LoopMaximum ?? 0;
 
 		#region ILoopable
 
@@ -158,6 +167,9 @@ namespace A2v10.Workflow.Bpmn
 		public Boolean CanCountinue(IExecutionContext context)
 		{
 			if (!HasLoop) 
+				return false;
+			var max = LoopMaximum;
+			if (max != 0 && _loopCounter >= max)
 				return false;
 			return context.Evaluate<Boolean>(Id, LoopConditionEval);
 		}
