@@ -7,6 +7,7 @@ using A2v10.System.Xaml;
 using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.Serialization;
 using System.Threading.Tasks;
+using System.Dynamic;
 
 namespace A2v10.Workflow.Tests
 {
@@ -42,7 +43,7 @@ namespace A2v10.Workflow.Tests
 		}
 
 
-		public static async ValueTask<IInstance> SimpleRun(String id, String text)
+		public static async ValueTask<IInstance> SimpleRun(String id, String text, ExpandoObject prms = null)
 		{
 			var sp = ServiceProvider();
 			var wfs = sp.GetService<IWorkflowStorage>();
@@ -58,7 +59,7 @@ namespace A2v10.Workflow.Tests
 
 			var wfe = sp.GetService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
-			return await wfe.RunAsync(inst, null);
+			return await wfe.RunAsync(inst, prms);
 		}
 	}
 }

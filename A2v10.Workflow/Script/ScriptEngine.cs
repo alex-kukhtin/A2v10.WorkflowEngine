@@ -59,9 +59,8 @@ namespace A2v10.Workflow
 		void SetArguments(Object args)
 		{
 			var func = GetFunc(_root.Id, "Arguments");
-			if (func == null)
-				throw new WorkflowException($"Script element {_root.Id}.Arguments not found");
-			func(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
+			if (func != null)
+				func(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
 		}
 
 		public void Restore(String refer, Object args)

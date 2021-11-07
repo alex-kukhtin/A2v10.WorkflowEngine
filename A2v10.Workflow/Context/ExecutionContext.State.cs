@@ -156,8 +156,10 @@ namespace A2v10.Workflow
 				var list = new List<Object>();
 				foreach (var v in variables.Where(v => v.External && v.Type == varType))
 				{
-					var ve = new ExpandoObject();
-					ve.Set("Name", v.Name);
+					var ve = new ExpandoObject()
+					{
+						{"Name", v.Name}
+					};
 					if (v is IExternalVariable extVar)
 					{
 						var rv = values.Get<ExpandoObject>(extVar.ActivityId);

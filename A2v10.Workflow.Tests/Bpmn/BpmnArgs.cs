@@ -48,5 +48,21 @@ namespace A2v10.Workflow.Tests
 			Assert.AreEqual(false, res0.Get<Boolean>("B"));
 			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
+
+		[TestMethod]
+		public async Task ArgOnlyOutput()
+		{
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\args_onlyoutput.bpmn");
+			String wfId = "OnlyArgs";
+			var prms = new ExpandoObject()
+			{
+				{"S", "VALUE" }
+			};
+			var inst = await TestEngine.SimpleRun(wfId, xaml, prms);
+
+			var res0 = inst.Result;
+			Assert.AreEqual("OUTPUT", res0.Get<String>("S"));
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+		}
 	}
 }
