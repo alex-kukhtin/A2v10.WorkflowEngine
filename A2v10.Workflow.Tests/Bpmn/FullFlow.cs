@@ -105,5 +105,35 @@ namespace A2v10.Workflow.Tests
 			res = inst.Result;
 			Assert.AreEqual("No", res.Get<String>("R"));
 		}
+
+		[TestMethod]
+		public async Task Counter()
+		{
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\UserTask_withCounter.bpmn");
+
+			var sp = TestEngine.ServiceProvider();
+
+			var wfs = sp.GetService<IWorkflowStorage>();
+			var wfc = sp.GetService<IWorkflowCatalog>();
+
+			String wfId = "Wait1WithCounter";
+			await wfc.SaveAsync(new WorkflowDescriptor()
+			{
+				Id = wfId,
+				Body = xaml,
+				Format = "xaml"
+			});
+			var ident = await wfs.PublishAsync(wfc, wfId);
+
+			var wfe = sp.GetService<IWorkflowEngine>();
+			var inst = await wfe.CreateAsync(ident);
+			inst = await wfe.RunAsync(inst.Id, new { X = 5 });
+			var res = inst.Result;
+			Assert.IsNull(res.Get<String>("R"));
+
+			inst = await wfe.ResumeAsync(inst.Id, "CheckSaldo", new { Answer = 0 });
+			res = inst.Result;
+			Assert.AreEqual("1", res.Get<String>("R"));
+		}
 	}
 }

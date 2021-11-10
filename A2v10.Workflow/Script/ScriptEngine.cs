@@ -40,7 +40,7 @@ namespace A2v10.Workflow
 
 			//Console.WriteLine(script);
 			var func = _engine.Evaluate(script);
-			_scriptData = func.Invoke().ToObject() as ExpandoObject;
+			_scriptData = _engine.Invoke(func).ToObject() as ExpandoObject;
 			if (args != null)
 				SetArguments(args);
 		}
