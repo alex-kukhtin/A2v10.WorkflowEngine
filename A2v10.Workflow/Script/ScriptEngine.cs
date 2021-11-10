@@ -59,24 +59,19 @@ namespace A2v10.Workflow
 		void SetArguments(Object args)
 		{
 			var func = GetFunc(_root.Id, "Arguments");
-			if (func != null)
-				func(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
+			func?.Invoke(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
 		}
 
 		public void Restore(String refer, Object args)
 		{
 			var func = GetFunc(refer, "Restore");
-			if (func == null)
-				return;
-			func(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
+			func?.Invoke(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
 		}
 
 		public ExpandoObject GetResult()
 		{
 			var func = GetFunc(_root.Id, "Result");
-			if (func == null)
-				return null;
-			return func(JsValue.Undefined, null).ToObject() as ExpandoObject;
+			return func?.Invoke(JsValue.Undefined, null).ToObject() as ExpandoObject;
 		}
 
 		public T Evaluate<T>(String refer, String name)

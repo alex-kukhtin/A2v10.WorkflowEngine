@@ -1,13 +1,14 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
-
-using A2v10.System.Xaml;
-using A2v10.Workflow.Interfaces;
-using A2v10.Workflow.Serialization;
 using System.Threading.Tasks;
 using System.Dynamic;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using A2v10.Workflow.Interfaces;
+using A2v10.Workflow.Serialization;
+using A2v10.System.Xaml;
 
 namespace A2v10.Workflow.Tests
 {

@@ -11,7 +11,7 @@ namespace A2v10.Workflow.Bpmn
 {
 	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 
-	public class ParallelGateway : Gateway
+	public class ParallelGateway : Gateway, IStorable
 	{
 		private readonly List<IToken> _tokens = new();
 
@@ -24,6 +24,20 @@ namespace A2v10.Workflow.Bpmn
 			else
 				return ValueTask.CompletedTask;
 		}
+
+		#region IStorable 
+		const String TOKENS = "Tokens";
+
+		public virtual void Store(IActivityStorage storage)
+		{
+			storage.SetTokenList(TOKENS, _tokens);
+		}
+
+		public virtual void Restore(IActivityStorage storage)
+		{
+			storage.GetTokenList(TOKENS, _tokens);
+		}
+		#endregion
 
 		public ValueTask DoOutgoing(IExecutionContext context, ExecutingAction onComplete)
 		{
