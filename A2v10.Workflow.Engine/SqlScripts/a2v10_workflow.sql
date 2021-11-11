@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2021 Alex Kukhtin
 
-Last updated : 03 nov 2021
-module version : 8050
+Last updated : 11 nov 2021
+module version : 8054
 */
 ------------------------------------------------
 set nocount on;
@@ -11,6 +11,28 @@ if not exists(select * from INFORMATION_SCHEMA.SCHEMATA where SCHEMA_NAME=N'a2wf
 go
 ------------------------------------------------
 grant execute on schema ::a2wf to public;
+go
+------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'Versions')
+begin
+	create table a2wf.[Versions]
+	(
+		[Module] nvarchar(32) not null,
+		[Version] int not null,
+		constraint PK_Versions primary key clustered (Module)
+	);
+end
+go
+------------------------------------------------
+begin
+	set nocount on;
+	declare @version int;
+	set @version = 8054;
+	if exists(select * from a2wf.Versions where Module = N'main')
+		update a2wf.Versions set [Version] = @version where Module = N'main';
+	else
+		insert into a2wf.Versions (Module, [Version]) values (N'main', @version);
+end
 go
 ------------------------------------------------
 if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'Catalog')
@@ -558,6 +580,10 @@ begin
 		inner join @Events sib on sib.ParentGUID=si.[GUID]
 	) as s
 	on t.[Event] = s.[Event] and t.InstanceId = s.InstanceId and t.WorkflowId = s.WorkflowId and t.Kind = s.Kind
+	when matched then update set
+		t.Pending = s.Pending,
+		t.[Name] = s.[Name],
+		t.[Text] = s.[Text]
 	when not matched by target then insert
 		(InstanceId, [Kind], [Event], WorkflowId, Pending, [Name], [Text]) values
 		(s.InstanceId, s.[Kind], s.[Event], s.WorkflowId, Pending, [Name], [Text])
@@ -583,6 +609,16 @@ begin
 	set transaction isolation level read committed;
 	insert into a2wf.InstanceTrack(InstanceId, Kind, [Action], [Message], RecordNumber)
 	values (@InstanceId, @Kind, @Action, @Message, 0);
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[Engine.Version]
+@Module nvarchar(32) = N'main'
+as
+begin
+	set nocount on;
+	set transaction isolation level read uncommitted;
+	select [Version] from a2wf.Versions where Module = @Module;
 end
 go
 ------------------------------------------------
