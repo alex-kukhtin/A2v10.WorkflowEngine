@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using A2v10.Workflow.Interfaces;
@@ -10,18 +11,28 @@ namespace A2v10.Workflow.Bpmn
 {
 	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 
-	public abstract class ProcessBase : BpmnActivity, IStorable, IScoped, IScriptable
+	public abstract class ProcessBase : FlowElement, IStorable, IScoped, IScriptable
 	{
 
 		protected ExecutingAction _onComplete;
 		protected IToken _token;
 		private readonly List<IToken> _tokens = new();
 
+		protected IEnumerable<BpmnActivity> Activities => Elems<BpmnActivity>().ToList();
+		protected Int32 TokensCount => _tokens.Count;
+
+		public override IEnumerable<IActivity> EnumChildren()
+		{
+			if (Children != null)
+				foreach (var elem in Activities)
+					yield return elem;
+		}
+
 		#region IScoped
 		public List<IVariable> Variables => Elem<ExtensionElements>()?.GetVariables();
 		public String GlobalScript => Elem<ExtensionElements>()?.GetGlobalScript();
 
-		public void BuildScript(IScriptBuilder builder)
+		public virtual void BuildScript(IScriptBuilder builder)
 		{
 			builder.AddVariables(Variables);
 		}
@@ -32,14 +43,14 @@ namespace A2v10.Workflow.Bpmn
 		const String TOKEN = "Token";
 		const String TOKENS = "Tokens";
 
-		public void Store(IActivityStorage storage)
+		public virtual void Store(IActivityStorage storage)
 		{
 			storage.SetCallback(ON_COMPLETE, _onComplete);
 			storage.SetToken(TOKEN, _token);
 			storage.SetTokenList(TOKENS, _tokens);
 		}
 
-		public void Restore(IActivityStorage storage)
+		public virtual void Restore(IActivityStorage storage)
 		{
 			_onComplete = storage.GetCallback(ON_COMPLETE);
 			_token = storage.GetToken(TOKEN);
@@ -58,6 +69,24 @@ namespace A2v10.Workflow.Bpmn
 		{
 			if (token != null)
 				_tokens.Remove(token);
+		}
+
+
+		public T FindElement<T>(String id) where T : BpmnActivity
+		{
+			var elem = Activities.FirstOrDefault(e => e.Id == id);
+			if (elem == null)
+				throw new WorkflowException($"BPMN. Element (Id = {id}) not found");
+			if (elem is T elemT)
+				return elemT;
+			throw new WorkflowException($"BPMN. Invalid type for element (Id = {id}). Expected: '{typeof(T).Name}', Actual: '{elem.GetType().Name}'");
+		}
+
+		public IEnumerable<T> FindAll<T>(Predicate<T> predicate) where T : BpmnActivity
+		{
+			var list = Activities.Where(elem => elem is T t && predicate(t));
+			foreach (var el in list)
+				yield return el as T;
 		}
 	}
 }

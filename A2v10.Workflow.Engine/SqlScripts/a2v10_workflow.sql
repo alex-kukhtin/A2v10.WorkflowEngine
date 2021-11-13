@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2021 Alex Kukhtin
 
-Last updated : 11 nov 2021
-module version : 8054
+Last updated : 13 nov 2021
+module version : 8055
 */
 ------------------------------------------------
 set nocount on;
@@ -27,7 +27,7 @@ go
 begin
 	set nocount on;
 	declare @version int;
-	set @version = 8054;
+	set @version = 8055;
 	if exists(select * from a2wf.Versions where Module = N'main')
 		update a2wf.Versions set [Version] = @version where Module = N'main';
 	else
@@ -628,9 +628,11 @@ begin
 	set nocount on;
 	set transaction isolation level read uncommitted;
 	-- timers
-	select InstanceId, EventKey = [Event] , Kind
-	from a2wf.InstanceEvents
-	where Pending <= getutcdate() and Kind=N'T' order by Pending;
+	select InstanceId, EventKey = ev.[Event] , ev.Kind
+	from a2wf.InstanceEvents ev
+		inner join a2wf.Instances i on ev.InstanceId = i.Id
+	where ev.Pending <= getutcdate() and ev.Kind=N'T' and i.Lock is null
+	order by ev.Pending;
 end
 go
 

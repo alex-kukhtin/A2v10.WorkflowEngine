@@ -44,15 +44,16 @@ namespace A2v10.Workflow.Bpmn
 			// kill all tokens
 			foreach (var t in _tokens)
 				Parent.KillToken(t);
+			_tokens.Clear();
 			if (HasOutgoing)
 			{
 				foreach (var og in Outgoing)
 				{
 					var flow = Parent.FindElement<SequenceFlow>(og.Text);
-					context.Schedule(flow, null, Parent.NewToken());
+					context.Schedule(flow, onComplete, Parent.NewToken());
 				}
-			}
-			if (onComplete != null)
+			} 
+			else if (onComplete != null)
 				return onComplete(context, this);
 			return ValueTask.CompletedTask;
 		}

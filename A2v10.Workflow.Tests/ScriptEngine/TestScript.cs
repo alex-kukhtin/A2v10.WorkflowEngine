@@ -11,6 +11,8 @@ using Jint.Native;
 using Jint.Runtime.Interop;
 
 using A2v10.Workflow.Interfaces;
+using Newtonsoft.Json;
+using A2v10.Workflow.Serialization;
 
 namespace A2v10.Workflow.Tests
 {
@@ -139,7 +141,7 @@ namespace A2v10.Workflow.Tests
 			{
 				var ref0 = dict["Ref0"] as IDictionary<String, Object>;
 				var res = eng.Invoke(JsValue.FromObject(eng, ref0["Script"]));
-				Assert.AreEqual((Double) 1, res.AsNumber());
+				Assert.AreEqual((Double)1, res.AsNumber());
 
 				var ref1 = dict["Ref1"] as IDictionary<String, Object>;
 				var res2 = eng.Invoke(JsValue.FromObject(eng, ref1["Script"]));
@@ -237,6 +239,24 @@ return __fmap__;
 			var res2 = JsValue.FromObject(eng, ref1["Script"]).Invoke();
 			var res3 = JsValue.FromObject(eng, ref1["Result"]).Invoke();
 			*/
+		}
+
+
+		[TestMethod]
+		public void DeserializeStringArrays()
+		{
+			var eng = new Engine(opts =>
+			{
+				opts.Strict(true);
+			});
+
+			var strArray = "{x: [\"f\", \"2\"]}";
+			var arg = JsonConvert.DeserializeObject<ExpandoObject>(strArray, new ExpandoObjectConverterArray());
+
+			var obj = eng.Evaluate("return function test(arg) { let r = arg.x; r.push('z'); return JSON.stringify(r); }").ToObject();
+			var func = obj as Func<JsValue, JsValue[], JsValue>;
+			var arr = func.Invoke(null, new JsValue[] { JsValue.FromObject(eng, arg) });
+			Assert.AreEqual("[\"f\",\"2\",\"z\"]", arr.ToString());
 		}
 	}
 }

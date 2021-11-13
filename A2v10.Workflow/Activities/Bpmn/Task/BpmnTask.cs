@@ -173,7 +173,7 @@ namespace A2v10.Workflow.Bpmn
 				return false;
 			return context.Evaluate<Boolean>(Id, LoopConditionEval);
 		}
+		#endregion
 	}
-	#endregion
 }
 

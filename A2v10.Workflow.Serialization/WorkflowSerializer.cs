@@ -23,7 +23,7 @@ namespace A2v10.Workflow.Serialization
 		{
 			new DoubleConverter(),
 			new StringEnumConverter(),
-			new ExpandoObjectConverter()
+			new ExpandoObjectConverterArray()
 		};
 
 		private static readonly JsonSerializerSettings _actititySettings = new()

@@ -14,7 +14,11 @@ namespace A2v10.Workflow
 				return default;
 			var d = expobj as IDictionary<String, Object>;
 			if (d.TryGetValue(name, out Object res))
+			{
+				if (res is T t)
+					return t;
 				return (T)Convert.ChangeType(res, typeof(T));
+			}
 			return default;
 		}
 

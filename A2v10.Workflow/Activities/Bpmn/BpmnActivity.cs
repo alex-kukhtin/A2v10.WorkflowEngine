@@ -15,7 +15,7 @@ namespace A2v10.Workflow.Bpmn
 	{
 		public String Name { get; init; }
 
-		protected Process Parent { get; private set; }
+		protected ProcessBase Parent { get; private set; }
 
 		#region IActivity
 
@@ -39,7 +39,7 @@ namespace A2v10.Workflow.Bpmn
 		}
 		#endregion
 
-		public void SetParent(Process parent)
+		public void SetParent(ProcessBase parent)
 		{
 			Parent = parent;
 		}
