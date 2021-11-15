@@ -105,11 +105,13 @@ namespace A2v10.Workflow
 		{
 			if (IsStoring)
 				throw new InvalidOperationException("Get in storing mode");
-			var vals = _expando.Get<List<Object>>(name);
+			var vals = _expando.Get<Object[]>(name);
 			if (vals == null)
 				return;
 			foreach (var v in vals)
+			{
 				list.Add(Token.FromString(v.ToString()));
+			}
 		}
 	}
 }

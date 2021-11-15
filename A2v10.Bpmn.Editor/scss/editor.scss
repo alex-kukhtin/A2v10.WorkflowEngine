@@ -35,4 +35,9 @@ html, body {
 .properties-panel-parent > .bpp-properties-panel {
 	padding-bottom: 70px;
 	min-height: 100%;
+
+	.js-text {
+		font-family: Consolas, 'Courier New', Courier, monospace;
+	}
 }
+

@@ -10,7 +10,8 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Tests
 {
-	internal record SavedInstance(IActivity Root, String State, IInstanceData InstanceData, ExpandoObject Result, WorkflowExecutionStatus Status);
+	internal record SavedInstance(IWorkflowIdentity Identity, IWorkflow Workflow,
+		String State, IInstanceData InstanceData, ExpandoObject Result, WorkflowExecutionStatus Status);
 
 	public class InMemoryInstanceStorage : IInstanceStorage
 	{
@@ -18,24 +19,27 @@ namespace A2v10.Workflow.Tests
 		private readonly Dictionary<Guid, SavedInstance> _memory = new();
 
 		private readonly ISerializer _serializer;
-		public InMemoryInstanceStorage(ISerializer serializer)
+		private readonly IWorkflowStorage _workflowStorage;
+		public InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage workflowStorage)
 		{
 			_serializer = serializer;
+			_workflowStorage = workflowStorage;
 		}
 
-		public Task<IInstance> Load(Guid id)
+		public async Task<IInstance> Load(Guid id)
 		{
 			if (_memory.TryGetValue(id, out SavedInstance saved))
 			{
+				var wf = saved.Identity != null ? await _workflowStorage.LoadAsync(saved.Identity) : saved.Workflow;
 				IInstance inst = new Instance()
 				{
 					Id = id,
-					Workflow = new Workflow() { Root = saved.Root },
+					Workflow = wf,
 					State = _serializer.Deserialize(saved.State),
 					Result = saved.Result,
 					ExecutionStatus = saved.Status
 				};
-				return Task.FromResult(inst);
+				return inst;
 			}
 			throw new NotImplementedException();
 		}
@@ -44,7 +48,7 @@ namespace A2v10.Workflow.Tests
 		{
 			if (_memory.ContainsKey(instance.Id))
 				throw new WorkflowException($"Instance storage. Instance with id = {instance.Id} has been already created");
-			var si = new SavedInstance(instance.Workflow.Root,
+			var si = new SavedInstance(instance.Workflow.Identity, instance.Workflow,
 				_serializer.Serialize(instance.State), instance.InstanceData,
 				instance.Result, instance.ExecutionStatus);
 			_memory.Add(instance.Id, si);
@@ -55,7 +59,7 @@ namespace A2v10.Workflow.Tests
 		{
 			if (_memory.ContainsKey(instance.Id))
 			{
-				var si = new SavedInstance(instance.Workflow.Root,
+				var si = new SavedInstance(instance.Workflow.Identity, instance.Workflow,
 					_serializer.Serialize(instance.State), instance.InstanceData,
 					instance.Result, instance.ExecutionStatus);
 				_memory[instance.Id] = si;

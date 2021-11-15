@@ -93,12 +93,12 @@ namespace A2v10.Workflow.Tests
 
 			{
 				var inst2 = await eng.ResumeAsync(inst.Id, "Bookmark1", null);
-				var res2 = inst2.Result;
-				Assert.AreEqual(29, res2.Get<Double>("X"));
 				Assert.AreEqual(WorkflowExecutionStatus.Idle, inst2.ExecutionStatus);
+				var res2 = inst2.Result;
 				var log1 = res2.Get<Object[]>("Log");
 				Assert.AreEqual(15, log1.Length);
 				Assert.AreEqual("start|startSub|task1|task2|endSub2|endSub1|startSub|task1|task2|endSub2|endSub1|startSub|task1|task2|endSub2", String.Join('|', log1));
+				Assert.AreEqual(29, res2.Get<Double>("X"));
 			}
 
 			{

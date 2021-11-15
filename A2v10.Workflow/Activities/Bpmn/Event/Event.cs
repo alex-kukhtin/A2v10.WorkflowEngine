@@ -32,8 +32,6 @@ namespace A2v10.Workflow.Bpmn
 
 		public void Store(IActivityStorage storage)
 		{
-			if (IsComplete)
-				return;
 			storage.SetCallback(ON_COMPLETE, _onComplete);
 			storage.SetToken(TOKEN, _token);
 		}
@@ -85,7 +83,6 @@ namespace A2v10.Workflow.Bpmn
 		{
 			IsComplete = true;
 			context.RemoveEvent(Id);
-			Parent.KillToken(_token);
 		}
 	}
 }

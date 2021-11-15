@@ -2,7 +2,6 @@
 // Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,8 +15,6 @@ namespace A2v10.Workflow.Bpmn
 	[ContentProperty("Children")]
 	public class SubProcess : ProcessBase, ILoopable
 	{
-		public Boolean IsClosed { get; init; }
-
 		protected Int32 _loopCounter;
 
 		const String LOOP_COUNTER = "LoopCounter";
@@ -75,21 +72,17 @@ namespace A2v10.Workflow.Bpmn
 		[StoreName("OnElemComplete")]
 		ValueTask OnElemComplete(IExecutionContext context, IActivity activity)
 		{
-			if (activity is EndEvent)
+			if (activity is not EndEvent || TokensCount > 0)
 			{
-				if (TokensCount > 0)
-				{
-					// do nothing, there are tokens
-					return ValueTask.CompletedTask;
-				}
-				if (HasLoop && (TestBefore || CanCountinue(context)))
-				{
-					context.Schedule(this, _onComplete, _token);
-					return ValueTask.CompletedTask;
-				}
-				return ProcessComplete(context);
+				// do nothing, there are tokens
+				return ValueTask.CompletedTask;
 			}
-			return ValueTask.CompletedTask;
+			if (HasLoop && (TestBefore || CanCountinue(context)))
+			{
+				context.Schedule(this, _onComplete, _token);
+				return ValueTask.CompletedTask;
+			}
+			return ProcessComplete(context);
 		}
 
 		ValueTask ProcessComplete(IExecutionContext context)
@@ -113,7 +106,7 @@ namespace A2v10.Workflow.Bpmn
 					context.Schedule(targetFlow, _onComplete, Parent.NewToken());
 				}
 			}
-			if (_onComplete != null)
+			else if (_onComplete != null)
 				return _onComplete(context, this);
 			return ValueTask.CompletedTask;
 		}

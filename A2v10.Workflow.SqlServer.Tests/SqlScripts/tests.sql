@@ -28,6 +28,8 @@ begin
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
 	delete from a2wf.InstanceTrack
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf.InstanceEvents
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
 	delete from a2wf.[Instances] where WorkflowId = @Id;
 
 	delete from a2wf.[Workflows] where Id=@Id;

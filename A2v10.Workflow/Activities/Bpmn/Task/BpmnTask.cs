@@ -49,6 +49,7 @@ namespace A2v10.Workflow.Bpmn
 		{
 			_onComplete = onComplete;
 			_token = token;
+			IsComplete = false;
 
 			if (HasLoop && TestBefore && !CanCountinue(context))
 			{

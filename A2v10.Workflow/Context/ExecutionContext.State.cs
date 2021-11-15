@@ -19,7 +19,7 @@ namespace A2v10.Workflow
 				if (activity is IStorable storable)
 				{
 					ActivityStorage storage = new(StorageState.Storing, _activities);
-					if (activity is ICanComplete canComplete && !canComplete.IsComplete)
+					if (activity is not ICanComplete canComplete || !canComplete.IsComplete)
 						storable.Store(storage);
 					if (storage.Value.IsNotEmpty())
 						actState.Set(refer, storage.Value);
