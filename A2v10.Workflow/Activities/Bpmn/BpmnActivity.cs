@@ -15,7 +15,7 @@ namespace A2v10.Workflow.Bpmn
 	{
 		public String Name { get; init; }
 
-		protected ProcessBase Parent { get; private set; }
+		protected IContainer Parent { get; private set; }
 
 		#region IActivity
 
@@ -32,14 +32,9 @@ namespace A2v10.Workflow.Bpmn
 
 		public abstract ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete);
 
-		public virtual void OnEndInit()
-		{
-			foreach (var act in EnumChildren())
-				act.OnEndInit();
-		}
 		#endregion
 
-		public void SetParent(ProcessBase parent)
+		public void SetParent(IContainer parent)
 		{
 			Parent = parent;
 		}

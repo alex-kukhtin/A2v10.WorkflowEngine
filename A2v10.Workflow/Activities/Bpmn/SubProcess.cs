@@ -45,6 +45,11 @@ namespace A2v10.Workflow.Bpmn
 			}
 		}
 
+		public override void TryComplete(IExecutionContext context)
+		{
+			ProcessComplete(context);
+		}
+
 		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
 		{
 			_onComplete = onComplete;
@@ -65,7 +70,7 @@ namespace A2v10.Workflow.Bpmn
 			var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart);
 			if (start == null)
 				throw new WorkflowException($"SubProcess (Id={Id}). Start event not found");
-			context.Schedule(start, OnElemComplete, _token);
+			context.Schedule(start, null, _token);
 			return ValueTask.CompletedTask;
 		}
 
@@ -103,11 +108,9 @@ namespace A2v10.Workflow.Bpmn
 				foreach (var flowId in Outgoing)
 				{
 					var targetFlow = Parent.FindElement<SequenceFlow>(flowId.Text);
-					context.Schedule(targetFlow, _onComplete, Parent.NewToken());
+					context.Schedule(targetFlow, null, Parent.NewToken());
 				}
 			}
-			else if (_onComplete != null)
-				return _onComplete(context, this);
 			return ValueTask.CompletedTask;
 		}
 

@@ -16,7 +16,5 @@ namespace A2v10.Workflow.Interfaces
 		void Cancel(IExecutionContext context);
 
 		IEnumerable<IActivity> EnumChildren();
-
-		void OnEndInit();
 	}
 }

@@ -24,12 +24,6 @@ namespace A2v10.Workflow.Interfaces
 		public void Cancel(IExecutionContext context)
 		{
 		}
-
-		public virtual void OnEndInit()
-		{
-			foreach (var act in EnumChildren())
-				act.OnEndInit();
-		}
 		#endregion
 	}
 }

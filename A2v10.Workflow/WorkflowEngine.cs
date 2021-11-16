@@ -37,7 +37,8 @@ namespace A2v10.Workflow
 					Identity = identity
 				}
 			};
-			root.OnEndInit();
+			if (root is IContainer cont)
+				cont.OnEndInit();
 			await _instanceStorage.Create(inst);
 			return inst;
 		}
@@ -111,7 +112,8 @@ namespace A2v10.Workflow
 			try
 			{
 				var inst = await _instanceStorage.Load(id);
-				inst.Workflow.Root.OnEndInit();
+				if (inst.Workflow.Root is IContainer cont)
+					cont.OnEndInit();
 				var context = new ExecutionContext(_serviceProvider, _tracker, inst.Workflow.Root);
 				context.SetState(inst.State);
 				await action(context);

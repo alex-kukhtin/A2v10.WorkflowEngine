@@ -18,7 +18,6 @@ namespace A2v10.Workflow.Bpmn
 		public Boolean IsExecutable { get; init; }
 		public Boolean IsClosed { get; init; }
 
-
 		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
 		{
 			_onComplete = onComplete;
@@ -30,6 +29,12 @@ namespace A2v10.Workflow.Bpmn
 				throw new WorkflowException($"Process (Id={Id}). Start event not found");
 			context.Schedule(start, OnElemComplete, token);
 			return ValueTask.CompletedTask;
+		}
+
+		public override void TryComplete(IExecutionContext context)
+		{
+			if (TokensCount > 0)
+				return;
 		}
 
 		[StoreName("OnElemComplete")]
@@ -61,7 +66,7 @@ namespace A2v10.Workflow.Bpmn
 			foreach (var e in Activities)
 			{
 				e.SetParent(this);
-				if (e is SubProcess subProcess)
+				if (e is IContainer subProcess)
 					subProcess.OnEndInit();
 			}
 		}

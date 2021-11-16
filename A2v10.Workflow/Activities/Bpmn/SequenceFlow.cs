@@ -36,7 +36,7 @@ namespace A2v10.Workflow.Bpmn
 		public Boolean Evaluate(IExecutionContext context)
 		{
 			var expr = ConditionExpression;
-			if (expr == null || String.IsNullOrEmpty(expr.Expression))
+			if (String.IsNullOrEmpty(expr?.Expression))
 				return false;
 			return context.Evaluate<Boolean>(this.Id, nameof(ConditionExpression));
 		}

@@ -10,7 +10,7 @@ namespace A2v10.Workflow
 {
 	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 
-	public class Flowchart : Activity, IScoped
+	public class Flowchart : Activity, IScoped /*, IContainer*/
 	{
 		public List<FlowNode> Nodes { get; set; }
 		public List<IVariable> Variables { get; set; }
@@ -23,7 +23,7 @@ namespace A2v10.Workflow
 					yield return node;
 		}
 
-		public override void OnEndInit()
+		public void OnEndInit()
 		{
 			foreach (var node in Nodes)
 				node.Parent = this;

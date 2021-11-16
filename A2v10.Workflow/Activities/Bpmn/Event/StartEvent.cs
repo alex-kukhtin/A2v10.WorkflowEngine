@@ -18,8 +18,8 @@ namespace A2v10.Workflow.Bpmn
 			if (!String.IsNullOrEmpty(Script))
 				context.Execute(Id, nameof(Script));
 
-			if (Children == null)
-				return onComplete(context, this);
+			//if (Children == null)
+				//return onComplete(context, this);
 
 			foreach (var flow in Outgoing)
 			{
