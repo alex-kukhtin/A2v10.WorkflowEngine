@@ -9,8 +9,6 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	[ContentProperty("Children")]
 	public class Process : ProcessBase
 	{
@@ -33,12 +31,6 @@ namespace A2v10.Workflow.Bpmn
 		{
 			if (TokensCount > 0)
 				return;
-			ProcessComplete(context);
-		}
-
-		ValueTask ProcessComplete(IExecutionContext context)
-		{
-			return ValueTask.CompletedTask;
 		}
 	}
 }
