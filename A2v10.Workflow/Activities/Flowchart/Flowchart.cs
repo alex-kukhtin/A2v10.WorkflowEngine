@@ -23,10 +23,13 @@ namespace A2v10.Workflow
 					yield return node;
 		}
 
-		public override void OnEndInit()
+		public override void OnEndInit(IActivity parent)
 		{
+			base.OnEndInit(parent);
+			if (Nodes == null)
+				return;
 			foreach (var node in Nodes)
-				node.Parent = this;
+				node.OnEndInit(this);
 		}
 
 		public FlowNode FindNode(String refer)
@@ -34,18 +37,14 @@ namespace A2v10.Workflow
 			return Nodes?.Find(node => node.Id == refer);
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			if (Nodes == null)
-			{
-				if (onComplete != null)
-					return onComplete(context, this);
 				return ValueTask.CompletedTask;
-			}
 			var start = Nodes.Find(n => n.IsStart);
 			if (start == null)
 				throw new WorkflowException($"Flowchart (Ref={Id}. Start node not found");
-			context.Schedule(start, onComplete, token);
+			context.Schedule(start, token);
 			return ValueTask.CompletedTask;
 		}
 
@@ -55,5 +54,6 @@ namespace A2v10.Workflow
 			builder.AddVariables(Variables);
 		}
 		#endregion
+
 	}
 }

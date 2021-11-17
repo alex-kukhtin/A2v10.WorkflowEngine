@@ -11,7 +11,7 @@ namespace A2v10.Workflow.Bpmn
 
 	public class IntermediateThrowEvent : Event
 	{
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			throw new NotImplementedException();
 		}

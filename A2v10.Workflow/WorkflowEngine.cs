@@ -37,7 +37,7 @@ namespace A2v10.Workflow
 					Identity = identity
 				}
 			};
-			root.OnEndInit();
+			root.OnEndInit(null);
 			await _instanceStorage.Create(inst);
 			return inst;
 		}
@@ -53,7 +53,7 @@ namespace A2v10.Workflow
 			if (instance.ExecutionStatus != WorkflowExecutionStatus.Init)
 				throw new WorkflowException($"Instance (id={instance.Id}) is already running");
 			var context = new ExecutionContext(_serviceProvider, _tracker, instance.Workflow.Root, args);
-			context.Schedule(instance.Workflow.Root, null, null);
+			context.Schedule(instance.Workflow.Root, null);
 			await context.RunAsync();
 			SetInstanceState(instance, context);
 			await _instanceStorage.Save(instance);
@@ -111,7 +111,7 @@ namespace A2v10.Workflow
 			try
 			{
 				var inst = await _instanceStorage.Load(id);
-				inst.Workflow.Root.OnEndInit();
+				inst.Workflow.Root.OnEndInit(null);
 				var context = new ExecutionContext(_serviceProvider, _tracker, inst.Workflow.Root);
 				context.SetState(inst.State);
 				await action(context);

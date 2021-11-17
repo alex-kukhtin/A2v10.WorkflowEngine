@@ -16,7 +16,7 @@ namespace A2v10.Workflow
 		All
 	}
 
-	public class Parallel : ActivityWithComplete, IScoped
+	public class Parallel : Activity, IScoped
 	{
 
 		public List<IVariable> Variables { get; set; }
@@ -40,28 +40,30 @@ namespace A2v10.Workflow
 					yield return branch;
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			_onComplete = onComplete;
 			if (Branches == null || Branches.Count == 0)
 			{
-				if (onComplete != null)
-					return onComplete(context, this);
 				return ValueTask.CompletedTask;
 			}
 			foreach (var br in Branches)
-				context.Schedule(br, OnBranchComplete, token);
+				context.Schedule(br, token);
 			return ValueTask.CompletedTask;
 		}
 
-		[StoreName("OnBranchComplete")]
-		ValueTask OnBranchComplete(IExecutionContext context, IActivity activity)
+		public override void TryComplete(IExecutionContext context, IActivity activity)
 		{
-			// TODO: CompletionCondition
-			// TODO: cancel
-			if (_onComplete != null)
-				return _onComplete(context, this);
-			return ValueTask.CompletedTask;
+			// TODO: use CompletionCondition
+			base.TryComplete(context, activity);
+		}
+
+		public override void OnEndInit(IActivity parent)
+		{
+			base.OnEndInit(parent);
+			if (Branches == null)
+				return;
+			foreach (var br in Branches)
+				br.OnEndInit(this);
 		}
 	}
 }

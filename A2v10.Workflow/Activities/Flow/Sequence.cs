@@ -8,33 +8,27 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class Sequence : Activity, IStorable, IScoped
 	{
 		public List<IActivity> Activities { get; set; }
 		public List<IVariable> Variables { get; set; }
 		public String GlobalScript { get; set; }
 
-		ExecutingAction _onComplete;
 		Int32 _next;
 		IToken _token;
 
 		#region IStorable
-		const String ON_COMPLETE = "OnComplete";
 		const String NEXT = "Next";
 		const String TOKEN = "Token";
 
 		public void Store(IActivityStorage storage)
 		{
-			storage.SetCallback(ON_COMPLETE, _onComplete);
 			storage.Set<Int32>(NEXT, _next);
 			storage.SetToken(TOKEN, _token);
 		}
 
 		public void Restore(IActivityStorage storage)
 		{
-			_onComplete = storage.GetCallback(ON_COMPLETE);
 			_next = storage.Get<Int32>(NEXT);
 			_token = storage.GetToken(TOKEN);
 		}
@@ -57,36 +51,38 @@ namespace A2v10.Workflow
 			}
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			_onComplete = onComplete;
 			_token = token;
 			if (Activities == null || Activities.Count == 0)
 			{
-				if (onComplete != null)
-					return onComplete(context, this);
+				Parent?.TryComplete(context, this);
 				return ValueTask.CompletedTask;
 			}
 			_next = 0;
 			var first = Activities[_next++];
-			context.Schedule(first, OnChildComplete, token);
+			context.Schedule(first, token);
 			return ValueTask.CompletedTask;
 		}
 
-		[StoreName("OnChildComplete")]
-		ValueTask OnChildComplete(IExecutionContext context, IActivity activity)
+		public override void TryComplete(IExecutionContext context, IActivity activity)
 		{
-			if (Activities == null || _next >= Activities.Count)
-			{
-				if (_onComplete != null)
-					return _onComplete(context, this);
-			}
-			else
+			if (Activities != null && _next < Activities.Count)
 			{
 				var next = Activities[_next++];
-				context.Schedule(next, OnChildComplete, _token);
+				context.Schedule(next, _token);
 			}
-			return ValueTask.CompletedTask;
+			else
+				Parent?.TryComplete(context, this);
+		}
+
+		public override void OnEndInit(IActivity parent)
+		{
+			base.OnEndInit(parent);
+			if (Activities == null)
+				return;
+			foreach (var act in Activities)
+				act.OnEndInit(this);
 		}
 	}
 }

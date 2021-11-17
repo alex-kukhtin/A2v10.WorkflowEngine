@@ -14,30 +14,25 @@ namespace A2v10.Workflow
 	{
 		public IActivity Activity { get; set; }
 
-		ExecutingAction _onComplete;
 		IToken _token;
 
 		#region IStorable
-		const String ON_COMPLETE = "OnComplete";
 		const String TOKEN = "Token";
 
 		public void Store(IActivityStorage storage)
 		{
-			storage.SetCallback(ON_COMPLETE, _onComplete);
 			storage.SetToken(TOKEN, _token);
 		}
 
 		public void Restore(IActivityStorage storage)
 		{
-			_onComplete = storage.GetCallback(ON_COMPLETE);
 			_token = storage.GetToken(TOKEN);
 		}
 		#endregion
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			_onComplete = onComplete;
-			context.Schedule(Activity, OnChildComplete, token);
+			context.Schedule(Activity, token);
 			return ValueTask.CompletedTask;
 		}
 
@@ -46,14 +41,18 @@ namespace A2v10.Workflow
 			yield return Activity;
 		}
 
-		[StoreName("OnChildComplete")]
-		ValueTask OnChildComplete(IExecutionContext context, IActivity activity)
+		public override void TryComplete(IExecutionContext context, IActivity activity)
 		{
 			if (Next != null)
-				context.Schedule(Parent.FindNode(Next), _onComplete, _token);
-			else if (_onComplete != null)
-				return _onComplete(context, this);
-			return ValueTask.CompletedTask;
+				context.Schedule(ParentFlow.FindNode(Next), _token);
+			else
+				Parent?.TryComplete(context, activity);
+		}
+
+		public override void OnEndInit(IActivity parent)
+		{
+			base.OnEndInit(parent);
+			Activity?.OnEndInit(this);
 		}
 	}
 }

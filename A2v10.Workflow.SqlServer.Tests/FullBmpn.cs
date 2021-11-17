@@ -62,7 +62,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var res = inst.Result;
 			Assert.AreEqual("1", res.Get<String>("res"));
 
-			Thread.Sleep(2000);
+			Thread.Sleep(1100);
 			await engine.ProcessPending();
 
 			var mdPrms = new ExpandoObject()
@@ -82,9 +82,13 @@ namespace A2v10.Workflow.SqlServer.Tests
 
 			await AssertModel("Idle", "2");
 
-			Thread.Sleep(2000);
+			Thread.Sleep(1100);
 			await engine.ProcessPending();
 
+			await AssertModel("Idle", "3");
+
+			Thread.Sleep(1100);
+			await engine.ProcessPending();
 			await AssertModel("Complete", "3end");
 
 		}

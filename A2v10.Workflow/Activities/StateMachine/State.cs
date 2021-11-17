@@ -8,8 +8,6 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class State : StateBase, IStorable
 	{
 		public IActivity Entry { get; set; }
@@ -17,22 +15,18 @@ namespace A2v10.Workflow
 
 		public List<Transition> Transitions { get; set; }
 
-		ExecutingAction _onComplete;
 		IToken _token;
 
 		#region IStorable
-		const String ON_COMPLETE = "OnComplete";
 		const String TOKEN = "Token";
 
 		public void Store(IActivityStorage storage)
 		{
-			storage.SetCallback(ON_COMPLETE, _onComplete);
 			storage.SetToken(TOKEN, _token);
 		}
 
 		public void Restore(IActivityStorage storage)
 		{
-			_onComplete = storage.GetCallback(ON_COMPLETE);
 			_token = storage.GetToken(TOKEN);
 		}
 		#endregion
@@ -48,17 +42,26 @@ namespace A2v10.Workflow
 				yield return Exit;
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			_onComplete = onComplete;
+			_token = token;
 			NextState = null;
 			if (Entry != null)
-				context.Schedule(Entry, OnEntryComplete, token);
+				context.Schedule(Entry, token);
 			else if (ScheduleTransitions(context))
 				return ValueTask.CompletedTask;
 			else
-				return ScheduleExit(context, Next);
+				ScheduleExit(context);
 			return ValueTask.CompletedTask;
+		}
+
+		public override void TryComplete(IExecutionContext context, IActivity activity)
+		{
+			if (activity == Entry) {
+				if (ScheduleTransitions(context))
+					return;
+			}
+			Parent.TryComplete(context, this);
 		}
 
 		// Schedule all transitions.
@@ -67,41 +70,38 @@ namespace A2v10.Workflow
 			if (Transitions == null || Transitions.Count == 0)
 				return false;
 			foreach (var tr in Transitions)
-				context.Schedule(tr, OnTransitionComplete, _token);
+				context.Schedule(tr, _token);
 			return true;
 		}
 
-		ValueTask ScheduleExit(IExecutionContext context, String nextState)
+		private void ScheduleExit(IExecutionContext context)
 		{
-			NextState = nextState;
 			if (Exit != null)
-				context.Schedule(Exit, _onComplete, _token);
-			else if (_onComplete != null)
-				return _onComplete(context, this);
-			return ValueTask.CompletedTask;
-		}
-
-		[StoreName("OnEntryComplete")]
-		ValueTask OnEntryComplete(IExecutionContext context, IActivity activity)
-		{
-			if (ScheduleTransitions(context))
-				return ValueTask.CompletedTask;
+				context.Schedule(Exit, _token);
 			else
-				return ScheduleExit(context, Next);
+				Parent.TryComplete(context, this);
 		}
 
-		[StoreName("OnTransitionComplete")]
-		ValueTask OnTransitionComplete(IExecutionContext context, IActivity activity)
+		public void TransitionComplete(IExecutionContext context, Transition transition)
 		{
-			if (activity is not Transition tr)
-				throw new InvalidProgramException("Invalid cast 'Transition'");
-			if (tr.NextState != null)
+			if (transition.NextState != null)
 			{
 				// Transition completed. Returning with new state.
-				NextState = tr.NextState;
-				return ScheduleExit(context, tr.NextState);
+				NextState = transition.NextState;
+				ScheduleExit(context);
 			}
-			return ValueTask.CompletedTask;
+			else
+				Parent.TryComplete(context, this);
+		}
+
+		public override void OnEndInit(IActivity parent)
+		{
+			base.OnEndInit(parent);
+			Entry?.OnEndInit(this);
+			Exit?.OnEndInit(this);
+			if (Transitions != null)
+				foreach (var tr in Transitions)
+					tr.OnEndInit(this);
 		}
 	}
 }

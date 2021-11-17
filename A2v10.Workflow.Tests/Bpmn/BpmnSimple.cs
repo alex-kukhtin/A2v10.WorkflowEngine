@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using A2v10.Workflow.Bpmn;
+using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Tests
 {
@@ -57,7 +58,8 @@ namespace A2v10.Workflow.Tests
 
 			var wfe = TestEngine.CreateInMemoryEngine();
 			var inst = await wfe.CreateAsync(process, null);
-			await wfe.RunAsync(inst.Id);
+			inst = await wfe.RunAsync(inst.Id);
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
 
 
@@ -126,7 +128,8 @@ namespace A2v10.Workflow.Tests
 
 			var wfe = TestEngine.CreateInMemoryEngine();
 			var inst = await wfe.CreateAsync(process, null);
-			await wfe.RunAsync(inst.Id);
+			inst = await wfe.RunAsync(inst.Id);
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
 	}
 }

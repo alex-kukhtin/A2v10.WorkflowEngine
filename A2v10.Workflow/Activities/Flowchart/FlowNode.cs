@@ -12,6 +12,6 @@ namespace A2v10.Workflow
 
 		public String Next { get; set; }
 
-		internal Flowchart Parent { get; set; }
+		internal Flowchart ParentFlow => Parent as Flowchart;
 	}
 }

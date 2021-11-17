@@ -36,5 +36,20 @@ begin
 	delete from a2wf.[Catalog] where Id=@Id;
 end
 go
+------------------------------------------------
+create or alter procedure a2wf_test.[Instance.Load.Unlocked]
+@UserId bigint = null,
+@Id uniqueidentifier
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+
+	select [Instance!TInstance!Object] = null, [Id!!Id] = i.Id, [WorkflowId], [Version], [State], 
+		ExecutionStatus, Lock
+	from a2wf.Instances i
+	where i.Id=@Id;
+end
+go
 
 

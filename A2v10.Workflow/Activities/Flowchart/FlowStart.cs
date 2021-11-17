@@ -13,11 +13,11 @@ namespace A2v10.Workflow
 	{
 		public override bool IsStart => true;
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			var node = Parent.FindNode(Next);
+			var node = ParentFlow.FindNode(Next);
 			if (node != null)
-				context.Schedule(node, onComplete, token);
+				context.Schedule(node, token);
 			return ValueTask.CompletedTask;
 		}
 	}

@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace A2v10.Workflow.Interfaces
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public interface IActivity
 	{
-		String Id { get; }
+		String Id { get; init;  }
+		IActivity Parent { get; }
 
-		ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete);
+		ValueTask ExecuteAsync(IExecutionContext context, IToken token);
 		void Cancel(IExecutionContext context);
+		void TryComplete(IExecutionContext context, IActivity activity);
 
 		IEnumerable<IActivity> EnumChildren();
+		void OnEndInit(IActivity parent);
 
-		void OnEndInit();
 	}
 }

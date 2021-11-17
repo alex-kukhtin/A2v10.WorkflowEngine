@@ -8,8 +8,6 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class If : Activity, IScriptable
 	{
 		public String Condition { get; set; }
@@ -17,22 +15,18 @@ namespace A2v10.Workflow
 		public IActivity Then { get; set; }
 		public IActivity Else { get; set; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			var cond = context.Evaluate<Boolean>(Id, nameof(Condition));
 			if (cond)
 			{
 				if (Then != null)
-					context.Schedule(Then, onComplete, token);
-				else if (onComplete != null)
-					return onComplete(context, this);
+					context.Schedule(Then, token);
 			}
 			else
 			{
 				if (Else != null)
-					context.Schedule(Else, onComplete, token);
-				else if (onComplete != null)
-					return onComplete(context, this);
+					context.Schedule(Else, token);
 			}
 			return ValueTask.CompletedTask;
 		}
@@ -51,5 +45,12 @@ namespace A2v10.Workflow
 			builder.BuildEvaluate(nameof(Condition), Condition);
 		}
 		#endregion
+
+		public override void OnEndInit(IActivity parent)
+		{
+			base.OnEndInit(parent);
+			Then?.OnEndInit(this);
+			Else?.OnEndInit(this);
+		}
 	}
 }

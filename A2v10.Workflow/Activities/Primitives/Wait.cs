@@ -7,15 +7,12 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
-	public class Wait : ActivityWithComplete
+	public class Wait : Activity
 	{
 		public String Bookmark { get; set; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			_onComplete = onComplete;
 			context.SetBookmark(Bookmark, this, OnBookmarkComplete);
 			return ValueTask.CompletedTask;
 		}
@@ -24,8 +21,7 @@ namespace A2v10.Workflow
 		ValueTask OnBookmarkComplete(IExecutionContext context, String bookmark, Object result)
 		{
 			context.RemoveBookmark(bookmark);
-			if (_onComplete != null)
-				return _onComplete(context, this);
+			Parent.TryComplete(context, this);
 			return ValueTask.CompletedTask;
 		}
 

@@ -15,7 +15,9 @@ namespace A2v10.Workflow.Bpmn
 	{
 		public String Name { get; init; }
 
-		protected ProcessBase Parent { get; private set; }
+		public IContainer Parent { get; private set; }
+
+		IActivity IActivity.Parent => Parent;
 
 		#region IActivity
 
@@ -30,18 +32,22 @@ namespace A2v10.Workflow.Bpmn
 			return Enumerable.Empty<IActivity>();
 		}
 
-		public abstract ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete);
+		public abstract ValueTask ExecuteAsync(IExecutionContext context, IToken token);
 
-		public virtual void OnEndInit()
+		public virtual void OnEndInit(IActivity parent)
 		{
-			foreach (var act in EnumChildren())
-				act.OnEndInit();
+			if (parent == null)
+				return;
+			if (parent is IContainer cont)
+				Parent = cont;
+			else
+				throw new WorkflowException("Parent activity is not a container");
+		}
+
+		public virtual void TryComplete(IExecutionContext context, IActivity activity)
+		{
+			Parent?.TryComplete(context, this);
 		}
 		#endregion
-
-		public void SetParent(ProcessBase parent)
-		{
-			Parent = parent;
-		}
 	}
 }

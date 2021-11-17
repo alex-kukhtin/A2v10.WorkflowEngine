@@ -7,18 +7,15 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class Code : Activity, IScriptable
 	{
 		public String Script { get; set; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			if (!String.IsNullOrEmpty(Script))
 				context.Execute(Id, nameof(Script));
-			if (onComplete != null)
-				return onComplete(context, this);
+			Parent.TryComplete(context, this);
 			return ValueTask.CompletedTask;
 		}
 
