@@ -8,9 +8,7 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
-	public class Transition : ActivityWithComplete, IScriptable
+	public class Transition : Activity, IScriptable
 	{
 		public String Condition { get; set; }
 
@@ -21,25 +19,32 @@ namespace A2v10.Workflow
 
 		internal String NextState { get; set; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		private State ParentState => Parent as State;
+
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			_onComplete = onComplete;
-			_token = token;
 			NextState = null;
 			if (Trigger != null)
-				context.Schedule(Trigger, OnTriggerComplete, token);
+				context.Schedule(Trigger, token);
 			else
-				return ContinueExecute(context);
+				ContinueExecute(context);
 			return ValueTask.CompletedTask;
 		}
 
-		[StoreName("OnTriggerComplete")]
-		ValueTask OnTriggerComplete(IExecutionContext context, IActivity activity)
+
+		public override void TryComplete(IExecutionContext context, IActivity activity)
 		{
-			return ContinueExecute(context);
+			if (activity == Trigger)
+			{
+				ContinueExecute(context);
+			} 
+			else if (activity == Action)
+			{
+				ParentState.TransitionComplete(context, this);
+			}
 		}
 
-		ValueTask ContinueExecute(IExecutionContext context)
+		void ContinueExecute(IExecutionContext context)
 		{
 			var cond = context.Evaluate<Boolean>(Id, nameof(Condition));
 			if (cond)
@@ -47,15 +52,11 @@ namespace A2v10.Workflow
 				NextState = Destination;
 				if (Action != null)
 				{
-					context.Schedule(Action, _onComplete, _token);
-					return ValueTask.CompletedTask;
+					context.Schedule(Action, null);
+					return;
 				}
 			}
-			if (_onComplete != null)
-			{
-				return _onComplete(context, this);
-			}
-			return ValueTask.CompletedTask;
+			ParentState.TransitionComplete(context, this);
 		}
 
 		public override IEnumerable<IActivity> EnumChildren()
@@ -72,5 +73,12 @@ namespace A2v10.Workflow
 			builder.BuildEvaluate(nameof(Condition), Condition);
 		}
 		#endregion
+
+		public override void OnEndInit(IActivity parent)
+		{
+			base.OnEndInit(parent);
+			Trigger?.OnEndInit(this);
+			Action?.OnEndInit(this);
+		}
 	}
 }

@@ -11,16 +11,13 @@ using A2v10.Workflow.Tracker;
 
 namespace A2v10.Workflow
 {
-
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 	using ResumeAction = Func<IExecutionContext, String, Object, ValueTask>;
 	using EventAction = Func<IExecutionContext, IWorkflowEvent, Object, ValueTask>;
 
 	public record QueueItem
 	(
-		Func<IExecutionContext, IToken, ExecutingAction, ValueTask> Action,
+		Func<IExecutionContext, IToken, ValueTask> Action,
 		IActivity Activity,
-		ExecutingAction OnComplete,
 		IToken Token
 	);
 
@@ -83,12 +80,12 @@ namespace A2v10.Workflow
 		}
 
 		#region IExecutionContext
-		public void Schedule(IActivity activity, ExecutingAction onComplete, IToken token)
+		public void Schedule(IActivity activity, IToken token)
 		{
 			if (activity == null)
 				return;
 			_tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Schedule, activity, token));
-			_commandQueue.Enqueue(new QueueItem(activity.ExecuteAsync, activity, onComplete, token));
+			_commandQueue.Enqueue(new QueueItem(activity.ExecuteAsync, activity, token));
 		}
 
 		public void SetBookmark(String bookmark, IActivity activity, ResumeAction onComplete)
@@ -137,7 +134,7 @@ namespace A2v10.Workflow
 			{
 				var queueItem = _commandQueue.Dequeue();
 				_tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Execute, queueItem.Activity, queueItem.Token));
-				await queueItem.Action(this, queueItem.Token, queueItem.OnComplete);
+				await queueItem.Action(this, queueItem.Token);
 			}
 			_tracker.Stop();
 		}

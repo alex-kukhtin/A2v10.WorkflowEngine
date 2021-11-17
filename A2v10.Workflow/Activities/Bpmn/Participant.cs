@@ -38,12 +38,12 @@ namespace A2v10.Workflow.Bpmn
 				Children = new List<BaseElement>();
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			var process = Children.OfType<Process>().FirstOrDefault(itm => itm.Id == ProcessRef);
 			if (process == null)
 				throw new WorkflowException($"Process '{ProcessRef}' not found");
-			return process.ExecuteAsync(context, token, onComplete);
+			return process.ExecuteAsync(context, token);
 		}
 	}
 }

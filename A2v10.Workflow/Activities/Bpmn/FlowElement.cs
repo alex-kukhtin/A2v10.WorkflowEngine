@@ -24,7 +24,7 @@ namespace A2v10.Workflow.Bpmn
 		{
 			if (!HasOutgoing)
 			{
-				Parent.TryComplete(context);
+				Parent.TryComplete(context, this);
 				return;
 			}
 			var cnt = Outgoing.Count();
@@ -32,7 +32,7 @@ namespace A2v10.Workflow.Bpmn
 			{
 				// simple outgouning - same token
 				var targetFlow = Parent.FindElement<SequenceFlow>(Outgoing.First().Text);
-				context.Schedule(targetFlow, null, token);
+				context.Schedule(targetFlow, token);
 				return;
 			}
 			else
@@ -44,11 +44,11 @@ namespace A2v10.Workflow.Bpmn
 					if (flow != null)
 					{
 						if (flow.Evaluate(context))
-							context.Schedule(flow, null, Parent.NewToken());
+							context.Schedule(flow, Parent.NewToken());
 					}
 				}
 			}
-			Parent.TryComplete(context);
+			Parent.TryComplete(context, this);
 		}
 	}
 }

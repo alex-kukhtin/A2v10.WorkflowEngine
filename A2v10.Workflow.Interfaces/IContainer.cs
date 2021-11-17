@@ -5,14 +5,10 @@ using System.Collections.Generic;
 
 namespace A2v10.Workflow.Interfaces
 {
-	public interface IContainer
+	public interface IContainer: IActivity
 	{
 		IToken NewToken();
 		void KillToken(IToken token);
-
-		void TryComplete(IExecutionContext context);
-
-		void OnEndInit();
 
 		T FindElement<T>(String id);
 		IEnumerable<T> FindAll<T>(Predicate<T> predicate);

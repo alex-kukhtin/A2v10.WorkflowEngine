@@ -16,9 +16,9 @@ namespace A2v10.Workflow
 
 		public IActivity Entry { get; set; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			context.Schedule(Entry, onComplete, token);
+			context.Schedule(Entry, token);
 			return ValueTask.CompletedTask;
 		}
 
@@ -27,6 +27,5 @@ namespace A2v10.Workflow
 			if (Entry != null)
 				yield return Entry;
 		}
-
 	}
 }

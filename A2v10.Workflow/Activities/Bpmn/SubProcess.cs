@@ -10,8 +10,6 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	[ContentProperty("Children")]
 	public class SubProcess : ProcessBase, ILoopable
 	{
@@ -45,19 +43,24 @@ namespace A2v10.Workflow.Bpmn
 			}
 		}
 
-		public override void TryComplete(IExecutionContext context)
+		public override void TryComplete(IExecutionContext context, IActivity activity)
 		{
-			ProcessComplete(context);
+			if (TokensCount > 0)
+				return;
+			if (HasLoop && (TestBefore || CanCountinue(context)))
+				context.Schedule(this, _token);
+			else
+				SubProcessComplete(context);
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			_onComplete = onComplete;
 			_token = token;
 
 			if (HasLoop && TestBefore && !CanCountinue(context))
 			{
-				return ProcessComplete(context);
+				SubProcessComplete(context);
+				return ValueTask.CompletedTask;
 			}
 			_loopCounter += 1;
 			return ExecuteBody(context);
@@ -70,34 +73,18 @@ namespace A2v10.Workflow.Bpmn
 			var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart);
 			if (start == null)
 				throw new WorkflowException($"SubProcess (Id={Id}). Start event not found");
-			context.Schedule(start, null, _token);
+			context.Schedule(start, _token);
 			return ValueTask.CompletedTask;
 		}
 
-		[StoreName("OnElemComplete")]
-		ValueTask OnElemComplete(IExecutionContext context, IActivity activity)
-		{
-			if (activity is not EndEvent || TokensCount > 0)
-			{
-				// do nothing, there are tokens
-				return ValueTask.CompletedTask;
-			}
-			if (HasLoop && (TestBefore || CanCountinue(context)))
-			{
-				context.Schedule(this, _onComplete, _token);
-				return ValueTask.CompletedTask;
-			}
-			return ProcessComplete(context);
-		}
-
-		ValueTask ProcessComplete(IExecutionContext context)
+		void SubProcessComplete(IExecutionContext context)
 		{
 			var count = Outgoing?.Count();
 			if (count == 1)
 			{
 				// simple outgouning - same token
 				var targetFlow = Parent.FindElement<SequenceFlow>(Outgoing.First().Text);
-				context.Schedule(targetFlow, _onComplete, _token);
+				context.Schedule(targetFlow, _token);
 				_token = null;
 			}
 			else if (count > 1)
@@ -108,18 +95,9 @@ namespace A2v10.Workflow.Bpmn
 				foreach (var flowId in Outgoing)
 				{
 					var targetFlow = Parent.FindElement<SequenceFlow>(flowId.Text);
-					context.Schedule(targetFlow, null, Parent.NewToken());
+					context.Schedule(targetFlow, Parent.NewToken());
 				}
 			}
-			return ValueTask.CompletedTask;
-		}
-
-		public override void OnEndInit()
-		{
-			if (Children == null)
-				return;
-			foreach (var e in Activities)
-				e.SetParent(this);
 		}
 
 		public String LoopConditionEval => $"{Id}_Loop";

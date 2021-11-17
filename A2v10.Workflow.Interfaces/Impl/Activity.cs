@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace A2v10.Workflow.Interfaces
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public abstract class Activity : IActivity
 	{
 		#region IActivity
-		public String Id { get; set; }
+		public String Id { get; init; }
+		public IActivity Parent { get; private set; }
 
-		public abstract ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete);
+		public abstract ValueTask ExecuteAsync(IExecutionContext context, IToken token);
 
 		public virtual IEnumerable<IActivity> EnumChildren()
 		{
@@ -24,6 +23,17 @@ namespace A2v10.Workflow.Interfaces
 		public void Cancel(IExecutionContext context)
 		{
 		}
+
+		public virtual void TryComplete(IExecutionContext context, IActivity activity)
+		{
+		}
+
+		public virtual void OnEndInit(IActivity parent)
+		{
+			Parent = parent;
+		}
+
+
 		#endregion
 	}
 }

@@ -9,14 +9,29 @@ namespace A2v10.Workflow.Bpmn
 {
 	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 
-	public class BoundaryEvent : Event
+	public class BoundaryEvent : Event, IStorable
 	{
 		public String AttachedToRef { get; init; }
 		public Boolean? CancelActivity { get; init; } // default is true!
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		protected IToken _token;
+
+		#region IStorable
+		const String TOKEN = "Token";
+
+		public void Store(IActivityStorage storage)
 		{
-			_onComplete = onComplete;
+			storage.SetToken(TOKEN, _token);
+		}
+
+		public void Restore(IActivityStorage storage)
+		{
+			_token = storage.GetToken(TOKEN);
+		}
+		#endregion
+
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		{
 			_token = token;
 			var eventDef = EventDefinition;
 			if (eventDef != null)
@@ -29,7 +44,7 @@ namespace A2v10.Workflow.Bpmn
 		[StoreName("OnTrigger")]
 		public ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object result)
 		{
-			ScheduleOutgoing(context);
+			ScheduleOutgoing(context, _token);
 			if (CancelActivity == null || CancelActivity.Value)
 			{
 				var task = Parent.FindElement<BpmnTask>(AttachedToRef);

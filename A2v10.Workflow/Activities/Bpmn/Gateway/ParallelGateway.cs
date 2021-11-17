@@ -9,18 +9,16 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class ParallelGateway : Gateway, IStorable
 	{
 		private readonly List<IToken> _tokens = new();
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			// waits for all incoming tokens
 			_tokens.Add(token);
 			if (HasIncoming && _tokens.Count == Incoming.Count())
-				return DoOutgoing(context, onComplete);
+				return DoOutgoing(context);
 			else
 				return ValueTask.CompletedTask;
 		}
@@ -39,7 +37,7 @@ namespace A2v10.Workflow.Bpmn
 		}
 		#endregion
 
-		public ValueTask DoOutgoing(IExecutionContext context, ExecutingAction onComplete)
+		public ValueTask DoOutgoing(IExecutionContext context)
 		{
 			// kill all tokens
 			foreach (var t in _tokens)
@@ -50,7 +48,7 @@ namespace A2v10.Workflow.Bpmn
 				foreach (var og in Outgoing)
 				{
 					var flow = Parent.FindElement<SequenceFlow>(og.Text);
-					context.Schedule(flow, null, Parent.NewToken());
+					context.Schedule(flow, Parent.NewToken());
 				}
 			} 
 			return ValueTask.CompletedTask;

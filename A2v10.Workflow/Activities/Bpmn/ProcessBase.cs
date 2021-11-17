@@ -14,7 +14,6 @@ namespace A2v10.Workflow.Bpmn
 	public abstract class ProcessBase : FlowElement, IContainer, IStorable, IScoped, IScriptable
 	{
 
-		protected ExecutingAction _onComplete;
 		protected IToken _token;
 
 		private readonly List<IToken> _tokens = new();
@@ -29,8 +28,14 @@ namespace A2v10.Workflow.Bpmn
 					yield return elem;
 		}
 
-		public abstract void TryComplete(IExecutionContext contex);
-		public abstract void OnEndInit();
+		public override void OnEndInit(IActivity parent)
+		{
+			base.OnEndInit(parent);
+			if (Children == null)
+				return;
+			foreach (var e in Activities)
+				e.OnEndInit(this);
+		}
 
 		#region IScoped
 		public List<IVariable> Variables => Elem<ExtensionElements>()?.GetVariables();
@@ -43,20 +48,17 @@ namespace A2v10.Workflow.Bpmn
 		#endregion
 
 		#region IStorable
-		const String ON_COMPLETE = "OnComplete";
 		const String TOKEN = "Token";
 		const String TOKENS = "Tokens";
 
 		public virtual void Store(IActivityStorage storage)
 		{
-			storage.SetCallback(ON_COMPLETE, _onComplete);
 			storage.SetToken(TOKEN, _token);
 			storage.SetTokenList(TOKENS, _tokens);
 		}
 
 		public virtual void Restore(IActivityStorage storage)
 		{
-			_onComplete = storage.GetCallback(ON_COMPLETE);
 			_token = storage.GetToken(TOKEN);
 			storage.GetTokenList(TOKENS, _tokens);
 		}

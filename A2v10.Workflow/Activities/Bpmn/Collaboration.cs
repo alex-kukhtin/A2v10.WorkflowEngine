@@ -70,14 +70,14 @@ namespace A2v10.Workflow.Bpmn
 			}
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			var parts = Children.OfType<Participant>();
 			if (parts == null)
 				throw new WorkflowException("No participants in the Collaboration");
 			if (parts.Count() != 1)
 				throw new WorkflowException("Collaboration has multiply participants. Yet not implemented");
-			return parts.First().ExecuteAsync(context, token, onComplete);
+			return parts.First().ExecuteAsync(context, token);
 		}
 	}
 }

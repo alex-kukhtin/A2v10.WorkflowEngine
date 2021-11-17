@@ -1,7 +1,6 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,57 +17,28 @@ namespace A2v10.Workflow.Bpmn
 		public Boolean IsExecutable { get; init; }
 		public Boolean IsClosed { get; init; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			_onComplete = onComplete;
 			_token = token;
 			if (!IsExecutable || Children == null)
 				return ValueTask.CompletedTask;
 			var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart);
 			if (start == null)
 				throw new WorkflowException($"Process (Id={Id}). Start event not found");
-			context.Schedule(start, OnElemComplete, token);
+			context.Schedule(start, token);
 			return ValueTask.CompletedTask;
 		}
 
-		public override void TryComplete(IExecutionContext context)
+		public override void TryComplete(IExecutionContext context, IActivity _)
 		{
 			if (TokensCount > 0)
 				return;
-		}
-
-		[StoreName("OnElemComplete")]
-		ValueTask OnElemComplete(IExecutionContext context, IActivity activity)
-		{
-			if (activity is EndEvent)
-			{
-				if (TokensCount > 0)
-				{
-					// do nothing, there are tokens
-					return ValueTask.CompletedTask;
-				}
-				return ProcessComplete(context);
-			}
-			return ValueTask.CompletedTask;
+			ProcessComplete(context);
 		}
 
 		ValueTask ProcessComplete(IExecutionContext context)
 		{
-			if (_onComplete != null)
-				return _onComplete(context, this);
 			return ValueTask.CompletedTask;
-		}
-
-		public override void OnEndInit()
-		{
-			if (Children == null)
-				return;
-			foreach (var e in Activities)
-			{
-				e.SetParent(this);
-				if (e is IContainer subProcess)
-					subProcess.OnEndInit();
-			}
 		}
 	}
 }

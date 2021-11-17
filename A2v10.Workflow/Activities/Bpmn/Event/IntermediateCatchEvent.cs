@@ -9,11 +9,26 @@ namespace A2v10.Workflow.Bpmn
 {
 	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 
-	public class IntermediateCatchEvent : Event
+	public class IntermediateCatchEvent : Event, IStorable
 	{
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		protected IToken _token;
+
+		#region IStorable
+		const String TOKEN = "Token";
+
+		public void Store(IActivityStorage storage)
 		{
-			_onComplete = onComplete;
+			storage.SetToken(TOKEN, _token);
+		}
+
+		public void Restore(IActivityStorage storage)
+		{
+			_token = storage.GetToken(TOKEN);
+		}
+		#endregion
+
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		{
 			_token = token;
 			var eventDef = EventDefinition;
 			if (eventDef != null)
@@ -27,7 +42,7 @@ namespace A2v10.Workflow.Bpmn
 		public ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object result)
 		{
 			SetComplete(context);
-			ScheduleOutgoing(context);
+			ScheduleOutgoing(context, _token);
 			return ValueTask.CompletedTask;
 		}
 	}

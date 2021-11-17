@@ -12,13 +12,11 @@ namespace A2v10.Workflow.Bpmn
 
 	public class ExclusiveGateway : Gateway
 	{
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			SequenceFlow flowToExecute = FindFlowToExecute(context);
 			if (flowToExecute != null)
-				context.Schedule(flowToExecute, onComplete, token);
-			else if (onComplete != null)
-				return onComplete(context, this);
+				context.Schedule(flowToExecute, token);
 			return ValueTask.CompletedTask;
 		}
 

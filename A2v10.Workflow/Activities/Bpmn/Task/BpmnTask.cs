@@ -7,12 +7,8 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoopable
 	{
-
-		protected ExecutingAction _onComplete;
 		protected IToken _token;
 		protected Int32 _loopCounter;
 
@@ -21,14 +17,12 @@ namespace A2v10.Workflow.Bpmn
 		protected virtual Boolean CanInduceIdle => false;
 
 		#region IStorable 
-		const String ON_COMPLETE = "OnComplete";
 		const String TOKEN = "Token";
 		const String LOOP_COUNTER = "LoopCounter";
 
 		public virtual void Store(IActivityStorage storage)
 		{
 			if (!CanInduceIdle) return;
-			storage.SetCallback(ON_COMPLETE, _onComplete);
 			storage.SetToken(TOKEN, _token);
 			if (HasLoop)
 				storage.Set<Int32>(LOOP_COUNTER, _loopCounter);
@@ -37,7 +31,6 @@ namespace A2v10.Workflow.Bpmn
 		public virtual void Restore(IActivityStorage storage)
 		{
 			if (!CanInduceIdle) return;
-			_onComplete = storage.GetCallback(ON_COMPLETE);
 			_token = storage.GetToken(TOKEN);
 			if (HasLoop)
 				_loopCounter = storage.Get<Int32>(LOOP_COUNTER);
@@ -45,9 +38,8 @@ namespace A2v10.Workflow.Bpmn
 		#endregion
 
 
-		public override async ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override async ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			_onComplete = onComplete;
 			_token = token;
 			IsComplete = false;
 
@@ -61,7 +53,7 @@ namespace A2v10.Workflow.Bpmn
 			{
 				// boundary events
 				foreach (var ev in Parent.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
-					await ev.ExecuteAsync(context, Parent.NewToken(), EventComplete);
+					await ev.ExecuteAsync(context, Parent.NewToken());
 			}
 			_loopCounter += 1;
 
@@ -81,7 +73,7 @@ namespace A2v10.Workflow.Bpmn
 			if (HasLoop && (TestBefore || CanCountinue(context)))
 			{
 				IsComplete = false;
-				context.Schedule(this, _onComplete, _token);
+				context.Schedule(this, _token);
 				return ValueTask.CompletedTask;
 			}
 			return DoCompleteBody(context);
@@ -91,8 +83,6 @@ namespace A2v10.Workflow.Bpmn
 		{ 
 			if (Outgoing == null)
 			{
-				if (_onComplete != null)
-					return _onComplete(context, this);
 				return ValueTask.CompletedTask;
 			}
 
@@ -100,7 +90,7 @@ namespace A2v10.Workflow.Bpmn
 			{
 				// simple outgouning - same token
 				var targetFlow = Parent.FindElement<SequenceFlow>(Outgoing.First().Text);
-				context.Schedule(targetFlow, _onComplete, _token);
+				context.Schedule(targetFlow, _token);
 				_token = null;
 			}
 			else
@@ -111,12 +101,10 @@ namespace A2v10.Workflow.Bpmn
 				foreach (var flowId in Outgoing)
 				{
 					var targetFlow = Parent.FindElement<SequenceFlow>(flowId.Text);
-					context.Schedule(targetFlow, _onComplete, Parent.NewToken());
+					context.Schedule(targetFlow, Parent.NewToken());
 				}
 			}
 			CompleteTask(context);
-			if (_onComplete != null)
-				return _onComplete(context, this);
 			return ValueTask.CompletedTask;
 		}
 
@@ -127,12 +115,6 @@ namespace A2v10.Workflow.Bpmn
 
 		public virtual void BuildScriptBody(IScriptBuilder builder)
 		{
-		}
-
-		[StoreName("OnEventComplete")]
-		protected virtual ValueTask EventComplete(IExecutionContext context, IActivity activity)
-		{
-			return ValueTask.CompletedTask;
 		}
 
 		protected virtual void CompleteTask(IExecutionContext context)

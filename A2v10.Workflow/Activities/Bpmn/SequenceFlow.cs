@@ -17,10 +17,10 @@ namespace A2v10.Workflow.Bpmn
 
 		public ConditionExpression ConditionExpression => Children?.OfType<ConditionExpression>()?.FirstOrDefault();
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			var target = Parent.FindElement<BpmnActivity>(TargetRef);
-			context.Schedule(target, onComplete, token);
+			context.Schedule(target, token);
 			return ValueTask.CompletedTask;
 		}
 

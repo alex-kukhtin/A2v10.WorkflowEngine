@@ -7,22 +7,22 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class FlowDecision : FlowNode, IScriptable
 	{
 		public String Condition { get; set; }
 		public String Then { get; set; }
 		public String Else { get; set; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			var cond = context.Evaluate<Boolean>(Id, nameof(Condition));
-			var nextNode = Parent.FindNode(cond ? Then : Else);
+			var nextNode = ParentFlow.FindNode(cond ? Then : Else);
 			if (nextNode == null)
-				nextNode = Parent.FindNode(Next);
+				nextNode = ParentFlow.FindNode(Next);
 			if (nextNode != null)
-				context.Schedule(nextNode, onComplete, token);
+				context.Schedule(nextNode, token);
+			else
+				Parent?.TryComplete(context, this);
 			return ValueTask.CompletedTask;
 		}
 

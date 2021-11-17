@@ -13,35 +13,13 @@ namespace A2v10.Workflow.Bpmn
 	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 
 	[ContentProperty("Children")]
-	public abstract class Event : BpmnActivity, IScriptable, IStorable, ICanComplete
+	public abstract class Event : BpmnActivity, IScriptable
 	{
 		public virtual Boolean IsStart => false;
 
 		public IEnumerable<Outgoing> Outgoing => Children?.OfType<Outgoing>();
 
 		public EventDefinition EventDefinition => Children?.OfType<EventDefinition>().FirstOrDefault();
-
-		public Boolean IsComplete { get; private set; }
-
-		protected ExecutingAction _onComplete;
-		protected IToken _token;
-
-		#region IStorable
-		const String ON_COMPLETE = "OnComplete";
-		const String TOKEN = "Token";
-
-		public void Store(IActivityStorage storage)
-		{
-			storage.SetCallback(ON_COMPLETE, _onComplete);
-			storage.SetToken(TOKEN, _token);
-		}
-
-		public void Restore(IActivityStorage storage)
-		{
-			_onComplete = storage.GetCallback(ON_COMPLETE);
-			_token = storage.GetToken(TOKEN);
-		}
-		#endregion
 
 
 		// wf:Script here
@@ -54,22 +32,22 @@ namespace A2v10.Workflow.Bpmn
 		}
 		#endregion
 
-		protected void ScheduleOutgoing(IExecutionContext context)
+		protected void ScheduleOutgoing(IExecutionContext context, IToken token)
 		{
 			if (Outgoing == null)
 				return;
 			if (Outgoing.Count() == 1)
 			{
 				var targetFlow = Parent.FindElement<SequenceFlow>(Outgoing.First().Text);
-				context.Schedule(targetFlow, _onComplete, _token);
+				context.Schedule(targetFlow, token);
 			}
 			else
 			{
-				Parent.KillToken(_token);
+				Parent.KillToken(token);
 				foreach (var o in Outgoing)
 				{
 					var targetFlow = Parent.FindElement<SequenceFlow>(o.Text);
-					context.Schedule(targetFlow, _onComplete, Parent.NewToken());
+					context.Schedule(targetFlow, Parent.NewToken());
 				}
 			}
 		}
@@ -81,7 +59,6 @@ namespace A2v10.Workflow.Bpmn
 
 		protected void SetComplete(IExecutionContext context)
 		{
-			IsComplete = true;
 			context.RemoveEvent(Id);
 		}
 	}

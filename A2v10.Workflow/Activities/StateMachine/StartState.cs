@@ -7,17 +7,14 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class StartState : StateBase
 	{
 		public override Boolean IsStart => true;
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			NextState = Next;
-			if (onComplete != null)
-				return onComplete(context, this);
+			Parent.TryComplete(context, this);
 			return ValueTask.CompletedTask;
 		}
 	}

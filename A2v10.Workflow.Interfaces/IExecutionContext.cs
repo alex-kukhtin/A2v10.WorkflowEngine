@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 
 namespace A2v10.Workflow.Interfaces
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 	using ResumeAction = Func<IExecutionContext, String, Object, ValueTask>;
 	using EventAction = Func<IExecutionContext, IWorkflowEvent, Object, ValueTask>;
 
 	public interface IExecutionContext
 	{
-		void Schedule(IActivity activity, ExecutingAction onComplete, IToken token);
+		void Schedule(IActivity activity, IToken token);
 
 		void SetBookmark(String bookmark, IActivity activity, ResumeAction onComplete);
 		void RemoveBookmark(String bookmark);

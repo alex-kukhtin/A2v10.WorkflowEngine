@@ -7,13 +7,11 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class StartEvent : Event
 	{
 		public override Boolean IsStart => true;
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token, ExecutingAction onComplete)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
 			if (!String.IsNullOrEmpty(Script))
 				context.Execute(Id, nameof(Script));
@@ -27,7 +25,7 @@ namespace A2v10.Workflow.Bpmn
 				if (flowElem.SourceRef != Id)
 					throw new WorkflowException($"BPMN. Invalid SequenceFlow (Id={Id}. SourceRef does not match");
 				// generate new token for every outogoing flow!
-				context.Schedule(flowElem, onComplete, Parent.NewToken());
+				context.Schedule(flowElem, Parent.NewToken());
 			}
 			return ValueTask.CompletedTask;
 		}

@@ -72,8 +72,7 @@ namespace A2v10.Workflow.Serialization
 				"text/xml" => DeserializeXaml(text),
 				_ => throw new NotImplementedException($"Deserialize for format '{format}' is not supported"),
 			};
-			if (activitiy is IContainer cont)
-				cont.OnEndInit();
+			activitiy.OnEndInit(null);
 			return activitiy;
 		}
 
