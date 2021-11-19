@@ -93,15 +93,5 @@ namespace A2v10.Workflow
 			else
 				Parent.TryComplete(context, this);
 		}
-
-		public override void OnEndInit(IActivity parent)
-		{
-			base.OnEndInit(parent);
-			Entry?.OnEndInit(this);
-			Exit?.OnEndInit(this);
-			if (Transitions != null)
-				foreach (var tr in Transitions)
-					tr.OnEndInit(this);
-		}
 	}
 }

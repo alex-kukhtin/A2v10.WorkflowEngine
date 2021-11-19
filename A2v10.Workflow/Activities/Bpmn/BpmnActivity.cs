@@ -9,15 +9,13 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public abstract class BpmnActivity : BaseElement, IActivity
 	{
 		public String Name { get; init; }
 
-		public IContainer Parent { get; private set; }
+		public IActivity Parent { get; private set; }
 
-		IActivity IActivity.Parent => Parent;
+		public IContainer ParentContainer => Parent as IContainer;
 
 		#region IActivity
 
@@ -36,12 +34,9 @@ namespace A2v10.Workflow.Bpmn
 
 		public virtual void OnEndInit(IActivity parent)
 		{
-			if (parent == null)
-				return;
-			if (parent is IContainer cont)
-				Parent = cont;
-			else
-				throw new WorkflowException("Parent activity is not a container");
+			Parent = parent;
+			foreach (var act in EnumChildren())
+				act.OnEndInit(this);
 		}
 
 		public virtual void TryComplete(IExecutionContext context, IActivity activity)

@@ -56,14 +56,5 @@ namespace A2v10.Workflow
 			// TODO: use CompletionCondition
 			base.TryComplete(context, activity);
 		}
-
-		public override void OnEndInit(IActivity parent)
-		{
-			base.OnEndInit(parent);
-			if (Branches == null)
-				return;
-			foreach (var br in Branches)
-				br.OnEndInit(this);
-		}
 	}
 }

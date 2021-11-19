@@ -10,8 +10,6 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	[ContentProperty("Children")]
 	public abstract class Event : BpmnActivity, IScriptable
 	{
@@ -38,16 +36,16 @@ namespace A2v10.Workflow.Bpmn
 				return;
 			if (Outgoing.Count() == 1)
 			{
-				var targetFlow = Parent.FindElement<SequenceFlow>(Outgoing.First().Text);
+				var targetFlow = ParentContainer.FindElement<SequenceFlow>(Outgoing.First().Text);
 				context.Schedule(targetFlow, token);
 			}
 			else
 			{
-				Parent.KillToken(token);
+				ParentContainer.KillToken(token);
 				foreach (var o in Outgoing)
 				{
-					var targetFlow = Parent.FindElement<SequenceFlow>(o.Text);
-					context.Schedule(targetFlow, Parent.NewToken());
+					var targetFlow = ParentContainer.FindElement<SequenceFlow>(o.Text);
+					context.Schedule(targetFlow, ParentContainer.NewToken());
 				}
 			}
 		}
@@ -60,6 +58,12 @@ namespace A2v10.Workflow.Bpmn
 		protected void SetComplete(IExecutionContext context)
 		{
 			context.RemoveEvent(Id);
+		}
+
+		public override IEnumerable<IActivity> EnumChildren()
+		{
+			if (EventDefinition != null)
+				yield return EventDefinition;
 		}
 	}
 }

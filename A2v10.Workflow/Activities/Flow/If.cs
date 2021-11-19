@@ -45,12 +45,5 @@ namespace A2v10.Workflow
 			builder.BuildEvaluate(nameof(Condition), Condition);
 		}
 		#endregion
-
-		public override void OnEndInit(IActivity parent)
-		{
-			base.OnEndInit(parent);
-			Then?.OnEndInit(this);
-			Else?.OnEndInit(this);
-		}
 	}
 }

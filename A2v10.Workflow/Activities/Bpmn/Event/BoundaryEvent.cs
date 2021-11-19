@@ -35,7 +35,7 @@ namespace A2v10.Workflow.Bpmn
 			_token = token;
 			var eventDef = EventDefinition;
 			if (eventDef != null)
-				context.AddEvent(eventDef.CreateEvent(Id), this, OnTrigger);
+				context.AddEvent(eventDef.CreateEvent(Id, context), this, OnTrigger);
 			else
 				SetComplete(context);
 			return ValueTask.CompletedTask;
@@ -47,7 +47,7 @@ namespace A2v10.Workflow.Bpmn
 			ScheduleOutgoing(context, _token);
 			if (CancelActivity == null || CancelActivity.Value)
 			{
-				var task = Parent.FindElement<BpmnTask>(AttachedToRef);
+				var task = ParentContainer.FindElement<BpmnTask>(AttachedToRef);
 				SetComplete(context);
 				task.Cancel(context);
 			}
@@ -55,7 +55,7 @@ namespace A2v10.Workflow.Bpmn
 			{
 				var eventDef = EventDefinition;
 				if (eventDef != null && eventDef.CanRepeat)
-					context.AddEvent(eventDef.CreateEvent(Id), this, OnTrigger);
+					context.AddEvent(eventDef.CreateEvent(Id, context), this, OnTrigger);
 				else
 					SetComplete(context);
 			}

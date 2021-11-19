@@ -31,6 +31,8 @@ namespace A2v10.Workflow.Interfaces
 		public virtual void OnEndInit(IActivity parent)
 		{
 			Parent = parent;
+			foreach (var act in EnumChildren())
+				act.OnEndInit(this);
 		}
 
 

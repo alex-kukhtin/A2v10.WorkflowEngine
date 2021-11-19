@@ -9,7 +9,6 @@ Designer
 2. Properties expressions. f.e: timeDuration = ${Duration}
 4. fileName in command line
 5. Task: multiInstanceLoopCharacteristics
-6. Remove Ctrl+Arrows accelerators.
 
 Engine
 ======

@@ -83,19 +83,19 @@ namespace A2v10.Workflow.Bpmn
 			if (count == 1)
 			{
 				// simple outgouning - same token
-				var targetFlow = Parent.FindElement<SequenceFlow>(Outgoing.First().Text);
+				var targetFlow = ParentContainer.FindElement<SequenceFlow>(Outgoing.First().Text);
 				context.Schedule(targetFlow, _token);
 				_token = null;
 			}
 			else if (count > 1)
 			{
 				// same as task + parallelGateway
-				Parent.KillToken(_token);
+				ParentContainer.KillToken(_token);
 				_token = null;
 				foreach (var flowId in Outgoing)
 				{
-					var targetFlow = Parent.FindElement<SequenceFlow>(flowId.Text);
-					context.Schedule(targetFlow, Parent.NewToken());
+					var targetFlow = ParentContainer.FindElement<SequenceFlow>(flowId.Text);
+					context.Schedule(targetFlow, ParentContainer.NewToken());
 				}
 			}
 		}

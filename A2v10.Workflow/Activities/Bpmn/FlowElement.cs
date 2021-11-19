@@ -31,20 +31,20 @@ namespace A2v10.Workflow.Bpmn
 			if (cnt == 1)
 			{
 				// simple outgouning - same token
-				var targetFlow = Parent.FindElement<SequenceFlow>(Outgoing.First().Text);
+				var targetFlow = ParentContainer.FindElement<SequenceFlow>(Outgoing.First().Text);
 				context.Schedule(targetFlow, token);
 				return;
 			}
 			else
 			{
-				Parent.KillToken(token);
+				ParentContainer.KillToken(token);
 				foreach (var og in Outgoing)
 				{
-					var flow = Parent.FindElement<SequenceFlow>(og.Text);
+					var flow = ParentContainer.FindElement<SequenceFlow>(og.Text);
 					if (flow != null)
 					{
 						if (flow.Evaluate(context))
-							context.Schedule(flow, Parent.NewToken());
+							context.Schedule(flow, ParentContainer.NewToken());
 					}
 				}
 			}

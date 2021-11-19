@@ -64,5 +64,20 @@ namespace A2v10.Workflow.Tests
 			Assert.AreEqual("OUTPUT", res0.Get<String>("S"));
 			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
+
+		[TestMethod]
+		public async Task ArgEmptyObject()
+		{
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\args_types.bpmn");
+			String wfId = "ArgEmptyObject";
+			var prms = new ExpandoObject()
+			{
+			};
+			var inst = await TestEngine.SimpleRun(wfId, xaml, prms);
+
+			var res0 = inst.Result;
+			Assert.AreEqual(true, res0.Get<Boolean>("B"));
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+		}
 	}
 }

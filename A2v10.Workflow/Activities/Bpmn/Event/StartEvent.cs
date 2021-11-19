@@ -16,16 +16,13 @@ namespace A2v10.Workflow.Bpmn
 			if (!String.IsNullOrEmpty(Script))
 				context.Execute(Id, nameof(Script));
 
-			//if (Children == null)
-				//return onComplete(context, this);
-
 			foreach (var flow in Outgoing)
 			{
-				var flowElem = Parent.FindElement<SequenceFlow>(flow.Text);
+				var flowElem = ParentContainer.FindElement<SequenceFlow>(flow.Text);
 				if (flowElem.SourceRef != Id)
 					throw new WorkflowException($"BPMN. Invalid SequenceFlow (Id={Id}. SourceRef does not match");
 				// generate new token for every outogoing flow!
-				context.Schedule(flowElem, Parent.NewToken());
+				context.Schedule(flowElem, ParentContainer.NewToken());
 			}
 			return ValueTask.CompletedTask;
 		}

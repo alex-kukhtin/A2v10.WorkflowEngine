@@ -16,7 +16,7 @@ namespace A2v10.Workflow.Bpmn
 			if (!String.IsNullOrEmpty(Script))
 				context.Execute(Id, nameof(Script));
 
-			Parent.KillToken(token);
+			ParentContainer.KillToken(token);
 			Parent.TryComplete(context, this);
 			return ValueTask.CompletedTask;
 		}

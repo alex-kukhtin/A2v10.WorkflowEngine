@@ -28,15 +28,6 @@ namespace A2v10.Workflow.Bpmn
 					yield return elem;
 		}
 
-		public override void OnEndInit(IActivity parent)
-		{
-			base.OnEndInit(parent);
-			if (Children == null)
-				return;
-			foreach (var e in Activities)
-				e.OnEndInit(this);
-		}
-
 		#region IScoped
 		public List<IVariable> Variables => Elem<ExtensionElements>()?.GetVariables();
 		public String GlobalScript => Elem<ExtensionElements>()?.GetGlobalScript();

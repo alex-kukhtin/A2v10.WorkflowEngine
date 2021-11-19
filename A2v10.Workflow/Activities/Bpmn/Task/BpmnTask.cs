@@ -52,8 +52,8 @@ namespace A2v10.Workflow.Bpmn
 			if (_loopCounter == 0)
 			{
 				// boundary events
-				foreach (var ev in Parent.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
-					await ev.ExecuteAsync(context, Parent.NewToken());
+				foreach (var ev in ParentContainer.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
+					await ev.ExecuteAsync(context, ParentContainer.NewToken());
 			}
 			_loopCounter += 1;
 
@@ -89,19 +89,19 @@ namespace A2v10.Workflow.Bpmn
 			if (Outgoing.Count() == 1)
 			{
 				// simple outgouning - same token
-				var targetFlow = Parent.FindElement<SequenceFlow>(Outgoing.First().Text);
+				var targetFlow = ParentContainer.FindElement<SequenceFlow>(Outgoing.First().Text);
 				context.Schedule(targetFlow, _token);
 				_token = null;
 			}
 			else
 			{
 				// same as task + parallelGateway
-				Parent.KillToken(_token);
+				ParentContainer.KillToken(_token);
 				_token = null;
 				foreach (var flowId in Outgoing)
 				{
-					var targetFlow = Parent.FindElement<SequenceFlow>(flowId.Text);
-					context.Schedule(targetFlow, Parent.NewToken());
+					var targetFlow = ParentContainer.FindElement<SequenceFlow>(flowId.Text);
+					context.Schedule(targetFlow, ParentContainer.NewToken());
 				}
 			}
 			CompleteTask(context);
@@ -120,7 +120,7 @@ namespace A2v10.Workflow.Bpmn
 		protected virtual void CompleteTask(IExecutionContext context)
 		{
 			IsComplete = true;
-			foreach (var ev in Parent.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
+			foreach (var ev in ParentContainer.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
 				context.RemoveEvent(ev.Id);
 		}
 

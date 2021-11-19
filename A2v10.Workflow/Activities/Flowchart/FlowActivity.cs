@@ -48,11 +48,5 @@ namespace A2v10.Workflow
 			else
 				Parent?.TryComplete(context, activity);
 		}
-
-		public override void OnEndInit(IActivity parent)
-		{
-			base.OnEndInit(parent);
-			Activity?.OnEndInit(this);
-		}
 	}
 }

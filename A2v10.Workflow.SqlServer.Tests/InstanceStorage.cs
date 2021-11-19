@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
 
-
 using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer.Tests

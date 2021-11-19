@@ -71,15 +71,5 @@ namespace A2v10.Workflow
 		}
 		#endregion
 
-		#region IInitialize
-		public override void OnEndInit(IActivity parent)
-		{
-			base.OnEndInit(parent);
-			if (States == null)
-				return;
-			foreach (var st in States)
-				st.OnEndInit(this);
-		}
-		#endregion
 	}
 }

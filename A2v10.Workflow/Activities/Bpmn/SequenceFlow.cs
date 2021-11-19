@@ -19,7 +19,7 @@ namespace A2v10.Workflow.Bpmn
 
 		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
 		{
-			var target = Parent.FindElement<BpmnActivity>(TargetRef);
+			var target = ParentContainer.FindElement<BpmnActivity>(TargetRef);
 			context.Schedule(target, token);
 			return ValueTask.CompletedTask;
 		}

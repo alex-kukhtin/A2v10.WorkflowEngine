@@ -23,15 +23,6 @@ namespace A2v10.Workflow
 					yield return node;
 		}
 
-		public override void OnEndInit(IActivity parent)
-		{
-			base.OnEndInit(parent);
-			if (Nodes == null)
-				return;
-			foreach (var node in Nodes)
-				node.OnEndInit(this);
-		}
-
 		public FlowNode FindNode(String refer)
 		{
 			return Nodes?.Find(node => node.Id == refer);

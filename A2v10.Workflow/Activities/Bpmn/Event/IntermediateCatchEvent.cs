@@ -7,8 +7,6 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class IntermediateCatchEvent : Event, IStorable
 	{
 		protected IToken _token;
@@ -32,7 +30,7 @@ namespace A2v10.Workflow.Bpmn
 			_token = token;
 			var eventDef = EventDefinition;
 			if (eventDef != null)
-				context.AddEvent(eventDef.CreateEvent(Id), this, OnTrigger);
+				context.AddEvent(eventDef.CreateEvent(Id, context), this, OnTrigger);
 			else
 				SetComplete(context);
 			return ValueTask.CompletedTask;

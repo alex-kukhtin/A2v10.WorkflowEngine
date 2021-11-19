@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using A2v10.Workflow.Interfaces;
+using System.Dynamic;
+using System.Threading;
 
 namespace A2v10.Workflow.Tests
 {
@@ -63,7 +65,7 @@ namespace A2v10.Workflow.Tests
 			var wfc = sp.GetService<IWorkflowCatalog>();
 			var ins = sp.GetService<IInstanceStorage>();
 
-			String wfId = "BoundarySimple";
+			String wfId = "IntermediateSimple";
 			await wfc.SaveAsync(new WorkflowDescriptor()
 			{
 				Id = wfId,
@@ -80,6 +82,33 @@ namespace A2v10.Workflow.Tests
 			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
 			await wfe.ProcessPending();
+			var instAfter = await ins.Load(inst.Id);
+			var res1 = instAfter.Result;
+			Assert.AreEqual("AfterTimer", res1.Get<String>("Result"));
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, instAfter.ExecutionStatus);
+		}
+
+		[TestMethod]
+		public async Task VariableTimer()
+		{
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\variable_timer.bpmn");
+
+			String wfId = "VariableTimer";
+			var prms = new ExpandoObject()
+			{
+				{ "Interval", "00:00:01" }
+			};
+
+			var wfe = TestEngine.ServiceProvider().GetService<IWorkflowEngine>();
+			var ins = TestEngine.ServiceProvider().GetService<IInstanceStorage>();
+
+			var inst = await TestEngine.SimpleRun(wfId, xaml, prms);
+
+			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+			Thread.Sleep(1100);
+			await wfe.ProcessPending();
+
 			var instAfter = await ins.Load(inst.Id);
 			var res1 = instAfter.Result;
 			Assert.AreEqual("AfterTimer", res1.Get<String>("Result"));

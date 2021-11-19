@@ -41,14 +41,14 @@ namespace A2v10.Workflow.Bpmn
 		{
 			// kill all tokens
 			foreach (var t in _tokens)
-				Parent.KillToken(t);
+				ParentContainer.KillToken(t);
 			_tokens.Clear();
 			if (HasOutgoing)
 			{
 				foreach (var og in Outgoing)
 				{
-					var flow = Parent.FindElement<SequenceFlow>(og.Text);
-					context.Schedule(flow, Parent.NewToken());
+					var flow = ParentContainer.FindElement<SequenceFlow>(og.Text);
+					context.Schedule(flow, ParentContainer.NewToken());
 				}
 			} 
 			return ValueTask.CompletedTask;

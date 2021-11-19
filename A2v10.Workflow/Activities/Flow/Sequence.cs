@@ -75,14 +75,5 @@ namespace A2v10.Workflow
 			else
 				Parent?.TryComplete(context, this);
 		}
-
-		public override void OnEndInit(IActivity parent)
-		{
-			base.OnEndInit(parent);
-			if (Activities == null)
-				return;
-			foreach (var act in Activities)
-				act.OnEndInit(this);
-		}
 	}
 }
