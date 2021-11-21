@@ -38,7 +38,7 @@ namespace A2v10.Workflow
 			var _nativeObjects = _serviceProvider.GetService<IScriptNativeObjectProvider>();
 			_engine.AddNativeObjects(_nativeObjects);
 
-			//Console.WriteLine(script);
+			// Console.WriteLine(script);
 			var func = _engine.Evaluate(script);
 			_scriptData = _engine.Invoke(func).ToObject() as ExpandoObject;
 			if (args != null)
@@ -58,6 +58,8 @@ namespace A2v10.Workflow
 
 		void SetArguments(Object args)
 		{
+			if (args is ExpandoObject eo && eo.IsEmpty())
+				return;
 			var func = GetFunc(_root.Id, "Arguments");
 			func?.Invoke(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
 		}

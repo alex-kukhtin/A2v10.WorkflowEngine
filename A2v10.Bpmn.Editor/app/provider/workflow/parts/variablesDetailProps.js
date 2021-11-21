@@ -13,6 +13,7 @@ const VAR_TYPE_OPTIONS = [
 	{ name: 'Boolean', value: 'Boolean' },
 	{ name: 'Object', value: 'Object' },
 	{ name: 'BigInt', value: 'BigInt' },
+	{ name: 'Date',   value: 'Date' },
 	{ name: 'Guid',   value: 'Guid' }
 ];
 

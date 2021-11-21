@@ -8,7 +8,11 @@ namespace A2v10.Workflow.Bpmn
 	{
 		public override Boolean CanRepeat => false;
 
-		public override DateTime NextTriggerTime(String arg) =>
-			DateTime.UtcNow + TimeSpan.Parse(arg);
+		public override DateTime NextTriggerTime(Object span)
+		{
+			if (span is String strSpan && TimeSpan.TryParse(strSpan, out TimeSpan timeSpan))
+				return DateTime.UtcNow + timeSpan;
+			throw new WorkflowException($"TimeDuration.NextTriggerTime can't convert from {span}");
+		}
 	}
 }

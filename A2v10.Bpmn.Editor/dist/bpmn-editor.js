@@ -3236,6 +3236,9 @@ const VAR_TYPE_OPTIONS = [{
   name: 'BigInt',
   value: 'BigInt'
 }, {
+  name: 'Date',
+  value: 'Date'
+}, {
   name: 'Guid',
   value: 'Guid'
 }];

@@ -65,7 +65,7 @@ namespace A2v10.Workflow
 			{
 				var args = variables.Where(v => v.IsArgument).ToList();
 				if (args.Count != 0)
-					mtds.Add($"Arguments: (_arg_) => {{ {String.Join("; ", args.Select(x => $"{x.Name} = {x.Modifier}_arg_.{x.Name}"))}; }}");
+					mtds.Add($"Arguments: (_arg_) => {{ {String.Join("; ", args.Select(x => $"{x.Name} = {x.ToType($"_arg_.{x.Name}")}"))}; }}");
 			}
 			// result - Out, InOut
 			{

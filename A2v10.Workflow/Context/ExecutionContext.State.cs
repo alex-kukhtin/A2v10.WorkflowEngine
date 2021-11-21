@@ -18,7 +18,7 @@ namespace A2v10.Workflow
 			{
 				if (activity is IStorable storable)
 				{
-					ActivityStorage storage = new(StorageState.Storing, _activities);
+					ActivityStorage storage = new(StorageState.Storing);
 					if (activity is not ICanComplete canComplete || !canComplete.IsComplete)
 						storable.Store(storage);
 					if (storage.Value.IsNotEmpty())
@@ -40,7 +40,7 @@ namespace A2v10.Workflow
 				{
 					if (activity is IStorable storable)
 					{
-						var storage = new ActivityStorage(StorageState.Loading, _activities, state.Get<ExpandoObject>(refer));
+						var storage = new ActivityStorage(StorageState.Loading, state.Get<ExpandoObject>(refer));
 						storable.Restore(storage);
 					}
 				}

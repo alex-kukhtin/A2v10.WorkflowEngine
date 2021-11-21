@@ -8,8 +8,6 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
-
 	public class Flowchart : Activity, IScoped
 	{
 		public List<FlowNode> Nodes { get; set; }

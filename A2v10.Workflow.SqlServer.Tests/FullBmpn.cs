@@ -92,5 +92,55 @@ namespace A2v10.Workflow.SqlServer.Tests
 			await AssertModel("Complete", "3end");
 
 		}
+
+
+		[TestMethod]
+		public async Task DateTimerFromDb()
+		{
+			var id = "DateTimer1";
+			await TestEngine.PrepareDatabase(id);
+
+			var storage = _serviceProvider.GetService<IWorkflowStorage>();
+			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
+			var engine = _serviceProvider.GetService<IWorkflowEngine>();
+			var dbContext = _serviceProvider.GetService<IDbContext>();
+
+
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\timerfromdb.bpmn");
+			var format = "text/xml";
+
+			await catalog.SaveAsync(new WorkflowDescriptor()
+			{
+				Id = id,
+				Body = xaml,
+				Format = format
+			});
+
+			var ident = await storage.PublishAsync(catalog, id);
+
+			Assert.AreEqual(1, ident.Version);
+
+			var inst = await engine.CreateAsync(ident);
+			inst = await engine.RunAsync(inst);
+
+			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+			var res = inst.Result;
+			Assert.AreEqual("Start", res.Get<String>("Result"));
+
+			Thread.Sleep(1100);
+			await engine.ProcessPending();
+
+			var mdPrms = new ExpandoObject()
+			{
+				{"Id", inst.Id }
+			};
+
+			var instModel = await dbContext.LoadModelAsync(null, "a2wf_test.[Instance.Load.Unlocked]", mdPrms);
+			Assert.AreEqual("Complete", instModel.Eval<String>("Instance.ExecutionStatus"));
+			String state = instModel.Eval<String>("Instance.State");
+			var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state);
+			String strVal = stateObj.Eval<String>("Variables.Process_1.Result");
+			Assert.AreEqual("StartEnd", strVal);
+		}
 	}
 }

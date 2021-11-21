@@ -258,5 +258,31 @@ return __fmap__;
 			var arr = func.Invoke(null, new JsValue[] { JsValue.FromObject(eng, arg) });
 			Assert.AreEqual("[\"f\",\"2\",\"z\"]", arr.ToString());
 		}
+
+		[TestMethod]
+		public void ScriptDates()
+		{
+			var eng = new Engine(opts =>
+			{
+				opts.Strict(true);
+			});
+
+			var now = DateTime.UtcNow;
+			var unixtime = new DateTimeOffset(now).ToUnixTimeMilliseconds();
+
+			var arg = new ExpandoObject()
+			{
+				{"date", now },
+				{"ms", unixtime }
+			};
+
+			var obj = eng.Evaluate("return function test(arg) { let d = new Date(arg.date); let x = new Date(arg.ms); return {d: d, x: x}; }").ToObject();
+			var func = obj as Func<JsValue, JsValue[], JsValue>;
+			var res = func.Invoke(null, new JsValue[] { JsValue.FromObject(eng, arg) }).ToObject() as ExpandoObject;
+			var dt = res.Get<DateTime>("d");
+			var xt = res.Get<DateTime>("x");
+			Assert.AreEqual(0, (Int32) (dt - now).TotalSeconds);
+			Assert.AreEqual(0, (Int32) (xt - now).TotalSeconds);
+		}
 	}
 }

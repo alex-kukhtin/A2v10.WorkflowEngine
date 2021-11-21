@@ -37,15 +37,21 @@ namespace A2v10.Workflow.Tests
 
 			var wfe = sp.GetService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
+			var now = DateTime.UtcNow;
 			inst = await wfe.RunAsync(inst, new ExpandoObject() {
 				{"X", "5" },
 				{"S",  8 },
-				{ "B", "true" }
+				{ "B", "true" },
+				{ "I", 77 },
+				{ "D", now }
 			});
 			var res0 = inst.Result;
 			Assert.AreEqual(10, res0.Get<Double>("X"));
 			Assert.AreEqual("88", res0.Get<String>("S"));
 			Assert.AreEqual(false, res0.Get<Boolean>("B"));
+			Assert.AreEqual(77, res0.Get<Int64>("I"));
+			var rdDate = res0.Get<DateTime>("D");
+			Assert.AreEqual(0, (Int32)(rdDate - now).TotalMilliseconds);
 			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
 
@@ -77,6 +83,11 @@ namespace A2v10.Workflow.Tests
 
 			var res0 = inst.Result;
 			Assert.AreEqual(true, res0.Get<Boolean>("B"));
+			Assert.AreEqual(106, res0.Get<Int64>("I"));
+			Assert.AreEqual("S8", res0.Get<String>("S"));
+			Assert.AreEqual(7 + 5, res0.Get<Double>("X"));
+			var rDate = res0.Get<DateTime>("D");
+			Assert.AreEqual(0, (Int32) (new DateTime(2008, 9, 22, 14, 01, 54, DateTimeKind.Utc) - rDate).TotalMilliseconds);
 			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
 	}

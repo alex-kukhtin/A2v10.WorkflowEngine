@@ -20,9 +20,9 @@ namespace A2v10.Workflow.Bpmn
 		{
 			if (TimeBase == null)
 				throw new WorkflowException($"TimerEventDefinition. There is no trigger time for '{Id}'");
-			String timeSpan = TimeBase.Expression;
+			Object timeSpan = TimeBase.Expression;
 			if (TimeBase.Expression.IsVariable())
-				timeSpan = context.Evaluate<String>(Id, TimeBaseEvaluate);
+				timeSpan = context.Evaluate<Object>(Id, TimeBaseEvaluate);
 			return TimeBase.NextTriggerTime(timeSpan);
 		}
 

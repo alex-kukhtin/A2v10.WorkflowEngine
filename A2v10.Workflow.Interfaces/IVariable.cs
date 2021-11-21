@@ -10,6 +10,7 @@ namespace A2v10.Workflow.Interfaces
 		Number,
 		Boolean,
 		Object,
+		Date,
 		BigInt,
 		Guid
 	}
@@ -31,10 +32,10 @@ namespace A2v10.Workflow.Interfaces
 
 		String Name { get; }
 		String Value { get; }
-		String Modifier { get; }
 
 		public Boolean IsArgument { get; }
 		public Boolean IsResult { get; }
+		public String ToType(String name);
 
 		String Assignment();
 	}

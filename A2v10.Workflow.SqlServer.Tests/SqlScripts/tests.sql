@@ -51,5 +51,10 @@ begin
 	where i.Id=@Id;
 end
 go
-
-
+------------------------------------------------
+create or alter procedure a2wf_test.GetTimer
+as
+begin
+	select [Model!TModel!Object] = null, [NextDate!!Utc] = dateadd(second, 1, getutcdate());
+end
+go

@@ -114,5 +114,34 @@ namespace A2v10.Workflow.Tests
 			Assert.AreEqual("AfterTimer", res1.Get<String>("Result"));
 			Assert.AreEqual(WorkflowExecutionStatus.Complete, instAfter.ExecutionStatus);
 		}
+
+		[TestMethod]
+		public async Task IntermediageTimerDate()
+		{
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\intermediate_timer_date.bpmn");
+
+			String wfId = "Intermediate";
+
+			var now = DateTime.UtcNow + TimeSpan.FromSeconds(1);
+			var prms = new ExpandoObject()
+			{
+				{ "Time", now }
+			};
+
+			var wfe = TestEngine.ServiceProvider().GetService<IWorkflowEngine>();
+			var ins = TestEngine.ServiceProvider().GetService<IInstanceStorage>();
+
+			var inst = await TestEngine.SimpleRun(wfId, xaml, prms);
+
+			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+			Thread.Sleep(1100);
+			await wfe.ProcessPending();
+
+			var instAfter = await ins.Load(inst.Id);
+			var res1 = instAfter.Result;
+			Assert.AreEqual("AfterTimer", res1.Get<String>("Result"));
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, instAfter.ExecutionStatus);
+		}
 	}
 }

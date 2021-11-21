@@ -15,16 +15,20 @@ namespace A2v10.Workflow
 		public Boolean External { get; set; }
 		public String Value { get; set; }
 
-		public String Modifier => Type switch {
-			VariableType.Number or VariableType.BigInt => "+",
-			VariableType.String => "''+",
-			VariableType.Boolean => "!!",
-			_ => ""
-		};
-
 		public Boolean IsArgument => Dir == VariableDirection.In || Dir == VariableDirection.InOut;
 		public Boolean IsResult => Dir == VariableDirection.Out || Dir == VariableDirection.InOut;
 
+		public String ToType(String name)
+		{
+			return Type switch
+			{
+				VariableType.Number or VariableType.BigInt => $"+{name}",
+				VariableType.String => $"''+{name}",
+				VariableType.Boolean => $"!!{name}",
+				VariableType.Date => $"new Date({name})",
+				_ => name
+			};
+		}
 
 		public String Assignment()
 		{
@@ -52,6 +56,10 @@ namespace A2v10.Workflow
 					if (Double.TryParse(Value, out Double dblVal))
 						return dblVal.ToString(CultureInfo.InvariantCulture);
 					throw new WorkflowException($"Unable to convert '{Value}' to Number");
+				case VariableType.Date:
+					if (DateTime.TryParse(Value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime dtVal))
+						return $"new Date({new DateTimeOffset(dtVal).ToUnixTimeMilliseconds()})";
+					throw new WorkflowException($"Unable to convert '{Value}' to Date");
 				case VariableType.Boolean:
 					if (Value == "true" || Value == "false")
 						return Value;

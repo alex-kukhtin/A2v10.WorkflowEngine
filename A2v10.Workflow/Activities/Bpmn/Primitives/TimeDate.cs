@@ -1,6 +1,5 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using A2v10.Workflow.Interfaces;
 using System;
 
 namespace A2v10.Workflow.Bpmn
@@ -9,7 +8,11 @@ namespace A2v10.Workflow.Bpmn
 	{
 		public override Boolean CanRepeat => false;
 
-		public override DateTime NextTriggerTime(String arg) 
-			=> throw new NotImplementedException("TimeDate.NextTriggerTime");
+		public override DateTime NextTriggerTime(Object arg)
+		{
+			if (arg is DateTime dateTime)
+				return dateTime;
+			throw new WorkflowException($"TimeDate.NextTriggerTime can't convert from {arg}");
+		}
 	}
 }

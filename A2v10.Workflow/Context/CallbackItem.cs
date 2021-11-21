@@ -10,7 +10,6 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	using ExecutingAction = Func<IExecutionContext, IActivity, ValueTask>;
 	using ResumeAction = Func<IExecutionContext, String, Object, ValueTask>;
 	using EventAction = Func<IExecutionContext, IWorkflowEvent, Object, ValueTask>;
 
@@ -78,12 +77,6 @@ namespace A2v10.Workflow
 				}
 			}
 			throw new WorkflowException($"Method '{CallbackName}' for activity '{Ref}' not found");
-		}
-
-		public ExecutingAction ToCallback(IActivity activity)
-		{
-			var mi = GetMethod(activity);
-			return Delegate.CreateDelegate(typeof(ExecutingAction), activity, mi) as ExecutingAction;
 		}
 
 		public ResumeAction ToBookmark(IActivity activity)
