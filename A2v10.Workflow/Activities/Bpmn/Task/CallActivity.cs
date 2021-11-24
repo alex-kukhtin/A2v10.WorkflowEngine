@@ -4,5 +4,8 @@ namespace A2v10.Workflow.Bpmn
 {
 	public class CallActivity : BpmnTask
 	{
+		public string CalledElement { get; set; }
+
+		protected override bool CanInduceIdle => true;
 	}
 }
