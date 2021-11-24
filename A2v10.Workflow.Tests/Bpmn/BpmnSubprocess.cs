@@ -111,5 +111,22 @@ namespace A2v10.Workflow.Tests
 				Assert.AreEqual("start|startSub|task1|task2|endSub2|endSub1|startSub|task1|task2|endSub2|endSub1|startSub|task1|task2|endSub2|endSub1|task3|end", String.Join('|', log1));
 			}
 		}
+
+		[TestMethod]
+		public async Task Nested()
+		{
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\subprocess\\subprocess_nested.bpmn");
+
+			String wfId = "SimpleSub";
+			var inst = await TestEngine.SimpleRun(wfId, xaml);
+
+			var res0 = inst.Result;
+			Assert.AreEqual(25, res0.Get<Double>("X"));
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+			var log = res0.Get<Object[]>("Log");
+			Assert.AreEqual(8, log.Length);
+			Assert.AreEqual("start|startSub|task|startNestedSub|nestedTask|endNestedSub|endSub|end", String.Join('|', log));
+		}
+
 	}
 }
