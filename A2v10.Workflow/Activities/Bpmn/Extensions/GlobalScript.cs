@@ -10,6 +10,6 @@ namespace A2v10.Workflow
 	[ContentProperty("Text")]
 	public class GlobalScript : BaseElement
 	{
-		public String Text { get; init; }
+		public String? Text { get; init; }
 	}
 }

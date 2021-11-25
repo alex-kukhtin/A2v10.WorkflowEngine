@@ -27,7 +27,7 @@ namespace A2v10.Workflow.Tests
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
 			String wfId = "ArgTypes";
-			await wfc.SaveAsync(new WorkflowDescriptor()
+			await wfc.SaveAsync(new WorkflowDescriptor(Id: wfId, Body: xaml, Format:"xaml")
 			{
 				Id = wfId,
 				Body = xaml,

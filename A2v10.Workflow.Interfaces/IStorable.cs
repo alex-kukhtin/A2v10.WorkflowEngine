@@ -1,10 +1,9 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-namespace A2v10.Workflow.Interfaces
+namespace A2v10.Workflow.Interfaces;
+public interface IStorable
 {
-	public interface IStorable
-	{
-		void Store(IActivityStorage storage);
-		void Restore(IActivityStorage storage);
-	}
+	void Store(IActivityStorage storage);
+	void Restore(IActivityStorage storage);
 }
+

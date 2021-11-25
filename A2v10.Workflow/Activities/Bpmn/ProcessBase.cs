@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 using A2v10.Workflow.Interfaces;
 
@@ -12,7 +11,7 @@ namespace A2v10.Workflow.Bpmn
 	public abstract class ProcessBase : FlowElement, IContainer, IStorable, IScoped, IScriptable
 	{
 
-		protected IToken _token;
+		protected IToken? _token;
 
 		private readonly List<IToken> _tokens = new();
 
@@ -27,8 +26,8 @@ namespace A2v10.Workflow.Bpmn
 		}
 
 		#region IScoped
-		public List<IVariable> Variables => Elem<ExtensionElements>()?.GetVariables();
-		public String GlobalScript => Elem<ExtensionElements>()?.GetGlobalScript();
+		public List<IVariable>? Variables => Elem<ExtensionElements>()?.GetVariables();
+		public String? GlobalScript => Elem<ExtensionElements>()?.GetGlobalScript();
 
 		public virtual void BuildScript(IScriptBuilder builder)
 		{
@@ -60,7 +59,7 @@ namespace A2v10.Workflow.Bpmn
 			return t;
 		}
 
-		public void KillToken(IToken token)
+		public void KillToken(IToken? token)
 		{
 			if (token != null)
 				_tokens.Remove(token);

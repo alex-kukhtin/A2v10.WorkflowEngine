@@ -10,6 +10,6 @@ namespace A2v10.Workflow
 	[ContentProperty("Items")]
 	public class Variables : BaseElement
 	{
-		public List<Variable> Items { get; init; }
+		public List<Variable>? Items { get; init; }
 	}
 }

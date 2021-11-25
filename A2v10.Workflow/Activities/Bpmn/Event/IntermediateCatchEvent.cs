@@ -9,7 +9,7 @@ namespace A2v10.Workflow.Bpmn
 {
 	public class IntermediateCatchEvent : Event, IStorable
 	{
-		protected IToken _token;
+		protected IToken? _token;
 
 		#region IStorable
 		const String TOKEN = "Token";
@@ -25,7 +25,7 @@ namespace A2v10.Workflow.Bpmn
 		}
 		#endregion
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			_token = token;
 			var eventDef = EventDefinition;
@@ -37,7 +37,7 @@ namespace A2v10.Workflow.Bpmn
 		}
 
 		[StoreName("OnTrigger")]
-		public ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object result)
+		public ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object? result)
 		{
 			SetComplete(context);
 			ScheduleOutgoing(context, _token);

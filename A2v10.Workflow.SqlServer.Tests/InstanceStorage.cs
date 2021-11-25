@@ -37,12 +37,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");
 			var format = "text/xml";
 
-			await catalog.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = id,
-				Body = xaml,
-				Format = format
-			});
+			await catalog.SaveAsync(new WorkflowDescriptor(id, xaml, format));
 
 			var ident = await storage.PublishAsync(catalog, id);
 
@@ -51,6 +46,8 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var inst = await engine.CreateAsync(ident);
 
 			inst = await engine.RunAsync(inst);
+
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
 	}
 }

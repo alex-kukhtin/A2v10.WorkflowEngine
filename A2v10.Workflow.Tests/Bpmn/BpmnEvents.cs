@@ -28,12 +28,7 @@ namespace A2v10.Workflow.Tests
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
 			String wfId = "BoundarySimple";
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = wfId,
-				Body = xaml,
-				Format = "xaml"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor(Id: wfId, Body: xaml, Format: "xaml"));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
 			var wfe = sp.GetService<IWorkflowEngine>();
@@ -66,12 +61,7 @@ namespace A2v10.Workflow.Tests
 			var ins = sp.GetService<IInstanceStorage>();
 
 			String wfId = "IntermediateSimple";
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = wfId,
-				Body = xaml,
-				Format = "xaml"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor(wfId, xaml));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
 			var wfe = sp.GetService<IWorkflowEngine>();

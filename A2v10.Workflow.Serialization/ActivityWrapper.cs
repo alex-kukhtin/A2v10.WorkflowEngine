@@ -6,6 +6,6 @@ namespace A2v10.Workflow.Serialization
 {
 	public record ActivityWrapper
 	{
-		public IActivity Root { get; init; }
+		public IActivity? Root { get; init; }
 	}
 }

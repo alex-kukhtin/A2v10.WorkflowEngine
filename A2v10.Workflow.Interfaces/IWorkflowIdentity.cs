@@ -1,12 +1,9 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
-
-namespace A2v10.Workflow.Interfaces
+namespace A2v10.Workflow.Interfaces;
+public interface IWorkflowIdentity
 {
-	public interface IWorkflowIdentity
-	{
-		String Id { get; }
-		Int32 Version { get; }
-	}
+	String Id { get; }
+	Int32 Version { get; }
 }
+

@@ -11,8 +11,8 @@ namespace A2v10.Workflow
 		public virtual Boolean IsStart => false;
 		public virtual Boolean IsFinal => false;
 
-		public String Next { get; set; }
+		public String? Next { get; set; }
 
-		internal String NextState { get; set; }
+		internal String? NextState { get; set; }
 	}
 }

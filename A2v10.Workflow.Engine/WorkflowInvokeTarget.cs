@@ -40,11 +40,7 @@ namespace A2v10.WorkflowEngine
 		{
 			if (String.IsNullOrEmpty(workflowId))
 				throw new WorkflowException($"Start. WorkflowId is required");
-			var res = await _engine.CreateAsync(new WorkflowIdentity()
-			{
-				Id = workflowId,
-				Version = version
-			});
+			var res = await _engine.CreateAsync(new WorkflowIdentity(workflowId, version));
 
 			return new ExpandoObject()
 			{
@@ -87,12 +83,7 @@ namespace A2v10.WorkflowEngine
 
 		public async Task<ExpandoObject> SaveAsync(String workflowId, String format, String body)
 		{
-			await _catalog.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = workflowId,
-				Format = format,
-				Body = body
-			});
+			await _catalog.SaveAsync(new WorkflowDescriptor(Id: workflowId, Body: body, Format: format));
 			return new ExpandoObject();
 		}
 

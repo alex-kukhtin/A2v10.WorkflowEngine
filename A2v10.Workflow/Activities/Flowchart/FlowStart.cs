@@ -11,7 +11,7 @@ namespace A2v10.Workflow
 	{
 		public override bool IsStart => true;
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			var node = ParentFlow.FindNode(Next);
 			if (node != null)

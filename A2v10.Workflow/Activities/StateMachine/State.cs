@@ -10,12 +10,12 @@ namespace A2v10.Workflow
 {
 	public class State : StateBase, IStorable
 	{
-		public IActivity Entry { get; set; }
-		public IActivity Exit { get; set; }
+		public IActivity? Entry { get; set; }
+		public IActivity? Exit { get; set; }
 
-		public List<Transition> Transitions { get; set; }
+		public List<Transition>? Transitions { get; set; }
 
-		IToken _token;
+		IToken? _token;
 
 		#region IStorable
 		const String TOKEN = "Token";
@@ -42,7 +42,7 @@ namespace A2v10.Workflow
 				yield return Exit;
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			_token = token;
 			NextState = null;
@@ -61,7 +61,7 @@ namespace A2v10.Workflow
 				if (ScheduleTransitions(context))
 					return;
 			}
-			Parent.TryComplete(context, this);
+			Parent?.TryComplete(context, this);
 		}
 
 		// Schedule all transitions.
@@ -79,7 +79,7 @@ namespace A2v10.Workflow
 			if (Exit != null)
 				context.Schedule(Exit, _token);
 			else
-				Parent.TryComplete(context, this);
+				Parent?.TryComplete(context, this);
 		}
 
 		public void TransitionComplete(IExecutionContext context, Transition transition)
@@ -91,7 +91,7 @@ namespace A2v10.Workflow
 				ScheduleExit(context);
 			}
 			else
-				Parent.TryComplete(context, this);
+				Parent?.TryComplete(context, this);
 		}
 	}
 }

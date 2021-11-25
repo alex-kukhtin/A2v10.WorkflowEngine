@@ -1,9 +1,8 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-namespace A2v10.Workflow.Interfaces
+namespace A2v10.Workflow.Interfaces;
+public interface IScriptable
 {
-	public interface IScriptable
-	{
-		void BuildScript(IScriptBuilder builder);
-	}
+	void BuildScript(IScriptBuilder builder);
 }
+

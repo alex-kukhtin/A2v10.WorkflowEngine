@@ -9,13 +9,13 @@ namespace A2v10.Workflow
 {
 	public class Code : Activity, IScriptable
 	{
-		public String Script { get; set; }
+		public String? Script { get; set; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			if (!String.IsNullOrEmpty(Script))
-				context.Execute(Id, nameof(Script));
-			Parent.TryComplete(context, this);
+				context.Execute(Ref, nameof(Script));
+			Parent?.TryComplete(context, this);
 			return ValueTask.CompletedTask;
 		}
 

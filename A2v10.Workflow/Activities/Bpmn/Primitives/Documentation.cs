@@ -9,6 +9,6 @@ namespace A2v10.Workflow.Bpmn
 	[ContentProperty("Body")]
 	public class Documentation : BaseElement
 	{
-		public String Body { get; set; }
+		public String? Body { get; set; }
 	}
 }

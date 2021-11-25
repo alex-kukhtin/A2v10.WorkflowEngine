@@ -9,7 +9,7 @@ namespace A2v10.Workflow.Bpmn
 {
 	public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoopable
 	{
-		protected IToken _token;
+		protected IToken? _token;
 		protected Int32 _loopCounter;
 
 		public Boolean IsComplete { get; protected set; }
@@ -38,7 +38,7 @@ namespace A2v10.Workflow.Bpmn
 		#endregion
 
 
-		public override async ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override async ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			_token = token;
 			IsComplete = false;
@@ -139,7 +139,7 @@ namespace A2v10.Workflow.Bpmn
 		#endregion
 
 		public String LoopConditionEval => $"{Id}_Loop";
-		public StandardLoopCharacteristics LoopCharacteristics => Children?.OfType<StandardLoopCharacteristics>().FirstOrDefault();
+		public StandardLoopCharacteristics? LoopCharacteristics => Children?.OfType<StandardLoopCharacteristics>().FirstOrDefault();
 		public Boolean TestBefore => LoopCharacteristics?.TestBefore ?? false;
 		public Int32 LoopMaximum => LoopCharacteristics?.LoopMaximum ?? 0;
 

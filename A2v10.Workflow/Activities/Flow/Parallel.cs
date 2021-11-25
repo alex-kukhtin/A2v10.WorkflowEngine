@@ -17,10 +17,10 @@ namespace A2v10.Workflow
 	public class Parallel : Activity, IScoped
 	{
 
-		public List<IVariable> Variables { get; set; }
-		public String GlobalScript { get; set; }
+		public List<IVariable>? Variables { get; set; }
+		public String? GlobalScript { get; set; }
 
-		public List<IActivity> Branches { get; set; }
+		public List<IActivity>? Branches { get; set; }
 
 		public CompletionCondition CompletionCondition { get; set; }
 
@@ -38,7 +38,7 @@ namespace A2v10.Workflow
 					yield return branch;
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			if (Branches == null || Branches.Count == 0)
 			{

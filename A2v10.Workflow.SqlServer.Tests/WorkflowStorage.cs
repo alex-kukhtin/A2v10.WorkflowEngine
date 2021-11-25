@@ -30,12 +30,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 			await TestEngine.PrepareDatabase(id);
 			var storage = _serviceProvider.GetService<IWorkflowStorage>();
 			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
-			await catalog.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = id,
-				Body = "<test></test>",
-				Format = "text/xml"
-			});
+			await catalog.SaveAsync(new WorkflowDescriptor(id, "<test></test>", "text/xml"));
 			var inst = await storage.PublishAsync(catalog, id);
 			Assert.AreEqual(1, inst.Version);
 			Assert.AreEqual(id, inst.Id);
@@ -52,12 +47,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var format = "text/xml";
 			var text2 = "<test><inner/></test>";
 
-			await catalog.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = id,
-				Body = text1,
-				Format = format
-			});
+			await catalog.SaveAsync(new WorkflowDescriptor(Id: id, Body: text1, Format: format));
 			{
 				var inst = await storage.PublishAsync(catalog, id);
 				Assert.AreEqual(1, inst.Version);
@@ -70,24 +60,14 @@ namespace A2v10.Workflow.SqlServer.Tests
 				Assert.AreEqual(id, inst2.Id);
 			}
 
-			await catalog.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = id,
-				Body = text1,
-				Format = format
-			});
+			await catalog.SaveAsync(new WorkflowDescriptor(Id: id, Body: text1, Format: format));
 			{
 				var inst3 = await storage.PublishAsync(catalog, id);
 				Assert.AreEqual(1, inst3.Version);
 				Assert.AreEqual(id, inst3.Id);
 			}
 
-			await catalog.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = id,
-				Body = text2,
-				Format = format
-			});
+			await catalog.SaveAsync(new WorkflowDescriptor(Id: id, Body: text2, Format: format));
 			{
 				var inst4 = await storage.PublishAsync(catalog, id);
 				Assert.AreEqual(2, inst4.Version);

@@ -44,12 +44,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\loop_with_timers.bpmn");
 			var format = "text/xml";
 
-			await catalog.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = id,
-				Body = xaml,
-				Format = format
-			});
+			await catalog.SaveAsync(new WorkflowDescriptor(id, xaml, format));
 
 			var ident = await storage.PublishAsync(catalog, id);
 
@@ -109,12 +104,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\timerfromdb.bpmn");
 			var format = "text/xml";
 
-			await catalog.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = id,
-				Body = xaml,
-				Format = format
-			});
+			await catalog.SaveAsync(new WorkflowDescriptor(id, xaml, format));
 
 			var ident = await storage.PublishAsync(catalog, id);
 

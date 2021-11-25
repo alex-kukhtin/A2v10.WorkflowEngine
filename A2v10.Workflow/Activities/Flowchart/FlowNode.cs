@@ -10,8 +10,8 @@ namespace A2v10.Workflow
 	{
 		public virtual Boolean IsStart => false;
 
-		public String Next { get; set; }
+		public String? Next { get; set; }
 
-		internal Flowchart ParentFlow => Parent as Flowchart;
+		internal Flowchart ParentFlow => Parent as Flowchart ?? throw new ArgumentNullException(nameof(Parent));
 	}
 }

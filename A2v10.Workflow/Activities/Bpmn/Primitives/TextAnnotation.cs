@@ -13,6 +13,6 @@ namespace A2v10.Workflow.Bpmn
 	[ContentProperty("Body")]
 	public class Text : BaseElement
 	{
-		public String Body { get; set; }
+		public String? Body { get; set; }
 	}
 }

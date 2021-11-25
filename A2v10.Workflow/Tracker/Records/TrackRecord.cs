@@ -5,37 +5,36 @@ using System.Dynamic;
 
 using A2v10.Workflow.Interfaces;
 
-namespace A2v10.Workflow.Tracker
+namespace A2v10.Workflow.Tracker;
+public abstract class TrackRecord : ITrackRecord
 {
-	public abstract class TrackRecord : ITrackRecord
+	public DateTime EventTime { get; }
+	public Int32 RecordNumber { get; set; }
+
+	protected String? Message { get; init; }
+
+	public TrackRecord()
 	{
-		public DateTime EventTime { get; }
-		public Int32 RecordNumber { get; set; }
+		EventTime = DateTime.UtcNow;
+	}
 
-		protected String Message { get; init; }
+	public override String? ToString()
+	{
+		return Message;
+	}
 
-		public TrackRecord()
-		{
-			EventTime = DateTime.UtcNow;
-		}
+	public virtual ExpandoObject ToExpandoObject(Int32 no)
+	{
+		return CreateExpando(no);
+	}
 
-		public override String ToString()
-		{
-			return Message;
-		}
-
-		public virtual ExpandoObject ToExpandoObject(Int32 no)
-		{
-			return CreateExpando(no);
-		}
-
-		protected ExpandoObject CreateExpando(Int32 no)
-		{
-			var eo = new ExpandoObject();
-			eo.Set("RecordNumber", no);
-			eo.Set("EventTime", EventTime);
-			eo.Set("Message", Message);
-			return eo;
-		}
+	protected ExpandoObject CreateExpando(Int32 no)
+	{
+		var eo = new ExpandoObject();
+		eo.Set("RecordNumber", no);
+		eo.Set("EventTime", EventTime);
+		eo.Set("Message", Message);
+		return eo;
 	}
 }
+

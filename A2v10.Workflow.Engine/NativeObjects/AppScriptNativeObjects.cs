@@ -11,8 +11,8 @@ namespace A2v10.WorkflowEngine
 	public class AppScriptNativeObjects : IScriptNativeObjectProvider
 	{
 		private readonly NativeType[] _nativeTypes = new NativeType[] {
-			new NativeType() {Name = "Database", Type = typeof(ScriptNativeDatabase)},
-			new NativeType() {Name = "Deferred", Type = typeof(ScriptNativeDeferred)}
+			new NativeType(Name:"Database", Type:typeof(ScriptNativeDatabase)),
+			new NativeType(Name:"Deferred", Type:typeof(ScriptNativeDeferred))
 		};
 
 		public IEnumerable<NativeType> NativeTypes()

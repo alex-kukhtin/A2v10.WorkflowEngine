@@ -10,9 +10,9 @@ namespace A2v10.Workflow
 {
 	public class FlowActivity : FlowNode, IStorable
 	{
-		public IActivity Activity { get; set; }
+		public IActivity? Activity { get; set; }
 
-		IToken _token;
+		IToken? _token;
 
 		#region IStorable
 		const String TOKEN = "Token";
@@ -28,21 +28,29 @@ namespace A2v10.Workflow
 		}
 		#endregion
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
+			if (Activity == null)
+				return ValueTask.CompletedTask;
 			context.Schedule(Activity, token);
 			return ValueTask.CompletedTask;
 		}
 
 		public override IEnumerable<IActivity> EnumChildren()
 		{
-			yield return Activity;
+			if (Activity != null)
+				yield return Activity;
 		}
 
 		public override void TryComplete(IExecutionContext context, IActivity activity)
 		{
 			if (Next != null)
-				context.Schedule(ParentFlow.FindNode(Next), _token);
+			{
+				var nextNode = ParentFlow.FindNode(Next);
+				if (nextNode == null)
+					throw new InvalidOperationException($"Node '{Next}' not found");
+				context.Schedule(nextNode, _token);
+			}
 			else
 				Parent?.TryComplete(context, activity);
 		}

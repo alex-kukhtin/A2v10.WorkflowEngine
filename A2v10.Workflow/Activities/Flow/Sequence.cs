@@ -10,12 +10,12 @@ namespace A2v10.Workflow
 {
 	public class Sequence : Activity, IStorable, IScoped
 	{
-		public List<IActivity> Activities { get; set; }
-		public List<IVariable> Variables { get; set; }
-		public String GlobalScript { get; set; }
+		public List<IActivity>? Activities { get; set; }
+		public List<IVariable>? Variables { get; set; }
+		public String? GlobalScript { get; set; }
 
 		Int32 _next;
-		IToken _token;
+		IToken? _token;
 
 		#region IStorable
 		const String NEXT = "Next";
@@ -51,7 +51,7 @@ namespace A2v10.Workflow
 			}
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			_token = token;
 			if (Activities == null || Activities.Count == 0)

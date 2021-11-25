@@ -44,15 +44,10 @@ namespace A2v10.Workflow.Tests
 			if (swf == null)
 				throw new KeyNotFoundException($"Workflow '{identity}' not found");
 			var root = _serializer.DeserializeActitity(swf.Text, swf.Format);
-			var wf = new Workflow()
-			{
-				Identity = new WorkflowIdentity()
-				{
-					Id = identity.Id,
-					Version = v
-				},
-				Root = root
-			};
+			var wf = new Workflow(
+				new WorkflowIdentity(identity.Id, v),
+				root
+			);
 			return Task.FromResult<IWorkflow>(wf);
 		}
 
@@ -84,11 +79,7 @@ namespace A2v10.Workflow.Tests
 				Format = format
 			};
 			_storage.Add(swf);
-			var ident = new WorkflowIdentity()
-			{
-				Id = id,
-				Version = v
-			};
+			var ident = new WorkflowIdentity(id,v);
 			return Task.FromResult<IWorkflowIdentity>(ident);
 		}
 	}

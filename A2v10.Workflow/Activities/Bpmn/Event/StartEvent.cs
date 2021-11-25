@@ -11,11 +11,12 @@ namespace A2v10.Workflow.Bpmn
 	{
 		public override Boolean IsStart => true;
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			if (!String.IsNullOrEmpty(Script))
 				context.Execute(Id, nameof(Script));
-
+			if (Outgoing == null)
+				return ValueTask.CompletedTask;
 			foreach (var flow in Outgoing)
 			{
 				var flowElem = ParentContainer.FindElement<SequenceFlow>(flow.Text);

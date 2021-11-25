@@ -10,13 +10,13 @@ namespace A2v10.Workflow
 {
 	public class StateMachine : Activity, IStorable, IScoped
 	{
-		public List<IVariable> Variables { get; set; }
-		public String GlobalScript { get; set; }
+		public List<IVariable>? Variables { get; set; }
+		public String? GlobalScript { get; set; }
 
-		public List<StateBase> States { get; set; }
+		public List<StateBase>? States { get; set; }
 
-		String _currentState; // for debug only
-		IToken _token;
+		String? _currentState; // for debug only
+		IToken? _token;
 
 		#region IStorable
 		const String CURRENT_STATE = "CurrentState";
@@ -41,9 +41,9 @@ namespace A2v10.Workflow
 					yield return state;
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
-			var startNode = States.Find(s => s.IsStart);
+			var startNode = States?.Find(s => s.IsStart);
 			if (startNode == null)
 				throw new WorkflowException("Flowchart. Start node not found");
 			_currentState = startNode.Id;
@@ -55,7 +55,7 @@ namespace A2v10.Workflow
 		{
 			if (activity is not StateBase stateBase)
 				throw new InvalidProgramException("Invalid cast 'StateBase'");
-			var nextState = States.Find(st => st.Id == stateBase.NextState);
+			var nextState = States?.Find(st => st.Id == stateBase.NextState);
 			if (nextState != null)
 			{
 				_currentState = nextState.NextState;

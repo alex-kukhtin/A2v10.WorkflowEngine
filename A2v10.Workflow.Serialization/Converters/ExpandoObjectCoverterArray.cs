@@ -8,72 +8,74 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace A2v10.Workflow.Serialization
+namespace A2v10.Workflow.Serialization;
+public class ExpandoObjectConverterArray : ExpandoObjectConverter
 {
-	public class ExpandoObjectConverterArray : ExpandoObjectConverter
+	public override Object? ReadJson(JsonReader reader, Type objectType, Object? existingValue, JsonSerializer serializer)
 	{
-		public override Object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-		{
-			return ReadValueArray(reader);
-		}
+		return ReadValueArray(reader);
+	}
 
-		private Object ReadValueArray(JsonReader reader)
+	private Object? ReadValueArray(JsonReader reader)
+	{
+		return reader.TokenType switch
 		{
-			return reader.TokenType switch
+			JsonToken.StartObject => ReadObjectArray(reader),
+			JsonToken.StartArray => ReadListArray(reader),
+			_ => reader.Value,
+		};
+	}
+
+	private Object ReadListArray(JsonReader reader)
+	{
+		IList<Object> list = new List<Object>();
+
+		while (reader.Read())
+		{
+			switch (reader.TokenType)
 			{
-				JsonToken.StartObject => ReadObjectArray(reader),
-				JsonToken.StartArray => ReadListArray(reader),
-				_ => reader.Value,
-			};
-		}
-
-		private Object ReadListArray(JsonReader reader)
-		{
-			IList<Object> list = new List<Object>();
-
-			while (reader.Read())
-			{
-				switch (reader.TokenType)
-				{
-					case JsonToken.Comment:
-						break;
-					default:
-						Object v = ReadValueArray(reader);
+				case JsonToken.Comment:
+					break;
+				default:
+					Object? v = ReadValueArray(reader);
+					if (v != null)
 						list.Add(v);
-						break;
-					case JsonToken.EndArray:
-						return list.ToArray();
-				}
+					break;
+				case JsonToken.EndArray:
+					return list.ToArray();
 			}
-
-			throw new JsonSerializationException("Unexpected end when reading ExpandoObject.");
 		}
 
-		private Object ReadObjectArray(JsonReader reader)
+		throw new JsonSerializationException("Unexpected end when reading ExpandoObject.");
+	}
+
+	private Object ReadObjectArray(JsonReader reader)
+	{
+		IDictionary<String, Object?> expandoObject = new ExpandoObject();
+
+		while (reader.Read())
 		{
-			IDictionary<String, Object> expandoObject = new ExpandoObject();
-
-			while (reader.Read())
+			switch (reader.TokenType)
 			{
-				switch (reader.TokenType)
-				{
-					case JsonToken.PropertyName:
-						String propertyName = reader.Value!.ToString();
+				case JsonToken.PropertyName:
+					String? propertyName = reader.Value!.ToString();
+					if (propertyName == null)
+						throw new JsonSerializationException("PropertyName not set");
 
-						if (!reader.Read())
-							throw new JsonSerializationException("Unexpected end when reading ExpandoObject.");
+					if (!reader.Read())
+						throw new JsonSerializationException("Unexpected end when reading ExpandoObject.");
 
-						Object v = ReadValueArray(reader);
-						expandoObject[propertyName] = v;
-						break;
-					case JsonToken.Comment:
-						break;
-					case JsonToken.EndObject:
-						return expandoObject;
-				}
+					Object? v = ReadValueArray(reader);
+					expandoObject[propertyName] = v;
+					break;
+				case JsonToken.Comment:
+					break;
+				case JsonToken.EndObject:
+					return expandoObject;
 			}
-
-			throw new JsonSerializationException("Unexpected end when reading ExpandoObject.");
 		}
+
+		throw new JsonSerializationException("Unexpected end when reading ExpandoObject.");
 	}
 }
+

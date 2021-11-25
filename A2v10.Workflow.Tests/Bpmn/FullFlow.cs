@@ -26,12 +26,7 @@ namespace A2v10.Workflow.Tests
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
 			String wfId = "Parallel1";
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = wfId,
-				Body = xaml,
-				Format = "xaml"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor(Id: wfId, Body: xaml, Format: "xaml"));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
 			var wfe = sp.GetService<IWorkflowEngine>();
@@ -53,12 +48,7 @@ namespace A2v10.Workflow.Tests
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
 			String wfId = "Wait1";
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = wfId,
-				Body = xaml,
-				Format = "xaml"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor(wfId, xaml, "xaml"));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
 			var wfe = sp.GetService<IWorkflowEngine>();
@@ -85,12 +75,8 @@ namespace A2v10.Workflow.Tests
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
 			String wfId = "Exclusive_1";
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = wfId,
-				Body = xaml,
-				Format = "xaml"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor(wfId, xaml, "xaml"));
+
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
 			var wfe = sp.GetService<IWorkflowEngine>();
@@ -117,12 +103,7 @@ namespace A2v10.Workflow.Tests
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
 			String wfId = "Wait1WithCounter";
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = wfId,
-				Body = xaml,
-				Format = "xaml"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor(wfId, xaml, "xaml"));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
 			var wfe = sp.GetService<IWorkflowEngine>();

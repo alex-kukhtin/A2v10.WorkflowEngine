@@ -53,7 +53,7 @@ namespace A2v10.Workflow.Tests.Simple
 			var root = new Parallel()
 			{
 				Id = "Ref0",
-				Branches = new List<IActivity>{
+				Branches = new List<IActivity> {
 					new Code() {Id="Ref1", Script="console.log('ref1')"},
 					new Code() {Id="Ref2", Script="console.log('ref2')"},
 					new Code() {Id="Ref3", Script="console.log('ref3')"},

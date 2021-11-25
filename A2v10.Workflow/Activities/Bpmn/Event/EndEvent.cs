@@ -9,13 +9,13 @@ namespace A2v10.Workflow.Bpmn
 {
 	public class EndEvent : Event
 	{
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			if (!String.IsNullOrEmpty(Script))
 				context.Execute(Id, nameof(Script));
 
 			ParentContainer.KillToken(token);
-			Parent.TryComplete(context, this);
+			Parent?.TryComplete(context, this);
 			return ValueTask.CompletedTask;
 		}
 	}

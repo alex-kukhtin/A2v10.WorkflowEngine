@@ -11,10 +11,10 @@ namespace A2v10.Workflow
 	{
 		public override Boolean IsStart => true;
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			NextState = Next;
-			Parent.TryComplete(context, this);
+			Parent?.TryComplete(context, this);
 			return ValueTask.CompletedTask;
 		}
 	}

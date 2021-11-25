@@ -18,25 +18,26 @@ namespace A2v10.Workflow
 	public class ScriptEngine
 	{
 		private readonly Engine _engine;
-		private readonly ExpandoObject _scriptData;
+		private readonly ExpandoObject? _scriptData;
 		private readonly IActivity _root;
 		private readonly IServiceProvider _serviceProvider;
 		private readonly ITracker _tracker;
 		private readonly IDeferredTarget _deferredTarget;
 
-		private IDictionary<String, Object> ScriptData => _scriptData;
+		private IDictionary<String, Object?> ScriptData => _scriptData ?? throw new InvalidProgramException("ScriptData is null");
 
-		public ScriptEngine(IServiceProvider serviceProvider, ITracker tracker, IActivity root, String script, Object args = null)
+		public ScriptEngine(IServiceProvider serviceProvider, ITracker tracker, IActivity root, String script, Object? args = null)
 		{
 			_root = root;
 			_serviceProvider = serviceProvider;
 			_tracker = tracker;
 			_engine = new Engine(EngineOptions);
-			_deferredTarget = _serviceProvider.GetService<IDeferredTarget>();
+			_deferredTarget = _serviceProvider.GetService<IDeferredTarget>() ?? throw new InvalidProgramException(nameof(IDeferredTarget));
 
 
-			var _nativeObjects = _serviceProvider.GetService<IScriptNativeObjectProvider>();
-			_engine.AddNativeObjects(_nativeObjects);
+			var nativeObjects = _serviceProvider.GetService<IScriptNativeObjectProvider>();
+			if (nativeObjects != null)
+				_engine.AddNativeObjects(nativeObjects);
 
 			// Console.WriteLine(script);
 			var func = _engine.Evaluate(script);
@@ -70,18 +71,18 @@ namespace A2v10.Workflow
 			func?.Invoke(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
 		}
 
-		public ExpandoObject GetResult()
+		public ExpandoObject? GetResult()
 		{
 			var func = GetFunc(_root.Id, "Result");
 			return func?.Invoke(JsValue.Undefined, null).ToObject() as ExpandoObject;
 		}
 
-		public T Evaluate<T>(String refer, String name)
+		public T? Evaluate<T>(String refer, String name)
 		{
 			_deferredTarget.Refer = refer;
 			//_tracker.Track(new ScriptTrackRecord(ScriptTrackAction.Evaluate, refer, name));
 			var func = GetFunc(refer, name);
-			T res = default;
+			T? res = default;
 			if (func == null)
 				res = default;
 			else
@@ -96,14 +97,14 @@ namespace A2v10.Workflow
 			return res;
 		}
 
-		private Func<JsValue, JsValue[], JsValue> GetFunc(String refer, String name)
+		private Func<JsValue, JsValue[]?, JsValue>? GetFunc(String refer, String name)
 		{
-			if (ScriptData.TryGetValue(refer, out Object activityData))
+			if (ScriptData.TryGetValue(refer, out Object? activityData))
 			{
 				if (activityData is IDictionary<String, Object> expData)
 				{
-					if (expData.TryGetValue(name, out Object objVal))
-						return (Func<JsValue, JsValue[], JsValue>)objVal;
+					if (expData.TryGetValue(name, out Object? objVal))
+						return (Func<JsValue, JsValue[]?, JsValue>)objVal;
 				}
 			}
 			return null;
@@ -119,7 +120,7 @@ namespace A2v10.Workflow
 			func(JsValue.Undefined, null);
 		}
 
-		public void ExecuteResult(String refer, String name, Object result)
+		public void ExecuteResult(String refer, String name, Object? result)
 		{
 			_deferredTarget.Refer = refer;
 			_tracker.Track(new ScriptTrackRecord(ScriptTrackAction.ExecuteResult, refer, name, result));

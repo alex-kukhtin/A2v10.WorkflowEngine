@@ -51,15 +51,17 @@ namespace A2v10.Workflow.Serialization
 		};
 
 
-		public ExpandoObject Deserialize(String text)
+		public ExpandoObject? Deserialize(String? text)
 		{
 			if (text == null)
 				return null;
 			return JsonConvert.DeserializeObject<ExpandoObject>(text, _jsonSettings);
 		}
 
-		public String Serialize(ExpandoObject obj)
+		public String? Serialize(ExpandoObject? obj)
 		{
+			if (obj == null)
+				return null;
 			return JsonConvert.SerializeObject(obj, _jsonSettings);
 		}
 
@@ -67,11 +69,13 @@ namespace A2v10.Workflow.Serialization
 		{
 			var activitiy = format switch
 			{
-				"json" => JsonConvert.DeserializeObject<ActivityWrapper>(text, _actititySettings).Root,
+				"json" => JsonConvert.DeserializeObject<ActivityWrapper>(text, _actititySettings)?.Root,
 				"xaml" => DeserializeXaml(text),
 				"text/xml" => DeserializeXaml(text),
 				_ => throw new NotImplementedException($"Deserialize for format '{format}' is not supported"),
 			};
+			if (activitiy == null)
+				throw new InvalidOperationException("DeserializeActitity failed");
 			activitiy.OnEndInit(null);
 			return activitiy;
 		}
@@ -86,7 +90,7 @@ namespace A2v10.Workflow.Serialization
 			};
 		}
 
-		IActivity DeserializeXaml(String text)
+		IActivity? DeserializeXaml(String text)
 		{
 			var obj = _xamlCodeProvider.ParseXml(text);
 			return obj switch

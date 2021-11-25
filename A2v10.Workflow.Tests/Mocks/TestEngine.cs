@@ -37,6 +37,7 @@ namespace A2v10.Workflow.Tests
 			collection.AddScoped<IWorkflowEngine, WorkflowEngine>();
 			collection.AddScoped<ITracker, ConsoleTracker>();
 			collection.AddScoped<IDeferredTarget, WorkflowDeferred>();
+			collection.AddScoped<IScriptNativeObjectProvider, ScriptNativeObjects>();
 
 			_provider = collection.BuildServiceProvider();
 
@@ -50,12 +51,7 @@ namespace A2v10.Workflow.Tests
 			var wfs = sp.GetService<IWorkflowStorage>();
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = id,
-				Body = text,
-				Format = "xaml"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor(id, text));
 			var ident = await wfs.PublishAsync(wfc, id);
 
 			var wfe = sp.GetService<IWorkflowEngine>();

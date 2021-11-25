@@ -6,11 +6,11 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow
 {
-	public class TraverseArg
+	public record TraverseArg
 	{
-		public Action<IActivity> Start;
-		public Action<IActivity> Action;
-		public Action<IActivity> End;
+		public Action<IActivity>? Start;
+		public Action<IActivity>? Action;
+		public Action<IActivity>? End;
 	}
 
 	public static class ActivityExtensions

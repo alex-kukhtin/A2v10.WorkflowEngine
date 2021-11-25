@@ -7,30 +7,30 @@ using System.Threading.Tasks;
 using A2v10.System.Xaml;
 using A2v10.Workflow.Interfaces;
 
-namespace A2v10.Workflow.Bpmn
+namespace A2v10.Workflow.Bpmn;
+
+[ContentProperty("Children")]
+public class Process : ProcessBase
 {
-	[ContentProperty("Children")]
-	public class Process : ProcessBase
+	public Boolean IsExecutable { get; init; }
+	public Boolean IsClosed { get; init; }
+
+	public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 	{
-		public Boolean IsExecutable { get; init; }
-		public Boolean IsClosed { get; init; }
-
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
-		{
-			_token = token;
-			if (!IsExecutable || Children == null)
-				return ValueTask.CompletedTask;
-			var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart);
-			if (start == null)
-				throw new WorkflowException($"Process (Id={Id}). Start event not found");
-			context.Schedule(start, token);
+		_token = token;
+		if (!IsExecutable || Children == null)
 			return ValueTask.CompletedTask;
-		}
+		var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart);
+		if (start == null)
+			throw new WorkflowException($"Process (Id={Id}). Start event not found");
+		context.Schedule(start, token);
+		return ValueTask.CompletedTask;
+	}
 
-		public override void TryComplete(IExecutionContext context, IActivity _)
-		{
-			if (TokensCount > 0)
-				return;
-		}
+	public override void TryComplete(IExecutionContext context, IActivity _)
+	{
+		if (TokensCount > 0)
+			return;
 	}
 }
+

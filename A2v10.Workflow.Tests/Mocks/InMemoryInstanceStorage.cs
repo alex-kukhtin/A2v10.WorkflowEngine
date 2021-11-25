@@ -31,10 +31,8 @@ namespace A2v10.Workflow.Tests
 			if (_memory.TryGetValue(id, out SavedInstance saved))
 			{
 				var wf = saved.Identity != null ? await _workflowStorage.LoadAsync(saved.Identity) : saved.Workflow;
-				IInstance inst = new Instance()
+				IInstance inst = new Instance(wf, id)
 				{
-					Id = id,
-					Workflow = wf,
 					State = _serializer.Deserialize(saved.State),
 					Result = saved.Result,
 					ExecutionStatus = saved.Status

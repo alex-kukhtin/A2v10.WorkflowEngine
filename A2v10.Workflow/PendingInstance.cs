@@ -4,11 +4,10 @@ using System;
 
 using A2v10.Workflow.Interfaces;
 
-namespace A2v10.Workflow
+namespace A2v10.Workflow;
+public class PendingInstance : IPendingInstance
 {
-	public class PendingInstance : IPendingInstance
-	{
-		public Guid InstanceId { get; set; }
-		public string EventKey { get; set; }
-	}
+	public Guid InstanceId { get; set; }
+	public String? EventKey { get; set; }
 }
+

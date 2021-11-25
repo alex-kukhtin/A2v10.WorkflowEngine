@@ -6,7 +6,7 @@ namespace A2v10.Workflow
 {
 	public class WorkflowXamlReaderService : XamlReaderService
 	{
-		public override XamlServicesOptions Options { get; set; }
+		public override XamlServicesOptions? Options { get; set; }
 
 		public WorkflowXamlReaderService()
 		{

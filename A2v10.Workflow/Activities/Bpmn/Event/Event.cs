@@ -14,13 +14,13 @@ namespace A2v10.Workflow.Bpmn
 	{
 		public virtual Boolean IsStart => false;
 
-		public IEnumerable<Outgoing> Outgoing => Children?.OfType<Outgoing>();
+		public IEnumerable<Outgoing>? Outgoing => Children?.OfType<Outgoing>();
 
-		public EventDefinition EventDefinition => Children?.OfType<EventDefinition>().FirstOrDefault();
+		public EventDefinition? EventDefinition => Children?.OfType<EventDefinition>().FirstOrDefault();
 
 
 		// wf:Script here
-		public String Script => ExtensionElements<A2v10.Workflow.Script>()?.FirstOrDefault()?.Text;
+		public String? Script => ExtensionElements<A2v10.Workflow.Script>()?.FirstOrDefault()?.Text;
 
 		#region IScriptable
 		public void BuildScript(IScriptBuilder builder)
@@ -29,10 +29,12 @@ namespace A2v10.Workflow.Bpmn
 		}
 		#endregion
 
-		protected void ScheduleOutgoing(IExecutionContext context, IToken token)
+		protected void ScheduleOutgoing(IExecutionContext context, IToken? token)
 		{
 			if (Outgoing == null)
 				return;
+			if (ParentContainer == null)
+				throw new WorkflowException("ParentContainer is null");
 			if (Outgoing.Count() == 1)
 			{
 				var targetFlow = ParentContainer.FindElement<SequenceFlow>(Outgoing.First().Text);

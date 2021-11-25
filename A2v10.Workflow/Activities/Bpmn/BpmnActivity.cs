@@ -7,42 +7,43 @@ using System.Threading.Tasks;
 
 using A2v10.Workflow.Interfaces;
 
-namespace A2v10.Workflow.Bpmn
+namespace A2v10.Workflow.Bpmn;
+public abstract class BpmnActivity : BaseElement, IActivity
 {
-	public abstract class BpmnActivity : BaseElement, IActivity
+	public String? Name { get; init; }
+
+	public IActivity? Parent { get; private set; }
+
+	internal IContainer ParentContainer => Parent as IContainer ?? throw new ArgumentNullException(nameof(ParentContainer));
+
+	#region IActivity
+
+	public virtual void Cancel(IExecutionContext context)
 	{
-		public String Name { get; init; }
-
-		public IActivity Parent { get; private set; }
-
-		public IContainer ParentContainer => Parent as IContainer;
-
-		#region IActivity
-
-		public virtual void Cancel(IExecutionContext context)
-		{
-			foreach (var ch in EnumChildren())
-				ch.Cancel(context);
-		}
-
-		public virtual IEnumerable<IActivity> EnumChildren()
-		{
-			return Enumerable.Empty<IActivity>();
-		}
-
-		public abstract ValueTask ExecuteAsync(IExecutionContext context, IToken token);
-
-		public virtual void OnEndInit(IActivity parent)
-		{
-			Parent = parent;
-			foreach (var act in EnumChildren())
-				act.OnEndInit(this);
-		}
-
-		public virtual void TryComplete(IExecutionContext context, IActivity activity)
-		{
-			Parent?.TryComplete(context, this);
-		}
-		#endregion
+		foreach (var ch in EnumChildren())
+			ch.Cancel(context);
 	}
+
+	public virtual IEnumerable<IActivity> EnumChildren()
+	{
+		return Enumerable.Empty<IActivity>();
+	}
+
+	public abstract ValueTask ExecuteAsync(IExecutionContext context, IToken? token);
+
+	public virtual void OnEndInit(IActivity? parent)
+	{
+		Parent = parent;
+		foreach (var act in EnumChildren())
+			act.OnEndInit(this);
+	}
+
+	public virtual void TryComplete(IExecutionContext context, IActivity activity)
+	{
+		Parent?.TryComplete(context, this);
+	}
+	#endregion
+
+	// newtonsoft support
+	public static Boolean ShouldSerializeParentContainer() => false;
 }

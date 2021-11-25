@@ -10,17 +10,17 @@ namespace A2v10.Workflow.Tracker
 	public class ActivityTrackRecord : TrackRecord
 	{
 		private readonly ActivityTrackAction _action;
-		private readonly String _id;
+		private readonly String? _id;
 
-		public ActivityTrackRecord(ActivityTrackAction action, IActivity activity, IToken token)
+		public ActivityTrackRecord(ActivityTrackAction action, IActivity? activity, IToken? token)
 			: base()
 		{
 			_action = action;
-			_id = activity.Id;
+			_id = activity?.Id;
 			Message = token != null ? $"{{token:'{token}'}}" : null;
 		}
 
-		public ActivityTrackRecord(ActivityTrackAction action, IActivity activity, String msg)
+		public ActivityTrackRecord(ActivityTrackAction action, IActivity? activity, String? msg)
 		{
 			_action = action;
 			_id = activity?.Id;

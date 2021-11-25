@@ -8,7 +8,7 @@ namespace A2v10.Workflow.Bpmn
 	{
 		public override Boolean CanRepeat => false;
 
-		public override DateTime NextTriggerTime(Object arg)
+		public override DateTime NextTriggerTime(Object? arg)
 		{
 			if (arg is DateTime dateTime)
 				return dateTime;

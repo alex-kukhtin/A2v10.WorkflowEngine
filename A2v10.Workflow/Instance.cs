@@ -9,6 +9,11 @@ namespace A2v10.Workflow
 {
 	public class Instance : IInstance
 	{
+		public Instance(IWorkflow workflow, Guid id)
+        {
+			Workflow = workflow;
+			Id = id;
+        }
 		public IWorkflow Workflow { get; init; }
 
 		public Guid Id { get; init; }
@@ -17,9 +22,9 @@ namespace A2v10.Workflow
 		public WorkflowExecutionStatus ExecutionStatus { get; set; }
 		public Guid? Lock { get; init; }
 
-		public ExpandoObject Result { get; set; }
-		public ExpandoObject State { get; set; }
+		public ExpandoObject? Result { get; set; }
+		public ExpandoObject? State { get; set; }
 
-		public IInstanceData InstanceData { get; set; }
+		public IInstanceData? InstanceData { get; set; }
 	}
 }

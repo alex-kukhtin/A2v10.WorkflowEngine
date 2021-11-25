@@ -1,6 +1,5 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
@@ -23,13 +22,13 @@ namespace A2v10.Workflow
 
 		public ExpandoObject Value => _expando;
 
-		public ActivityStorage(StorageState state, ExpandoObject obj = null)
+		public ActivityStorage(StorageState state, ExpandoObject? obj = null)
 		{
 			IsLoading = state == StorageState.Loading;
 			_expando = obj ?? new ExpandoObject();
 		}
 
-		public T Get<T>(String name)
+		public T? Get<T>(String name)
 		{
 			if (IsStoring)
 				throw new InvalidOperationException("Get in storing mode");
@@ -44,7 +43,7 @@ namespace A2v10.Workflow
 			_expando.Set(name, value);
 		}
 
-		public void SetToken(String name, IToken value)
+		public void SetToken(String name, IToken? value)
 		{
 			if (IsLoading)
 				throw new InvalidOperationException("Set in loading mode");
@@ -53,7 +52,7 @@ namespace A2v10.Workflow
 			_expando.Set(name, value.ToString());
 		}
 
-		public IToken GetToken(String name)
+		public IToken? GetToken(String name)
 		{
 			if (IsStoring)
 				throw new InvalidOperationException("Get in storing mode");
@@ -84,7 +83,7 @@ namespace A2v10.Workflow
 				return;
 			foreach (var v in vals)
 			{
-				list.Add(Token.FromString(v.ToString()));
+				list.Add(Token.FromString(v.ToString()!));
 			}
 		}
 	}

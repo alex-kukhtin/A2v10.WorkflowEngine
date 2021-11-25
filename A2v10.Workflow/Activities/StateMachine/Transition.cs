@@ -10,18 +10,18 @@ namespace A2v10.Workflow
 {
 	public class Transition : Activity, IScriptable
 	{
-		public String Condition { get; set; }
+		public String? Condition { get; set; }
 
-		public IActivity Trigger { get; set; }
-		public IActivity Action { get; set; }
+		public IActivity? Trigger { get; set; }
+		public IActivity? Action { get; set; }
 
-		public String Destination { get; set; }
+		public String? Destination { get; set; }
 
-		internal String NextState { get; set; }
+		internal String? NextState { get; set; }
 
-		private State ParentState => Parent as State;
+		private State ParentState => Parent as State ?? throw new InvalidProgramException("State");
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			NextState = null;
 			if (Trigger != null)
@@ -46,7 +46,7 @@ namespace A2v10.Workflow
 
 		void ContinueExecute(IExecutionContext context)
 		{
-			var cond = context.Evaluate<Boolean>(Id, nameof(Condition));
+			var cond = context.Evaluate<Boolean>(Ref, nameof(Condition));
 			if (cond)
 			{
 				NextState = Destination;

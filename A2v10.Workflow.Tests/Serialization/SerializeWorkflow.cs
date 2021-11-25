@@ -52,12 +52,7 @@ namespace A2v10.Workflow.Tests.Serialization
 			var wfs = sp.GetService<IWorkflowStorage>();
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = "test1",
-				Body = json,
-				Format = "json"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor(Id: "test1", Body: json, Format: "json"));
 			var ident = await wfs.PublishAsync(wfc, "test1");
 
 			var wfe = sp.GetService<IWorkflowEngine>();
@@ -90,22 +85,12 @@ namespace A2v10.Workflow.Tests.Serialization
 			var wfs = sp.GetService<IWorkflowStorage>();
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = "xxx",
-				Body = "123",
-				Format = "json"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor("xxx", "123", "json"));
 
 			// check for empty storage
 			await wfs.PublishAsync(wfc, "xxx");
 
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = "test2",
-				Body = json,
-				Format = "json"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor("test2", json, "json"));
 
 			var ident = await wfs.PublishAsync(wfc, "test2");
 			Assert.AreEqual(1, ident.Version);
@@ -152,12 +137,7 @@ namespace A2v10.Workflow.Tests.Serialization
 			var wfs = sp.GetService<IWorkflowStorage>();
 			var wfc = sp.GetService<IWorkflowCatalog>();
 
-			await wfc.SaveAsync(new WorkflowDescriptor()
-			{
-				Id = "fchart1",
-				Body = json,
-				Format = "json"
-			});
+			await wfc.SaveAsync(new WorkflowDescriptor("fchart1", json, "json"));
 
 			var ident = await wfs.PublishAsync(wfc, "fchart1");
 

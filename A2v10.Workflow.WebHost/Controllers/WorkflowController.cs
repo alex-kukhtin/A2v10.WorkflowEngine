@@ -28,11 +28,7 @@ namespace A2v10.Workflow.WebHost.Controllers
 		[Consumes("application/json")]
 		public async Task<IActionResult> Create([FromBody] CreateRequest rq)
 		{
-			var res = await _engine.CreateAsync(new WorkflowIdentity()
-			{
-				Id = rq.Workflow,
-				Version = rq.Version
-			});
+			var res = await _engine.CreateAsync(new WorkflowIdentity(rq.Workflow, rq.Version));
 			return Ok(new CreateResponse()
 			{
 				InstanceId = res.Id

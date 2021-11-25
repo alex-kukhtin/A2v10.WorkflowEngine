@@ -12,9 +12,9 @@ namespace A2v10.Workflow.Bpmn
 	public class Collaboration : BpmnActivity, IScoped, IExternalScoped
 	{
 		#region IScoped
-		public List<IVariable> Variables => Elem<ExtensionElements>()?.GetVariables();
+		public List<IVariable>? Variables => Elem<ExtensionElements>()?.GetVariables();
 
-		public String GlobalScript => Elem<ExtensionElements>()?.GetGlobalScript();
+		public String? GlobalScript => Elem<ExtensionElements>()?.GetGlobalScript();
 
 		public void BuildScript(IScriptBuilder builder)
 		{
@@ -23,22 +23,24 @@ namespace A2v10.Workflow.Bpmn
 		#endregion
 
 		#region IExternalScoped
-		public List<IVariable> ExternalVariables()
+		public List<IVariable>? ExternalVariables()
 		{
 			var vars = Variables;
 			var lst = new List<IVariable>();
 			if (vars != null)
 				lst.AddRange(vars);
-
-			foreach (var elem in Children.OfType<BaseElement>())
+			if (Children != null)
 			{
-				if (elem is not IScoped scoped)
-					continue;
-				vars = scoped.Variables;
-				if (vars == null)
-					continue;
-				foreach (var v in vars)
-					lst.Add(new ExternalVariable(v, elem.Id));
+				foreach (var elem in Children.OfType<BaseElement>())
+				{
+					if (elem is not IScoped scoped)
+						continue;
+					vars = scoped.Variables;
+					if (vars == null)
+						continue;
+					foreach (var v in vars)
+						lst.Add(new ExternalVariable(v, elem.Id));
+				}
 			}
 			if (lst.Count == 0)
 				return null;
@@ -63,14 +65,14 @@ namespace A2v10.Workflow.Bpmn
 				var prc = processes.FirstOrDefault(p => p.Id == participant.ProcessRef);
 				if (prc == null)
 					throw new WorkflowException($"Process '{participant.ProcessRef}' not found");
-				participant.EnsureChildren();
-				participant.Children.Add(prc);
+				//participant.EnsureChildren();
+				participant.Children?.Add(prc);
 			}
 		}
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
-			var parts = Children.OfType<Participant>();
+			var parts = Children?.OfType<Participant>();
 			if (parts == null)
 				throw new WorkflowException("No participants in the Collaboration");
 			if (parts.Count() != 1)

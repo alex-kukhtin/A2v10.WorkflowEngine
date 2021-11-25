@@ -1,7 +1,5 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
-using System.Threading.Tasks;
 
 using A2v10.Workflow.Interfaces;
 
@@ -9,10 +7,10 @@ namespace A2v10.Workflow.Bpmn
 {
 	public class BoundaryEvent : Event, IStorable
 	{
-		public String AttachedToRef { get; init; }
+		public String AttachedToRef { get; init; } = String.Empty;
 		public Boolean? CancelActivity { get; init; } // default is true!
 
-		protected IToken _token;
+		protected IToken? _token;
 
 		#region IStorable
 		const String TOKEN = "Token";
@@ -28,7 +26,7 @@ namespace A2v10.Workflow.Bpmn
 		}
 		#endregion
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			_token = token;
 			var eventDef = EventDefinition;
@@ -40,8 +38,10 @@ namespace A2v10.Workflow.Bpmn
 		}
 
 		[StoreName("OnTrigger")]
-		public ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object result)
+		public ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object? result)
 		{
+			if (ParentContainer == null)
+				throw new InvalidProgramException("Invalid ParentContainer");
 			ScheduleOutgoing(context, _token);
 			if (CancelActivity == null || CancelActivity.Value)
 			{

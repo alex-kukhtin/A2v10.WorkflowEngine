@@ -21,7 +21,7 @@ namespace A2v10.Workflow.Tracker
 	{
 		private readonly ScriptTrackAction _action;
 
-		public ScriptTrackRecord(ScriptTrackAction action, String refer, String name, Object result = null)
+		public ScriptTrackRecord(ScriptTrackAction action, String refer, String name, Object? result = null)
 			: base()
 		{
 			_action = action;

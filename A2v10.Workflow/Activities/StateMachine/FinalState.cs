@@ -12,11 +12,12 @@ namespace A2v10.Workflow
 	{
 		public override Boolean IsFinal => false;
 
-		public IActivity Entry { get; set; }
+		public IActivity? Entry { get; set; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
-			context.Schedule(Entry, token);
+			if (Entry != null)
+				context.Schedule(Entry, token);
 			return ValueTask.CompletedTask;
 		}
 

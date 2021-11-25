@@ -13,12 +13,12 @@ namespace A2v10.Workflow
 	{
 		public const String FMAP = "__fmap__";
 
-		private String _declaratons;
+		private String? _declaratons;
 		private readonly Dictionary<String, List<String>> _methods = new();
 
 		private readonly IActivity _activity;
 
-		public String Declarations => _declaratons;
+		public String Declarations => _declaratons ?? String.Empty;
 
 		public ActivityScriptBuilder(IActivity activity)
 		{
@@ -43,7 +43,7 @@ namespace A2v10.Workflow
 
 		#region IScriptBuilder
 
-		public void AddVariables(IEnumerable<IVariable> variables)
+		public void AddVariables(IEnumerable<IVariable>? variables)
 		{
 			if (variables == null)
 				return;
@@ -89,21 +89,21 @@ namespace A2v10.Workflow
 			}
 		}
 
-		public void BuildExecute(String name, String expression)
+		public void BuildExecute(String name, String? expression)
 		{
 			if (String.IsNullOrEmpty(expression))
 				return;
 			AddMethod(_activity.Id, $"{name}: () => {{{expression};}}");
 		}
 
-		public void BuildExecuteResult(String name, String expression)
+		public void BuildExecuteResult(String name, String? expression)
 		{
 			if (String.IsNullOrEmpty(expression))
 				return;
 			AddMethod(_activity.Id, $"{name}: (reply) => {{{expression};}}");
 		}
 
-		public void BuildEvaluate(String name, String expression)
+		public void BuildEvaluate(String name, String? expression)
 		{
 			if (String.IsNullOrEmpty(expression))
 				return;
@@ -142,7 +142,7 @@ namespace A2v10.Workflow
 			_builder = builder;
 		}
 
-		public String Ref => _activity.Id;
+		public String Ref => _activity.Id ?? throw new WorkflowException("Invalid activity Id");
 
 		public void Build(IActivity activity)
 		{

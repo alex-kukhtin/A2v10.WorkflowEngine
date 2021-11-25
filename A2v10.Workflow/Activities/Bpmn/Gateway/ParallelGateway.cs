@@ -13,11 +13,12 @@ namespace A2v10.Workflow.Bpmn
 	{
 		private readonly List<IToken> _tokens = new();
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
 			// waits for all incoming tokens
-			_tokens.Add(token);
-			if (HasIncoming && _tokens.Count == Incoming.Count())
+			if (token != null)
+				_tokens.Add(token);
+			if (HasIncoming && _tokens.Count == Incoming?.Count())
 				return DoOutgoing(context);
 			else
 				return ValueTask.CompletedTask;
@@ -45,7 +46,7 @@ namespace A2v10.Workflow.Bpmn
 			_tokens.Clear();
 			if (HasOutgoing)
 			{
-				foreach (var og in Outgoing)
+				foreach (var og in Outgoing!)
 				{
 					var flow = ParentContainer.FindElement<SequenceFlow>(og.Text);
 					context.Schedule(flow, ParentContainer.NewToken());

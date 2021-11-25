@@ -10,14 +10,14 @@ namespace A2v10.Workflow
 {
 	public class If : Activity, IScriptable
 	{
-		public String Condition { get; set; }
+		public String? Condition { get; set; }
 
-		public IActivity Then { get; set; }
-		public IActivity Else { get; set; }
+		public IActivity? Then { get; set; }
+		public IActivity? Else { get; set; }
 
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken token)
+		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 		{
-			var cond = context.Evaluate<Boolean>(Id, nameof(Condition));
+			var cond = context.Evaluate<Boolean>(Ref, nameof(Condition));
 			if (cond)
 			{
 				if (Then != null)
