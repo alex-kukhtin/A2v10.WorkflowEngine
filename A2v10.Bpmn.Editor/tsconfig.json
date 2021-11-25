@@ -1,4 +1,9 @@
 {
   "compilerOptions": {
-  }
+    "allowJs": false,
+    "noEmit": true
+  },
+  "compileOnSave": false,
+  "include": ["./dummy.ts"],
+  "exclude": ["node_modules"]
 }

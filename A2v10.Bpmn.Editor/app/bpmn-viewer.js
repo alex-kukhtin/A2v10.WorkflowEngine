@@ -4,18 +4,7 @@ import BpmnViewer from "bpmn-js/lib/NavigatedViewer";
 import modeling from 'bpmn-js/lib/features/modeling';
 
 
-/*see: https://github.com/bpmn-io/bpmn-js/tree/develop/lib*/
-
-/*
-let canvas = document.getElementById('canvas');
-
-let bpmnViewer = new BpmnViewer({
-	container: canvas,
-	keyboard: {
-		bindTo: window
-	}
-});
-*/
+/*see: https://github.com/bpmn-io/bpmn-js/tree/develop/lib */
 
 window.BpmnViewer = {
 	create: function (canvas) {

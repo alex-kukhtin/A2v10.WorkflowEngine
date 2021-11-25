@@ -11,7 +11,6 @@ var _workflow2 = _interopRequireDefault(require("./descriptors/workflow"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-//import BpmnViewer from "bpmn-js/lib/Viewer";
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" 
 		xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
