@@ -15,7 +15,7 @@ namespace A2v10.Workflow.Tests
 		{
 		}
 #pragma warning disable IDE1006 // Naming Styles
-		public ExpandoObject loadModel(String procedure, ExpandoObject prms = null)
+		public ExpandoObject loadModel(String procedure, ExpandoObject? prms = null)
 #pragma warning restore IDE1006 // Naming Styles
 		{
 			_eo.Set("prop", "value");

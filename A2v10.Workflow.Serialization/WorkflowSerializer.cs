@@ -12,9 +12,9 @@ namespace A2v10.Workflow.Serialization
 {
 	public class WorkflowSerializer : ISerializer
 	{
-		private readonly IXamlReaderService _xamlCodeProvider;
+		private readonly IXamlReaderService? _xamlCodeProvider;
 
-		public WorkflowSerializer(IXamlReaderService xamlCodeProvider)
+		public WorkflowSerializer(IXamlReaderService? xamlCodeProvider = null)
 		{
 			_xamlCodeProvider = xamlCodeProvider;
 		}
@@ -92,6 +92,8 @@ namespace A2v10.Workflow.Serialization
 
 		IActivity? DeserializeXaml(String text)
 		{
+			if (_xamlCodeProvider == null)
+				throw new InvalidOperationException("XamlCodeProvider is null");
 			var obj = _xamlCodeProvider.ParseXml(text);
 			return obj switch
 			{

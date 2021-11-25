@@ -17,15 +17,15 @@ public class WorkflowEngine : IWorkflowEngine
 	public WorkflowEngine(IServiceProvider serviceProvider, ITracker tracker, IDeferredTarget deferredTarget)
 	{
 		_serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-		_workflowStorage = _serviceProvider.GetService<IWorkflowStorage>() ?? throw new NullReferenceException("IWorkflowStorage");
-		_instanceStorage = _serviceProvider.GetService<IInstanceStorage>() ?? throw new NullReferenceException("IInstanceStorage");
+		_workflowStorage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
+		_instanceStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
 		_deferredTarget = deferredTarget ?? throw new NullReferenceException("IDeferredTarget");
 		_tracker = tracker;
 	}
 
-	public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity identity)
+	public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity)
 	{
-		var wf = new Workflow(identity, root);
+		var wf = new Workflow(identity ?? new WorkflowIdentity(String.Empty), root);
 		var inst = new Instance(wf, Guid.NewGuid());
 		root.OnEndInit(null);
 		await _instanceStorage.Create(inst);

@@ -49,13 +49,13 @@ namespace A2v10.Workflow.Tests.Serialization
 			var json = s.SerializeActitity(p, "json");
 
 			var sp = TestEngine.ServiceProvider();
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
 
 			await wfc.SaveAsync(new WorkflowDescriptor(Id: "test1", Body: json, Format: "json"));
 			var ident = await wfs.PublishAsync(wfc, "test1");
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			await wfe.RunAsync(inst.Id);
 		}
@@ -82,8 +82,8 @@ namespace A2v10.Workflow.Tests.Serialization
 			var json = ser.SerializeActitity(s, "json");
 
 			var sp = TestEngine.ServiceProvider();
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
 
 			await wfc.SaveAsync(new WorkflowDescriptor("xxx", "123", "json"));
 
@@ -99,7 +99,7 @@ namespace A2v10.Workflow.Tests.Serialization
 
 			Assert.AreEqual(2, ident.Version);
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			inst = await wfe.RunAsync(inst.Id, new { x = 5 });
 
@@ -134,8 +134,8 @@ namespace A2v10.Workflow.Tests.Serialization
 			var json = ser.SerializeActitity(fc, "json");
 
 			var sp = TestEngine.ServiceProvider();
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
 
 			await wfc.SaveAsync(new WorkflowDescriptor("fchart1", json, "json"));
 
@@ -147,7 +147,7 @@ namespace A2v10.Workflow.Tests.Serialization
 
 			Assert.AreEqual(2, ident.Version);
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			inst = await wfe.RunAsync(inst.Id, new { X = 5 });
 			Assert.AreEqual(0, inst.Result.Get<Int32>("x"));

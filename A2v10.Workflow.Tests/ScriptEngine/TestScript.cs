@@ -43,13 +43,14 @@ namespace A2v10.Workflow.Tests
 
 
 			var obj = eng.Evaluate(program).ToObject();
-			var func = obj as Func<JsValue, JsValue[], JsValue>;
+			var func = (obj as Func<JsValue, JsValue[]?, JsValue>)!;
 
 			var val = func.Invoke(JsValue.Undefined, null).ToObject();
 
 			if (val is IDictionary<String, Object> dict)
 			{
 				var x = dict["Ref0"] as IDictionary<String, Object>;
+				Assert.IsNotNull(x);
 				var res = eng.Invoke(JsValue.FromObject(eng, x["Script"]));
 				Assert.AreEqual("7", res.ToString());
 			}
@@ -63,13 +64,15 @@ namespace A2v10.Workflow.Tests
 		[TestMethod]
 		public void ScriptDatabase()
 		{
+			var sp = TestEngine.ServiceProvider();
+
 			var eng = new Engine(opts =>
 			{
 				opts.Strict(true);
 				opts.SetWrapObjectHandler((e, o) =>
 				{
 					if (o is IInjectable injectable)
-						injectable.Inject(null);
+						injectable.Inject(sp);
 					return new ObjectWrapper(e, o);
 				});
 			});
@@ -84,13 +87,15 @@ namespace A2v10.Workflow.Tests
 		[TestMethod]
 		public void ScriptDatabase2()
 		{
+			var sp = TestEngine.ServiceProvider();
+
 			var eng = new Engine(opts =>
 			{
 				opts.Strict(true);
 				opts.SetWrapObjectHandler((e, o) =>
 				{
 					if (o is IInjectable injectable)
-						injectable.Inject(null);
+						injectable.Inject(sp);
 					return new ObjectWrapper(e, o);
 				});
 			});
@@ -131,19 +136,21 @@ namespace A2v10.Workflow.Tests
 				opts.Strict(true);
 			});
 
-
 			var obj = eng.Evaluate(programCount).ToObject();
-			var func = obj as Func<JsValue, JsValue[], JsValue>;
+			var func = (obj as Func<JsValue, JsValue[]?, JsValue>)!;
 
 			var val = func.Invoke(JsValue.Undefined, null).ToObject();
 
 			if (val is IDictionary<String, Object> dict)
 			{
 				var ref0 = dict["Ref0"] as IDictionary<String, Object>;
+				Assert.IsNotNull(ref0);
 				var res = eng.Invoke(JsValue.FromObject(eng, ref0["Script"]));
+				Assert.IsNotNull(res);
 				Assert.AreEqual((Double)1, res.AsNumber());
 
 				var ref1 = dict["Ref1"] as IDictionary<String, Object>;
+				Assert.IsNotNull(ref1);
 				var res2 = eng.Invoke(JsValue.FromObject(eng, ref1["Script"]));
 				var res3 = eng.Invoke(JsValue.FromObject(eng, ref1["Result"]));
 				Assert.AreEqual("1", res3.AsObject().Get("R"));
@@ -190,17 +197,17 @@ return __fmap__;
 
 
 			var obj = eng.Evaluate(ScriptProgramError).ToObject();
-			var func = obj as Func<JsValue, JsValue[], JsValue>;
+			var func = (obj as Func<JsValue, JsValue[]?, JsValue>)!;
 
 			var val = func.Invoke(JsValue.Undefined, null).ToObject();
 
-			if (val is not IDictionary<String, Object> dict)
+			if (val is not IDictionary<String, Object?> dict)
 				throw new ArgumentException("Invalid type");
 
-			var refP = dict["Process_1"] as IDictionary<String, Object>;
+			var refP = (dict["Process_1"] as IDictionary<String, Object>)!;
 			var resStore = eng.Invoke(JsValue.FromObject(eng, refP["Store"]));
 			var resStoreVal = resStore.ToObject();
-			dict = null;
+			dict.Clear();
 
 			var eng2 = new Engine(opts =>
 			{
@@ -208,7 +215,7 @@ return __fmap__;
 			});
 
 			obj = eng.Evaluate(ScriptProgramError).ToObject();
-			func = obj as Func<JsValue, JsValue[], JsValue>;
+			func = (obj as Func<JsValue, JsValue[]?, JsValue>)!;
 
 			val = func.Invoke(JsValue.Undefined, null).ToObject();
 
@@ -216,19 +223,24 @@ return __fmap__;
 				throw new ArgumentException("Invalid type");
 
 			refP = dict2["Process_1"] as IDictionary<String, Object>;
-			var restoreFunc = (Func<JsValue, JsValue[], JsValue>)refP["Restore"];
+			Assert.IsNotNull(refP);
+			var restoreFunc = (Func<JsValue?, JsValue[]?, JsValue>) refP["Restore"];
+			Assert.IsNotNull(restoreFunc);
 			restoreFunc(null, new JsValue[] { resStore });
 
 			var refCP = dict2["CountPlus"] as IDictionary<String, Object>;
+			Assert.IsNotNull(refCP);
 			var res = eng.Invoke(JsValue.FromObject(eng, refCP["Script"])).ToObject();
 
 			resStoreVal = eng.Invoke(JsValue.FromObject(eng, refP["Store"])).ToObject();
 
 			var refCalc = dict2["Flow_0v13tb0"] as IDictionary<String, Object>;
+			Assert.IsNotNull(refCalc);
 			var res2x = eng.Invoke(JsValue.FromObject(eng, refCalc["ConditionExpression"]));
 
 
 			var refA = dict2["Activity_0p7ly0p"] as IDictionary<String, Object>;
+			Assert.IsNotNull(refA);
 			eng.Invoke(JsValue.FromObject(eng, refA["Script"])).ToObject();
 
 			var resFinal = eng.Invoke(JsValue.FromObject(eng, refP["Store"]));
@@ -254,7 +266,7 @@ return __fmap__;
 			var arg = JsonConvert.DeserializeObject<ExpandoObject>(strArray, new ExpandoObjectConverterArray());
 
 			var obj = eng.Evaluate("return function test(arg) { let r = arg.x; r.push('z'); return JSON.stringify(r); }").ToObject();
-			var func = obj as Func<JsValue, JsValue[], JsValue>;
+			var func = (obj as Func<JsValue?, JsValue[]?, JsValue>)!;
 			var arr = func.Invoke(null, new JsValue[] { JsValue.FromObject(eng, arg) });
 			Assert.AreEqual("[\"f\",\"2\",\"z\"]", arr.ToString());
 		}
@@ -277,7 +289,7 @@ return __fmap__;
 			};
 
 			var obj = eng.Evaluate("return function test(arg) { let d = new Date(arg.date); let x = new Date(arg.ms); return {d: d, x: x}; }").ToObject();
-			var func = obj as Func<JsValue, JsValue[], JsValue>;
+			var func = (obj as Func<JsValue?, JsValue[]?, JsValue>)!;
 			var res = func.Invoke(null, new JsValue[] { JsValue.FromObject(eng, arg) }).ToObject() as ExpandoObject;
 			var dt = res.Get<DateTime>("d");
 			var xt = res.Get<DateTime>("x");

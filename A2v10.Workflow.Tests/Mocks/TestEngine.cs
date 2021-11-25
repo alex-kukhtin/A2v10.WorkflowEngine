@@ -16,10 +16,10 @@ namespace A2v10.Workflow.Tests
 	{
 		public static IWorkflowEngine CreateInMemoryEngine()
 		{
-			return ServiceProvider().GetService<IWorkflowEngine>();
+			return ServiceProvider().GetService<IWorkflowEngine>() ?? throw new InvalidOperationException(nameof(IWorkflowEngine));
 		}
 
-		private static IServiceProvider _provider;
+		private static IServiceProvider? _provider;
 
 		public static IServiceProvider ServiceProvider()
 		{
@@ -45,16 +45,16 @@ namespace A2v10.Workflow.Tests
 		}
 
 
-		public static async ValueTask<IInstance> SimpleRun(String id, String text, ExpandoObject prms = null)
+		public static async ValueTask<IInstance> SimpleRun(String id, String text, ExpandoObject? prms = null)
 		{
 			var sp = ServiceProvider();
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
 
 			await wfc.SaveAsync(new WorkflowDescriptor(id, text));
 			var ident = await wfs.PublishAsync(wfc, id);
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			return await wfe.RunAsync(inst, prms);
 		}

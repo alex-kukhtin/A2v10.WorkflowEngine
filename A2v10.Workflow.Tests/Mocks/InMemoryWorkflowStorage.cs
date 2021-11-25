@@ -11,9 +11,9 @@ namespace A2v10.Workflow.Tests
 {
 	public record StoredWorkflow
 	{
-		public String Text { get; set; }
-		public String Format { get; set; }
-		public String WorkflowId { get; set; }
+		public String Text { get; set; } = String.Empty;
+		public String Format { get; set; } = String.Empty;
+		public String WorkflowId { get; set; } = String.Empty;
 		public Int32 Version { get; set; }
 	}
 
@@ -29,7 +29,7 @@ namespace A2v10.Workflow.Tests
 
 		public Task<String> LoadSourceAsync(IWorkflowIdentity identity)
 		{
-			return Task.FromResult<String>(null);
+			return Task.FromResult<String>(String.Empty);
 		}
 
 		public Task<IWorkflow> LoadAsync(IWorkflowIdentity identity)

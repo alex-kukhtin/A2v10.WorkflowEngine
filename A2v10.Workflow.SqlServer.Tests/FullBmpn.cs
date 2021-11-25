@@ -35,10 +35,10 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var id = "LoopTimer_Instance_1";
 			await TestEngine.PrepareDatabase(id);
 
-			var storage = _serviceProvider.GetService<IWorkflowStorage>();
-			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
-			var engine = _serviceProvider.GetService<IWorkflowEngine>();
-			var dbContext = _serviceProvider.GetService<IDbContext>();
+			var storage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
+			var catalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
+			var engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
+			var dbContext = _serviceProvider.GetRequiredService<IDbContext>();
 
 
 			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\loop_with_timers.bpmn");

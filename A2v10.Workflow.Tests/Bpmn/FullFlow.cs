@@ -22,14 +22,14 @@ namespace A2v10.Workflow.Tests
 
 			var sp = TestEngine.ServiceProvider();
 
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
 
 			String wfId = "Parallel1";
 			await wfc.SaveAsync(new WorkflowDescriptor(Id: wfId, Body: xaml, Format: "xaml"));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			inst = await wfe.RunAsync(inst, new { X = 5 });
 			var res = inst.Result;
@@ -44,14 +44,14 @@ namespace A2v10.Workflow.Tests
 
 			var sp = TestEngine.ServiceProvider();
 
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
 
 			String wfId = "Wait1";
 			await wfc.SaveAsync(new WorkflowDescriptor(wfId, xaml, "xaml"));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			inst = await wfe.RunAsync(inst.Id, new { X = 5 });
 			var res = inst.Result;
@@ -71,15 +71,15 @@ namespace A2v10.Workflow.Tests
 
 			var sp = TestEngine.ServiceProvider();
 
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
 
 			String wfId = "Exclusive_1";
 			await wfc.SaveAsync(new WorkflowDescriptor(wfId, xaml, "xaml"));
 
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			inst = await wfe.RunAsync(inst.Id, new { X = 6 });
 			var res = inst.Result;
@@ -99,14 +99,14 @@ namespace A2v10.Workflow.Tests
 
 			var sp = TestEngine.ServiceProvider();
 
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
 
 			String wfId = "Wait1WithCounter";
 			await wfc.SaveAsync(new WorkflowDescriptor(wfId, xaml, "xaml"));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			inst = await wfe.RunAsync(inst.Id, new { X = 5 });
 			var res = inst.Result;

@@ -6,7 +6,7 @@ namespace A2v10.Workflow.Interfaces;
 public abstract class Activity : IActivity
 {
 	#region IActivity
-	public String? Id { get; init; }
+	public String Id { get; init; } = String.Empty;
 	public IActivity? Parent { get; private set; }
 
 	public String Ref => Id ?? throw new ArgumentNullException(nameof(Id));

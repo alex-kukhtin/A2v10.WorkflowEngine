@@ -11,7 +11,12 @@ using A2v10.Workflow.Interfaces;
 namespace A2v10.Workflow.Tests
 {
 	internal record SavedInstance(IWorkflowIdentity Identity, IWorkflow Workflow,
-		String State, IInstanceData InstanceData, ExpandoObject Result, WorkflowExecutionStatus Status);
+		String? State, IInstanceData? InstanceData, ExpandoObject? Result, WorkflowExecutionStatus Status)
+    {
+		public Boolean IsEmptyWorkflow => Identity == null || String.IsNullOrEmpty(Identity.Id) && Identity.Version == 0;
+		public Boolean HasWorkflow => !IsEmptyWorkflow;
+	}
+
 
 	public class InMemoryInstanceStorage : IInstanceStorage
 	{
@@ -28,9 +33,9 @@ namespace A2v10.Workflow.Tests
 
 		public async Task<IInstance> Load(Guid id)
 		{
-			if (_memory.TryGetValue(id, out SavedInstance saved))
+			if (_memory.TryGetValue(id, out SavedInstance? saved))
 			{
-				var wf = saved.Identity != null ? await _workflowStorage.LoadAsync(saved.Identity) : saved.Workflow;
+				var wf = saved.HasWorkflow ? await _workflowStorage.LoadAsync(saved.Identity) : saved.Workflow;
 				IInstance inst = new Instance(wf, id)
 				{
 					State = _serializer.Deserialize(saved.State),
@@ -73,7 +78,7 @@ namespace A2v10.Workflow.Tests
 			return Task.CompletedTask;
 		}
 
-		private static String IsTimerExpired(List<Object> events)
+		private static String? IsTimerExpired(List<Object>? events)
 		{
 			if (events == null)
 				return null;
@@ -100,7 +105,7 @@ namespace A2v10.Workflow.Tests
 			var list = new List<IPendingInstance>();
 			foreach (var (k, v) in _memory)
 			{
-				var eventKey = IsTimerExpired(v.InstanceData.ExternalEvents);
+				var eventKey = IsTimerExpired(v.InstanceData?.ExternalEvents);
 				if (!String.IsNullOrEmpty(eventKey))
 					list.Add(new PendingInstance() { InstanceId = k, EventKey = eventKey });
 			}

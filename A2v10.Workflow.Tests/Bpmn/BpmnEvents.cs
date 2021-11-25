@@ -24,14 +24,14 @@ namespace A2v10.Workflow.Tests
 
 			var sp = TestEngine.ServiceProvider();
 
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
 
 			String wfId = "BoundarySimple";
 			await wfc.SaveAsync(new WorkflowDescriptor(Id: wfId, Body: xaml, Format: "xaml"));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			inst = await wfe.RunAsync(inst);
 			var res0 = inst.Result;
@@ -56,15 +56,15 @@ namespace A2v10.Workflow.Tests
 
 			var sp = TestEngine.ServiceProvider();
 
-			var wfs = sp.GetService<IWorkflowStorage>();
-			var wfc = sp.GetService<IWorkflowCatalog>();
-			var ins = sp.GetService<IInstanceStorage>();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
+			var ins = sp.GetRequiredService<IInstanceStorage>();
 
 			String wfId = "IntermediateSimple";
 			await wfc.SaveAsync(new WorkflowDescriptor(wfId, xaml));
 			var ident = await wfs.PublishAsync(wfc, wfId);
 
-			var wfe = sp.GetService<IWorkflowEngine>();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
 			var inst = await wfe.CreateAsync(ident);
 			inst = await wfe.RunAsync(inst);
 			var res0 = inst.Result;
@@ -89,8 +89,8 @@ namespace A2v10.Workflow.Tests
 				{ "Interval", "00:00:01" }
 			};
 
-			var wfe = TestEngine.ServiceProvider().GetService<IWorkflowEngine>();
-			var ins = TestEngine.ServiceProvider().GetService<IInstanceStorage>();
+			var wfe = TestEngine.ServiceProvider().GetRequiredService<IWorkflowEngine>();
+			var ins = TestEngine.ServiceProvider().GetRequiredService<IInstanceStorage>();
 
 			var inst = await TestEngine.SimpleRun(wfId, xaml, prms);
 
@@ -118,8 +118,8 @@ namespace A2v10.Workflow.Tests
 				{ "Time", now }
 			};
 
-			var wfe = TestEngine.ServiceProvider().GetService<IWorkflowEngine>();
-			var ins = TestEngine.ServiceProvider().GetService<IInstanceStorage>();
+			var wfe = TestEngine.ServiceProvider().GetRequiredService<IWorkflowEngine>();
+			var ins = TestEngine.ServiceProvider().GetRequiredService<IInstanceStorage>();
 
 			var inst = await TestEngine.SimpleRun(wfId, xaml, prms);
 

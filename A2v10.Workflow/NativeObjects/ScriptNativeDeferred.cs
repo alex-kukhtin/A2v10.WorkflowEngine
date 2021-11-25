@@ -15,7 +15,7 @@ namespace A2v10.Workflow
 
 		public void Inject(IServiceProvider serviceProvider)
 		{
-			_deferredTarget = serviceProvider.GetService<IDeferredTarget>() ?? throw new NullReferenceException("IDeferredTarget");
+			_deferredTarget = serviceProvider.GetRequiredService<IDeferredTarget>();
 		}
 
 #pragma warning disable IDE1006 // Naming Styles

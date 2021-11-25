@@ -8,10 +8,15 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Tests
 {
-	public class CatalogWorkflow
+	public record CatalogWorkflow
 	{
+		public CatalogWorkflow(String body, String format)
+		{ 
+			Body = body;
+			Format = format;
+		}
 		public String Body { get; set; }
-		public String Format { get; set; }
+		public String Format { get; }
 	}
 
 	public class InMemoryWorkflowCatalog : IWorkflowCatalog
@@ -20,7 +25,7 @@ namespace A2v10.Workflow.Tests
 
 		public Task<WorkflowElem> LoadBodyAsync(String id)
 		{
-			if (!_storage.TryGetValue(id, out CatalogWorkflow wf))
+			if (!_storage.TryGetValue(id, out CatalogWorkflow? wf))
 				throw new KeyNotFoundException(id);
 			var wfe = new WorkflowElem(Body: wf.Body, Format: wf.Format);
 			return Task.FromResult(wfe);
@@ -36,11 +41,7 @@ namespace A2v10.Workflow.Tests
 			if (_storage.ContainsKey(workflow.Id))
 				_storage[workflow.Id].Body = workflow.Body;
 			else
-				_storage.Add(workflow.Id, new CatalogWorkflow()
-				{
-					Body = workflow.Body,
-					Format = workflow.Format
-				});
+				_storage.Add(workflow.Id, new CatalogWorkflow(body:workflow.Body, format:workflow.Format));
 			return Task.CompletedTask;
 		}
 	}

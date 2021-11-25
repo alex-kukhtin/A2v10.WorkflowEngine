@@ -5,7 +5,7 @@ namespace A2v10.Workflow.Interfaces;
 public interface IWorkflowEngine
 {
 	ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity);
-	ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity identity);
+	ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity);
 
 	ValueTask<IInstance> RunAsync(Guid id, Object? args = null);
 	ValueTask<IInstance> RunAsync(IInstance instance, Object? args = null);

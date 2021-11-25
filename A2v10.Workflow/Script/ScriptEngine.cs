@@ -32,7 +32,7 @@ namespace A2v10.Workflow
 			_serviceProvider = serviceProvider;
 			_tracker = tracker;
 			_engine = new Engine(EngineOptions);
-			_deferredTarget = _serviceProvider.GetService<IDeferredTarget>() ?? throw new InvalidProgramException(nameof(IDeferredTarget));
+			_deferredTarget = _serviceProvider.GetRequiredService<IDeferredTarget>();
 
 
 			var nativeObjects = _serviceProvider.GetService<IScriptNativeObjectProvider>();
