@@ -19,19 +19,24 @@ namespace A2v10.Workflow.SqlServer.Tests
 	[TestCategory("Storage.InvokeTarget")]
 	public class InvokeTarget
 	{
-		private IServiceProvider _serviceProvider;
+		private readonly IServiceProvider _serviceProvider;
+
+		public InvokeTarget()
+        {
+			_serviceProvider = TestEngine.ServiceProvider();
+
+		}
 
 		[TestInitialize]
 		public void Init()
 		{
-			_serviceProvider = TestEngine.ServiceProvider();
 		}
 
 		[TestMethod]
 		public async Task StartWorkflow_Error()
 		{
 			var id = "DummyWorkflow";
-			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
+			var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
 			var ex = await Assert.ThrowsExceptionAsync<SqlServerStorageException>(() =>
 			{
 				return target.InvokeAsync("Start", new ExpandoObject()
@@ -45,7 +50,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 		[TestMethod]
 		public async Task RunWorkflow_Error()
 		{
-			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
+			var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
 			var ex = await Assert.ThrowsExceptionAsync<WorkflowException>(() =>
 			{
 				return target.InvokeAsync("Run", new ExpandoObject()
@@ -60,7 +65,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 		public async Task CreateWorkflow_Error()
 		{
 			var id = "DummyWorkflow";
-			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
+			var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
 			var ex = await Assert.ThrowsExceptionAsync<SqlServerStorageException>(() =>
 			{
 				return target.InvokeAsync("Create", new ExpandoObject()
@@ -77,7 +82,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var id = "SimpleTarget";
 			await TestEngine.PrepareDatabase(id);
 
-			var target = _serviceProvider.GetService<IRuntimeInvokeTarget>();
+			var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
 
 			var format = "xaml";
 			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");

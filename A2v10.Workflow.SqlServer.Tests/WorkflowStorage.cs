@@ -15,12 +15,17 @@ namespace A2v10.Workflow.SqlServer.Tests
 	[TestCategory("Storage.Workflow")]
 	public class WorkflowStorage
 	{
-		private IServiceProvider _serviceProvider;
+		private readonly IServiceProvider _serviceProvider;
+
+
+		public WorkflowStorage()
+        {
+			_serviceProvider = TestEngine.ServiceProvider();
+		}
 
 		[TestInitialize]
 		public void Init()
 		{
-			_serviceProvider = TestEngine.ServiceProvider();
 		}
 
 		[TestMethod]
@@ -28,8 +33,8 @@ namespace A2v10.Workflow.SqlServer.Tests
 		{
 			var id = "Publish_Workflow1";
 			await TestEngine.PrepareDatabase(id);
-			var storage = _serviceProvider.GetService<IWorkflowStorage>();
-			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
+			var storage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
+			var catalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
 			await catalog.SaveAsync(new WorkflowDescriptor(id, "<test></test>", "text/xml"));
 			var inst = await storage.PublishAsync(catalog, id);
 			Assert.AreEqual(1, inst.Version);
@@ -41,8 +46,8 @@ namespace A2v10.Workflow.SqlServer.Tests
 		{
 			var id = "Publish_Workflow2";
 			await TestEngine.PrepareDatabase(id);
-			var storage = _serviceProvider.GetService<IWorkflowStorage>();
-			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
+			var storage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
+			var catalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
 			var text1 = "<test></test>";
 			var format = "text/xml";
 			var text2 = "<test><inner/></test>";

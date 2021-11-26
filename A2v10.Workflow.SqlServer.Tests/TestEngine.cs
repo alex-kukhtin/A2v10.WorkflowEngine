@@ -19,12 +19,12 @@ namespace A2v10.Workflow.SqlServer.Tests
 {
 	public static class TestEngine
 	{
-		private static IServiceProvider _provider;
+		private static IServiceProvider? _provider;
 
 
 		public static IWorkflowEngine CreateSqlServerEngine()
 		{
-			return ServiceProvider().GetService<IWorkflowEngine>();
+			return ServiceProvider().GetRequiredService<IWorkflowEngine>();
 		}
 
 		public static IServiceProvider ServiceProvider()
@@ -52,7 +52,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 
 		public static Task PrepareDatabase(String id)
 		{
-			var dbContext = ServiceProvider().GetService<IDbContext>();
+			var dbContext = ServiceProvider().GetRequiredService<IDbContext>();
 			var prms = new ExpandoObject()
 			{
 				{ "Id", id }

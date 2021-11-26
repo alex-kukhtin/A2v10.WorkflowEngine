@@ -15,12 +15,16 @@ namespace A2v10.Workflow.SqlServer.Tests
 	[TestCategory("Storage.Instance")]
 	public class InstanceStorage
 	{
-		private IServiceProvider _serviceProvider;
+		private readonly IServiceProvider _serviceProvider;
+
+		public InstanceStorage()
+        {
+			_serviceProvider = TestEngine.ServiceProvider();
+		}
 
 		[TestInitialize]
 		public void Init()
 		{
-			_serviceProvider = TestEngine.ServiceProvider();
 		}
 
 		[TestMethod]
@@ -29,9 +33,9 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var id = "Simple_Instance_1";
 			await TestEngine.PrepareDatabase(id);
 
-			var storage = _serviceProvider.GetService<IWorkflowStorage>();
-			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
-			var engine = _serviceProvider.GetService<IWorkflowEngine>();
+			var storage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
+			var catalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
+			var engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
 
 
 			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");

@@ -21,7 +21,7 @@ namespace A2v10.Workflow.Tests
 			String wfId = "CallApi";
 			var inst = await TestEngine.SimpleRun(wfId, xaml, null);
 
-			var res0 = inst.Result;
+			//var res0 = inst.Result;
 			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
 
@@ -32,7 +32,7 @@ namespace A2v10.Workflow.Tests
 			String wfId = "CallActivity";
 			var inst = await TestEngine.SimpleRun(wfId, xaml, null);
 
-			var res0 = inst.Result;
+			//var res0 = inst.Result;
 			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
 	}

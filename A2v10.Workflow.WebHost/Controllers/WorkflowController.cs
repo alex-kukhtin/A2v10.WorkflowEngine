@@ -1,5 +1,6 @@
 ﻿// Copyright © 2021 Alex Kukhtin. All rights reserved.
 
+using System;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,9 @@ namespace A2v10.Workflow.WebHost.Controllers
 		[Consumes("application/json")]
 		public async Task<IActionResult> Create([FromBody] CreateRequest rq)
 		{
+			_logger.LogInformation("Create {wf}:{ver}", rq.Workflow, rq.Version);
+			if (String.IsNullOrEmpty(rq.Workflow))
+				return BadRequest("Invalid workflow id");
 			var res = await _engine.CreateAsync(new WorkflowIdentity(rq.Workflow, rq.Version));
 			return Ok(new CreateResponse()
 			{
@@ -41,9 +45,8 @@ namespace A2v10.Workflow.WebHost.Controllers
 		public async Task<RunResponse> Run(RunRequest rq)
 		{
 			var res = await _engine.RunAsync(rq.InstanceId, rq.Parameters);
-			return new RunResponse()
+			return new RunResponse(res.ExecutionStatus.ToString())
 			{
-				ExecutionStatus = res.ExecutionStatus.ToString(),
 				Result = res.Result
 			};
 		}

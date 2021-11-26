@@ -10,6 +10,6 @@ namespace A2v10.Workflow.SqlServer.Tests
 	{
 		public Int64? UserId => null;
 		public Int32? TenantId => null;
-		public String Segment => null;
+		public String? Segment => null;
 	}
 }

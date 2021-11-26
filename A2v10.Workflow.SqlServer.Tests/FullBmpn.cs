@@ -21,12 +21,15 @@ namespace A2v10.Workflow.SqlServer.Tests
 	[TestCategory("Bpmn.Full")]
 	public class FullBmpn
 	{
-		private IServiceProvider _serviceProvider;
+		private readonly IServiceProvider _serviceProvider;
+
+		public FullBmpn() {
+			_serviceProvider = TestEngine.ServiceProvider();
+		}
 
 		[TestInitialize]
 		public void Init()
 		{
-			_serviceProvider = TestEngine.ServiceProvider();
 		}
 
 		[TestMethod]
@@ -69,9 +72,11 @@ namespace A2v10.Workflow.SqlServer.Tests
 			{
 				var instModel = await dbContext.LoadModelAsync(null, "a2wf_test.[Instance.Load.Unlocked]", mdPrms);
 				Assert.AreEqual(execState, instModel.Eval<String>("Instance.ExecutionStatus"));
-				String state = instModel.Eval<String>("Instance.State");
+				String? state = instModel.Eval<String>("Instance.State");
+				Assert.IsNotNull(state);
 				var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state);
-				String strVal = stateObj.Eval<String>("Variables.Process_1.res");
+				Assert.IsNotNull(stateObj);
+				String? strVal = stateObj.Eval<String>("Variables.Process_1.res");
 				Assert.AreEqual(resVal, strVal);
 			}
 
@@ -95,10 +100,10 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var id = "DateTimer1";
 			await TestEngine.PrepareDatabase(id);
 
-			var storage = _serviceProvider.GetService<IWorkflowStorage>();
-			var catalog = _serviceProvider.GetService<IWorkflowCatalog>();
-			var engine = _serviceProvider.GetService<IWorkflowEngine>();
-			var dbContext = _serviceProvider.GetService<IDbContext>();
+			var storage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
+			var catalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
+			var engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
+			var dbContext = _serviceProvider.GetRequiredService<IDbContext>();
 
 
 			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\timerfromdb.bpmn");
@@ -127,9 +132,11 @@ namespace A2v10.Workflow.SqlServer.Tests
 
 			var instModel = await dbContext.LoadModelAsync(null, "a2wf_test.[Instance.Load.Unlocked]", mdPrms);
 			Assert.AreEqual("Complete", instModel.Eval<String>("Instance.ExecutionStatus"));
-			String state = instModel.Eval<String>("Instance.State");
+			String? state = instModel.Eval<String>("Instance.State");
+			Assert.IsNotNull(state);
 			var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state);
-			String strVal = stateObj.Eval<String>("Variables.Process_1.Result");
+			Assert.IsNotNull(stateObj);
+			String? strVal = stateObj.Eval<String>("Variables.Process_1.Result");
 			Assert.AreEqual("StartEnd", strVal);
 		}
 	}
