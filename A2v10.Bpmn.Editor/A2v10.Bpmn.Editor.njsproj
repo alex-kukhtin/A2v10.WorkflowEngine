@@ -92,6 +92,7 @@
     <Content Include="index.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="libman.json" />
     <Content Include="scss\editor.scss" />
     <Content Include="server.js" />
     <Content Include="package.json" />

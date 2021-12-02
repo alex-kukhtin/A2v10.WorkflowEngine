@@ -17,7 +17,7 @@ export default function scriptProps(group, element, bpmnFactory, translate) {
 		});
 		group.entries.push(textBox);
 	}
-	else if (isAny(element, ["bpmn:UserTask", "bpmn:StartEvent", "bpmn:EndEvent"])) {
+	else if (isAny(element, ["bpmn:UserTask", "bpmn:StartEvent", "bpmn:EndEvent", "bpmn:CallActivity"])) {
 		let textBox = entryFactory.textBox(translate, {
 			id: 'script',
 			label: translate('Script'),

@@ -68,7 +68,7 @@ window.BpmnModeler = {
     return new _Modeler.default({
       container: canvas,
       keyboard: {
-        bindTo: window
+        bindTo: document.getRootNode()
       },
       propertiesPanel: {
         parent: propPanel
@@ -3166,7 +3166,7 @@ function scriptProps(group, element, bpmnFactory, translate) {
     });
 
     group.entries.push(textBox);
-  } else if ((0, _ModelingUtil.isAny)(element, ["bpmn:UserTask", "bpmn:StartEvent", "bpmn:EndEvent"])) {
+  } else if ((0, _ModelingUtil.isAny)(element, ["bpmn:UserTask", "bpmn:StartEvent", "bpmn:EndEvent", "bpmn:CallActivity"])) {
     let textBox = _EntryFactory.default.textBox(translate, {
       id: 'script',
       label: translate('Script'),

@@ -17,7 +17,7 @@
 
 
 	<ItemGroup>
-	  <PackageReference Include="A2v10.Data.Core" Version="10.0.7301" />
+	  <PackageReference Include="A2v10.Data.Core" Version="10.0.7303" />
 	</ItemGroup>
 
 	<ItemGroup>

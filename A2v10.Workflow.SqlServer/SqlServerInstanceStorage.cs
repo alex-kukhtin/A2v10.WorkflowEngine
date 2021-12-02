@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
+using A2v10.Data;
 
 namespace A2v10.Workflow.SqlServer;
+
 public class SqlServerInstanceStorage : IInstanceStorage
 {
 	private readonly IDbContext _dbContext;
@@ -118,13 +120,68 @@ public class SqlServerInstanceStorage : IInstanceStorage
 	}
 
 
-	public async Task<IEnumerable<IPendingInstance>> GetPendingAsync()
-	{
-		return await 
-			_dbContext.LoadListAsync<PendingInstance>(null, $"{SqlDefinitions.SqlSchema}.[Instance.Pending.Load]", null) 
-			?? Enumerable.Empty<IPendingInstance>();
+	static List<IPendingInstance> PendingFromModel(ExpandoObject root)
+    {
+		var result = new List<IPendingInstance>();
+		var pendList = root.Get<List<ExpandoObject>>("Pending");
+		if (pendList == null)
+			return result;
+		foreach (var pe in pendList)
+		{
+			if (pe is not ExpandoObject pee)
+				continue;
+			result.Add(new PendingInstance()
+			{
+				InstanceId = pee.GetNotNull<Guid>("InstanceId"),
+				EventKey = pee.Get<String>("EventKey"),
+			});
+		}
+		return result;
 	}
 
+	static List<IAutoStartInstance> AutoStartFromModel(ExpandoObject root)
+    {
+		var result = new List<IAutoStartInstance>();
+
+		var autoStartList = root.Get<List<ExpandoObject>>("AutoStart");
+		if (autoStartList == null)
+			return result;
+		foreach (var asi in autoStartList)
+		{
+			if (asi is not ExpandoObject asie)
+				continue;
+			result.Add(new AutoStartInstance()
+			{
+				Id = asie.GetNotNull<Int64>("Id"),
+				WorkflowId = asie.GetNotNull<String>("WorkflowId"),
+				Version = asie.Get<Int32>("Version"),
+				Params = asie.Get<ExpandoObject>("Params")
+			});
+		}
+		return result;
+	}
+
+
+	public async Task<PendingElement?> GetPendingAsync()
+	{
+		var dm = await _dbContext.LoadModelAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Pending.Load]", null);
+		if (dm == null || dm.Root == null)
+			return null;
+
+		return new PendingElement(Pending: PendingFromModel(dm.Root), AutoStart: AutoStartFromModel(dm.Root));
+	}
+
+	public Task AutoStartComplete(Int64 Id, Guid instanceId)
+    {
+		var prms = new ExpandoObject()
+		{
+			{ "Id", Id },
+			{ "InstanceId", instanceId }
+		};
+		return _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[AutoStart.Complete]", prms);
+    }
+
 	#endregion
+
 }
 

@@ -20,7 +20,6 @@ namespace A2v10.Workflow.Tests
 
 	public class InMemoryInstanceStorage : IInstanceStorage
 	{
-
 		private readonly Dictionary<Guid, SavedInstance> _memory = new();
 
 		private readonly ISerializer _serializer;
@@ -99,17 +98,24 @@ namespace A2v10.Workflow.Tests
 			return null;
 		}
 
-		public Task<IEnumerable<IPendingInstance>> GetPendingAsync()
+		public Task<PendingElement?> GetPendingAsync()
 		{
 			// timers
-			var list = new List<IPendingInstance>();
+			var pendingList = new List<IPendingInstance>();
 			foreach (var (k, v) in _memory)
 			{
 				var eventKey = IsTimerExpired(v.InstanceData?.ExternalEvents);
 				if (!String.IsNullOrEmpty(eventKey))
-					list.Add(new PendingInstance() { InstanceId = k, EventKey = eventKey });
+					pendingList.Add(new PendingInstance() { InstanceId = k, EventKey = eventKey });
 			}
-			return Task.FromResult<IEnumerable<IPendingInstance>>(list);
+			var autoStartList = new List<IAutoStartInstance>();
+			var res = new PendingElement(Pending: pendingList, AutoStart: autoStartList);
+			return Task.FromResult<PendingElement?>(res);
 		}
+
+		public Task AutoStartComplete(Int64 Id, Guid instanceId)
+        {
+			return Task.CompletedTask;
+        }
 	}
 }

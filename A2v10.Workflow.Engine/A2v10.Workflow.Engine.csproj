@@ -15,7 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="A2v10.Data.Core" Version="10.0.7301" />
+		<PackageReference Include="A2v10.Data.Core" Version="10.0.7303" />
 		<PackageReference Include="A2v10.Runtime.Interfaces" Version="10.1.8030" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
 	</ItemGroup>

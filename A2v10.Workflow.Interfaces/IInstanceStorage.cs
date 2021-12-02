@@ -1,6 +1,9 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
+
+public record PendingElement(IEnumerable<IPendingInstance> Pending, IEnumerable<IAutoStartInstance> AutoStart);
+
 public interface IInstanceStorage
 {
 	Task<IInstance> Load(Guid id);
@@ -10,6 +13,7 @@ public interface IInstanceStorage
 
 	Task WriteException(Guid id, Exception ex);
 
-	Task<IEnumerable<IPendingInstance>> GetPendingAsync();
+	Task<PendingElement?> GetPendingAsync();
+	Task AutoStartComplete(Int64 Id, Guid instanceId);
 }
 

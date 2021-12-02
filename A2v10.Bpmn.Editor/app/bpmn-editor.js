@@ -66,7 +66,7 @@ window.BpmnModeler = {
 		return new BpmnModeler({
 			container: canvas,
 			keyboard: {
-				bindTo: window
+				bindTo: document.getRootNode()
 			},
 			propertiesPanel: {
 				parent: propPanel

@@ -92,13 +92,29 @@ public class WorkflowEngine : IWorkflowEngine
 
 	public async ValueTask ProcessPending()
 	{
-		foreach (var pi in await _instanceStorage.GetPendingAsync())
+		var pend = await _instanceStorage.GetPendingAsync();
+		if (pend == null)
+			return;
+		foreach (var asw in pend.AutoStart)
+        {
+			var inst = await AutoStartAsync(asw);
+			await _instanceStorage.AutoStartComplete(asw.Id, inst.Id);
+        }
+		foreach (var pi in pend.Pending)
 		{
 			if (pi.EventKey == null)
 				throw new InvalidProgramException("EventKey is null");
 			await HandleEventAsync(pi.InstanceId, pi.EventKey);
 		}
 	}
+
+	private async ValueTask<IInstance> AutoStartAsync(IAutoStartInstance autoStart)
+    {
+		if (String.IsNullOrEmpty(autoStart.WorkflowId))
+			throw new InvalidProgramException("WorkflowId is null");
+		var inst = await CreateAsync(new WorkflowIdentity(id: autoStart.WorkflowId, ver: autoStart.Version));
+		return await RunAsync(inst, autoStart.Params);
+    }
 
 	private async ValueTask<IInstance> Handle(Guid id, Func<ExecutionContext, ValueTask> action)
 	{
