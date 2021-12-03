@@ -1,7 +1,7 @@
 ﻿/*
 Copyright © 2020-2021 Alex Kukhtin
 
-Last updated : 02 вус 2021
+Last updated : 03 dec 2021
 module version : 8071
 */
 ------------------------------------------------
@@ -182,6 +182,24 @@ begin
 		[Message] nvarchar(max)
 	);
 	create index IDX_InstanceTrack_InstanceId on a2wf.InstanceTrack (InstanceId) with (fillfactor = 70);
+end
+go
+------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'AutoStart')
+begin
+	create table a2wf.[AutoStart]
+	(
+		[Id] bigint identity(100, 1) not null
+			constraint PK_AutoStart primary key clustered,
+		[WorkflowId] nvarchar(255) not null,
+		[Version] int not null
+			constraint DF_AutoStart_Version default(0),
+		Params nvarchar(max) null,
+		Lock uniqueidentifier null,
+		DateCreated datetime not null constraint DF_AutoStart_DateCreated default(getutcdate()),
+		InstanceId uniqueidentifier null,
+		DateStarted datetime null
+	);
 end
 go
 ------------------------------------------------
@@ -626,13 +644,49 @@ create or alter procedure a2wf.[Instance.Pending.Load]
 as
 begin
 	set nocount on;
-	set transaction isolation level read uncommitted;
+	set transaction isolation level read committed;
 	-- timers
 	select [Pending!TPend!Array] = null, InstanceId, EventKey = ev.[Event] , ev.Kind
 	from a2wf.InstanceEvents ev
 		inner join a2wf.Instances i on ev.InstanceId = i.Id
 	where ev.Pending <= getutcdate() and ev.Kind=N'T' and i.Lock is null
 	order by ev.Pending;
+
+	declare @AutoStartTable table(Id bigint);
+	update a2wf.AutoStart set Lock = newid() 
+	output inserted.Id into @AutoStartTable(Id)
+	where Lock is null and InstanceId is null and DateStarted is null;
+
+	select [AutoStart!TAutoStart!Array] = null, [Id!!Id]= a.Id,  
+		WorkflowId, [Version], [Params!!Json] = Params
+	from @AutoStartTable t inner join a2wf.AutoStart a on t.Id = a.Id
+	order by a.DateCreated;
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[AutoStart.Create]
+@WorkflowId nvarchar(255),
+@Version int = 0,
+@Params nvarchar(max) = null
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+
+	insert into a2wf.AutoStart(WorkflowId, [Version], [Params]) 
+	values (@WorkflowId, @Version, @Params);
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[AutoStart.Complete]
+@Id bigint,
+@InstanceId uniqueidentifier
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+	update a2wf.AutoStart set InstanceId = @InstanceId, DateStarted = getutcdate() 
+	where Id=@Id;
 end
 go
 
@@ -646,4 +700,5 @@ drop table a2wf.InstanceVariablesInt;
 drop table a2wf.Instances;
 drop table a2wf.Workflows;
 drop table a2wf.Catalog;
+drop table a2wf.AutoStart;
 */

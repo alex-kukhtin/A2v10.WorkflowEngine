@@ -34,6 +34,7 @@ begin
 
 	delete from a2wf.[Workflows] where Id=@Id;
 	delete from a2wf.[Catalog] where Id=@Id;
+	delete from a2wf.[AutoStart] where WorkflowId = @Id;
 end
 go
 ------------------------------------------------
@@ -55,6 +56,23 @@ go
 create or alter procedure a2wf_test.GetTimer
 as
 begin
+	set nocount on;
+	set transaction isolation level read uncommitted;
 	select [Model!TModel!Object] = null, [NextDate!!Utc] = dateadd(second, 1, getutcdate());
+end
+go
+------------------------------------------------
+create or alter procedure a2wf_test.AutoStartLast
+as
+begin
+	set nocount on;
+	set transaction isolation level read uncommitted;
+	declare @InstanceId uniqueidentifier;
+	select top(1) @InstanceId = InstanceId from a2wf.AutoStart where InstanceId is not null
+	order by DateCreated desc;
+	select [Instance!TInstance!Object] = null, [Id!!Id] = i.Id, [WorkflowId], [Version], [State], 
+		ExecutionStatus, Lock
+	from a2wf.Instances i
+	where i.Id=@InstanceId;
 end
 go

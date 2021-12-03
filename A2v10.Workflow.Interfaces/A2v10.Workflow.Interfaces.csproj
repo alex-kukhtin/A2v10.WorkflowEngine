@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
-		<Version>10.1.8070</Version>
+		<Version>10.1.8071</Version>
 		<Product>A2v10</Product>
 		<PackageId>A2v10.Workflow.Interfaces</PackageId>
 		<Authors>Oleksandr Kukthin</Authors>
