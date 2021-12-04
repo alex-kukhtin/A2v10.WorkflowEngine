@@ -13,7 +13,7 @@ window.BpmnViewer = {
 		return new BpmnViewer({
 			container: canvas,
 			keyboard: {
-				bindTo: window
+				bindTo: document.getRootNode()
 			},
 			additionalModules: [
 				modeling

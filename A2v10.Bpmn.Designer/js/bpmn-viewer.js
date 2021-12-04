@@ -7,25 +7,14 @@ var _modeling = _interopRequireDefault(require("bpmn-js/lib/features/modeling"))
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/*see: https://github.com/bpmn-io/bpmn-js/tree/develop/lib*/
-
-/*
-let canvas = document.getElementById('canvas');
-
-let bpmnViewer = new BpmnViewer({
-	container: canvas,
-	keyboard: {
-		bindTo: window
-	}
-});
-*/
+/*see: https://github.com/bpmn-io/bpmn-js/tree/develop/lib */
 window.BpmnViewer = {
   create: function (canvas) {
     if (typeof canvas === 'string') canvas = document.getElementById(canvas);
     return new _NavigatedViewer.default({
       container: canvas,
       keyboard: {
-        bindTo: window
+        bindTo: document.getRootNode()
       },
       additionalModules: [_modeling.default]
     });

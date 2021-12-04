@@ -14,7 +14,7 @@ window.BpmnViewer = {
     return new _NavigatedViewer.default({
       container: canvas,
       keyboard: {
-        bindTo: window
+        bindTo: document.getRootNode()
       },
       additionalModules: [_modeling.default]
     });

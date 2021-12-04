@@ -1,8 +1,8 @@
 /*
 Copyright © 2020-2021 Alex Kukhtin
 
-Last updated : 21 sep 2021
-module version : 8033
+Last updated : 04 dec 2021
+module version : 8072
 */
 ------------------------------------------------
 set nocount on;
@@ -30,6 +30,9 @@ begin
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
 	delete from a2wf.InstanceEvents
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf.InstanceBookmarks
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+
 	delete from a2wf.[Instances] where WorkflowId = @Id;
 
 	delete from a2wf.[Workflows] where Id=@Id;

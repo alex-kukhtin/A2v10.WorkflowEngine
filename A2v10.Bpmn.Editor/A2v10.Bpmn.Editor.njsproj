@@ -64,6 +64,7 @@
     <Content Include="app\provider\workflow\parts\bpmn\implementation\timerEventDefinition.js" />
     <Content Include="app\provider\workflow\parts\bpmn\linkProps.js" />
     <Content Include="app\provider\workflow\parts\bpmn\nameProps.js" />
+    <Content Include="app\provider\workflow\parts\callActivityProps.js" />
     <Content Include="app\provider\workflow\parts\bpmn\processProps.js" />
     <Content Include="app\provider\workflow\parts\globalScriptProps.js" />
     <Content Include="app\provider\workflow\parts\impl\extensionElements.js" />

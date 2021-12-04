@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
 using System.Dynamic;
 
-using A2v10.Workflow.Interfaces;
+using A2v10.Workflow.Interfaces; 
 
 namespace A2v10.Workflow
 {
 	public class Instance : IInstance
 	{
-		public Instance(IWorkflow workflow, Guid id)
+		public Instance(IWorkflow workflow, Guid id, Guid? parent = null)
         {
 			Workflow = workflow;
 			Id = id;
+			Parent = parent;
         }
 		public IWorkflow Workflow { get; init; }
 

@@ -15,6 +15,7 @@ import scriptProps from './parts/scriptProps';
 import variablesProps from './parts/variablesProps';
 import variablesDetailProps from './parts/variablesDetailProps';
 import globalScriptGroup from './parts/globalScriptProps';
+import callActivityProps from './parts/callActivityProps';
 
 import extensionElementsImpl from './parts/impl/extensionElements';
 
@@ -39,6 +40,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 
 	linkProps(detailsGroup, element, translate);
 	eventProps(detailsGroup, element, bpmnFactory, elementRegistry, translate);
+	callActivityProps(detailsGroup, element, bpmnFactory, translate);
 	scriptProps(detailsGroup, element, bpmnFactory, translate);
 	conditionalProps(detailsGroup, element, bpmnFactory, translate);
 

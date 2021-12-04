@@ -67,6 +67,19 @@ export default {
 			]
 		},
 		{
+			"name": "Parameters",
+			"superClass": [
+				"Element"
+			],
+			"properties": [
+				{
+					"name": "text",
+					"type": "String",
+					"isBody": true
+				}
+			]
+		},
+		{
 			"name": "GlobalScript",
 			"superClass": [
 				"Element"

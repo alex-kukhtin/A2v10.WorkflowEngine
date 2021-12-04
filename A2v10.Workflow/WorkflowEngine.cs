@@ -23,30 +23,31 @@ public class WorkflowEngine : IWorkflowEngine
 		_tracker = tracker;
 	}
 
-	public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity)
+	public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, Guid? parent = null)
 	{
 		var wf = new Workflow(identity ?? new WorkflowIdentity(String.Empty), root);
-		var inst = new Instance(wf, Guid.NewGuid());
+		var inst = new Instance(wf, Guid.NewGuid(), parent);
 		root.OnEndInit(null);
 		await _instanceStorage.Create(inst);
 		return inst;
 	}
 
-	public async ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity)
+	public async ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, Guid? parent = null)
 	{
 		var wf = await _workflowStorage.LoadAsync(identity);
-		return await CreateAsync(wf.Root, wf.Identity);
+		return await CreateAsync(wf.Root, wf.Identity, parent);
 	}
 
 	public async ValueTask<IInstance> RunAsync(IInstance instance, Object? args = null)
 	{
 		if (instance.ExecutionStatus != WorkflowExecutionStatus.Init)
 			throw new WorkflowException($"Instance (id={instance.Id}) is already running");
-		var context = new ExecutionContext(_serviceProvider, _tracker, instance.Workflow.Root, args);
+		var context = new ExecutionContext(_serviceProvider, _tracker, instance, args);
 		context.Schedule(instance.Workflow.Root, null);
 		await context.RunAsync();
 		SetInstanceState(instance, context);
 		await _instanceStorage.Save(instance);
+		await CheckParent(instance);
 		return instance;
 	}
 
@@ -121,14 +122,7 @@ public class WorkflowEngine : IWorkflowEngine
 		try
 		{
 			var inst = await _instanceStorage.Load(id);
-			inst.Workflow.Root.OnEndInit(null);
-			var context = new ExecutionContext(_serviceProvider, _tracker, inst.Workflow.Root);
-			context.SetState(inst.State);
-			await action(context);
-			await context.RunAsync();
-			SetInstanceState(inst, context);
-			await _instanceStorage.Save(inst);
-			return inst;
+			return await Handle(inst, action);
 		}
 		catch (Exception ex)
 		{
@@ -137,5 +131,45 @@ public class WorkflowEngine : IWorkflowEngine
 		}
 	}
 
+	public async ValueTask<IInstance> LoadInstance(Guid id)
+    {
+		var inst = await _instanceStorage.Load(id);
+		inst.Workflow.Root.OnEndInit(null);
+		var context = new ExecutionContext(_serviceProvider, _tracker, inst);
+		context.SetState(inst.State);
+		SetInstanceState(inst, context);
+		return inst;
+	}
+
+	private async ValueTask<IInstance> Handle(IInstance inst, Func<ExecutionContext, ValueTask> action)
+    {
+		inst.Workflow.Root.OnEndInit(null);
+		var context = new ExecutionContext(_serviceProvider, _tracker, inst);
+		context.SetState(inst.State);
+		await action(context);
+		await context.RunAsync();
+		SetInstanceState(inst, context);
+		await _instanceStorage.Save(inst);
+		await CheckParent(inst);
+		return inst;
+	}
+
+	private async ValueTask CheckParent(IInstance inst)
+    {
+		if (inst.Parent == null || inst.ExecutionStatus != WorkflowExecutionStatus.Complete)
+			return;
+		String bookmarkName = $"{inst.Workflow.Identity.Id}:{inst.Id}";
+		var foundInst = await _instanceStorage.LoadBookmark(bookmarkName);
+		if (foundInst == null)
+			return;
+		try
+		{
+			await Handle(foundInst, context => context.ResumeAsync(bookmarkName, inst.Result));
+		} 
+		catch (Exception ex)
+        {
+			await _instanceStorage.WriteException(foundInst.Id, ex);
+		}
+    }
 }
 

@@ -7,9 +7,20 @@ using System.Threading.Tasks;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
-using A2v10.Data;
 
 namespace A2v10.Workflow.SqlServer;
+
+public record DatabaseInstance
+{	
+	public Guid? Id { get; set; }
+	public Guid? Parent { get; set; }
+	public Int32 Version { get; set; }
+	public String? WorkflowId { get; set; }
+	public String State { get; set; } = String.Empty;
+	public WorkflowExecutionStatus ExecutionStatus { get; set; }
+
+	public Guid? Lock { get; set; }
+}
 
 public class SqlServerInstanceStorage : IInstanceStorage
 {
@@ -34,22 +45,23 @@ public class SqlServerInstanceStorage : IInstanceStorage
 			{ "Id", instanceId }
 		};
 		_dbIdentity.SetIdentityParams(prms);
-		var eo = await _dbContext.ReadExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Load]", prms);
-		if (eo == null)
+		var dbi = await _dbContext.LoadAsync<DatabaseInstance>(null, $"{SqlDefinitions.SqlSchema}.[Instance.Load]", prms);
+		if (dbi == null)
 			throw new SqlServerStorageException($"Instance '{instanceId}' not found");
 
 		var identity = new WorkflowIdentity (
-			eo.GetNotNull<String>("WorkflowId") ?? throw new InvalidProgramException("WorkflowId is null"),
-			eo.Get<Int32>("Version")
+			dbi.WorkflowId ?? throw new InvalidProgramException("WorkflowId is null"),
+			dbi.Version
 		);
 
 		var wf = await _workflowStorage.LoadAsync(identity);
+
 		return new Instance(wf, instanceId)
 		{
-			Parent = eo.Get<Guid>("Parent"),
-			State = _serializer.Deserialize(eo.Get<String>("State")),
-			ExecutionStatus = Enum.Parse<WorkflowExecutionStatus>(eo.GetNotNull<String>("ExecutionStatus")),
-			Lock = eo.Get<Guid>("Lock")
+			Parent = dbi.Parent,
+			State = _serializer.Deserialize(dbi.State),
+			ExecutionStatus = dbi.ExecutionStatus,
+			Lock = dbi.Lock
 		};
 	}
 
@@ -180,6 +192,32 @@ public class SqlServerInstanceStorage : IInstanceStorage
 		};
 		return _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[AutoStart.Complete]", prms);
     }
+
+	public async Task<IInstance?> LoadBookmark(String bookmark)
+    {
+		var prms = new ExpandoObject()
+		{
+			{ "Bookmark", bookmark }
+		};
+		_dbIdentity.SetIdentityParams(prms);
+		var dbi = await _dbContext.LoadAsync<DatabaseInstance>(null, $"{SqlDefinitions.SqlSchema}.[Instance.LoadBookmark]", prms);
+		if (dbi == null)
+			return null;
+
+		var identity = new WorkflowIdentity(
+			dbi.WorkflowId ?? throw new InvalidProgramException("WorkflowId is null"),
+			dbi.Version
+		);
+
+		var wf = await _workflowStorage.LoadAsync(identity);
+		return new Instance(wf, dbi.Id ?? throw new InvalidProgramException("InstanceId is null"))
+		{
+			Parent = dbi.Parent,
+			State = _serializer.Deserialize(dbi.State),
+			ExecutionStatus = dbi.ExecutionStatus ,
+			Lock = dbi.Lock
+		};
+	}
 
 	#endregion
 

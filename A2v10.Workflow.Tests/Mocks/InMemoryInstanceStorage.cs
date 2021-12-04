@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using A2v10.Workflow.Interfaces;
@@ -11,7 +12,7 @@ using A2v10.Workflow.Interfaces;
 namespace A2v10.Workflow.Tests
 {
 	internal record SavedInstance(IWorkflowIdentity Identity, IWorkflow Workflow,
-		String? State, IInstanceData? InstanceData, ExpandoObject? Result, WorkflowExecutionStatus Status)
+		String? State, IInstanceData? InstanceData, ExpandoObject? Result, WorkflowExecutionStatus Status, Guid? Parent)
     {
 		public Boolean IsEmptyWorkflow => Identity == null || String.IsNullOrEmpty(Identity.Id) && Identity.Version == 0;
 		public Boolean HasWorkflow => !IsEmptyWorkflow;
@@ -39,11 +40,12 @@ namespace A2v10.Workflow.Tests
 				{
 					State = _serializer.Deserialize(saved.State),
 					Result = saved.Result,
-					ExecutionStatus = saved.Status
+					ExecutionStatus = saved.Status,
+					Parent = saved.Parent
 				};
 				return inst;
 			}
-			throw new NotImplementedException();
+			throw new KeyNotFoundException();
 		}
 
 		public Task Create(IInstance instance)
@@ -52,7 +54,7 @@ namespace A2v10.Workflow.Tests
 				throw new WorkflowException($"Instance storage. Instance with id = {instance.Id} has been already created");
 			var si = new SavedInstance(instance.Workflow.Identity, instance.Workflow,
 				_serializer.Serialize(instance.State), instance.InstanceData,
-				instance.Result, instance.ExecutionStatus);
+				instance.Result, instance.ExecutionStatus, instance.Parent);
 			_memory.Add(instance.Id, si);
 			return Task.CompletedTask;
 		}
@@ -63,7 +65,7 @@ namespace A2v10.Workflow.Tests
 			{
 				var si = new SavedInstance(instance.Workflow.Identity, instance.Workflow,
 					_serializer.Serialize(instance.State), instance.InstanceData,
-					instance.Result, instance.ExecutionStatus);
+					instance.Result, instance.ExecutionStatus, instance.Parent);
 				_memory[instance.Id] = si;
 			}
 			else
@@ -117,5 +119,25 @@ namespace A2v10.Workflow.Tests
         {
 			return Task.CompletedTask;
         }
+
+		public async Task<IInstance?> LoadBookmark(String bookmark)
+		{
+			foreach (var (id, saved) in _memory)
+			{
+				var eb = saved?.InstanceData?.ExternalBookmarks;
+				if (eb != null)
+				{
+					foreach (var bi in eb)
+					{
+						if (bi is ExpandoObject eo)
+						{
+							if (eo.Get<String>("Bookmark") == bookmark)
+								return await Load(id);
+						}
+					}
+				}
+			}
+			return null;
+		}
 	}
 }

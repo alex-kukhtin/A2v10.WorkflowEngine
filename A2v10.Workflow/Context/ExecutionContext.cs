@@ -1,10 +1,10 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Threading.Tasks;
 using System.Text.Json;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.Tracker;
@@ -35,16 +35,20 @@ public partial class ExecutionContext : IExecutionContext
 	private readonly Dictionary<String, EventItem> _events = new();
 
 	private readonly IActivity _root;
+	private readonly IInstance _instance;
 
 	private readonly ScriptEngine _script;
 	private readonly IServiceProvider _serviceProvider;
 	private readonly ITracker _tracker;
+	private readonly IWorkflowEngine _engine;
 
-	public ExecutionContext(IServiceProvider serviceProvider, ITracker tracker, IActivity root, Object? args = null)
+	public ExecutionContext(IServiceProvider serviceProvider, ITracker tracker, IInstance instance, Object? args = null)
 	{
 		_serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 		_tracker = tracker;
-		_root = root;
+		_instance = instance;
+		_root = instance.Workflow.Root;
+		_engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
 
 		// store all activites
 		var toMapArg = new TraverseArg()
@@ -151,6 +155,7 @@ public partial class ExecutionContext : IExecutionContext
 			throw new WorkflowException($"Bookmark '{bookmark}' not found");
 	}
 
+
 	public ValueTask HandleEventAsync(String eventKey, Object? result)
 	{
 		if (_events.TryGetValue(eventKey, out EventItem? eventItem))
@@ -162,5 +167,20 @@ public partial class ExecutionContext : IExecutionContext
 		else
 			throw new WorkflowException($"Event '{eventKey}' not found");
 	}
+
+	public async ValueTask<IInstance> Call(String activity, ExpandoObject? prms)
+    {
+		var ea = ExternalActivity.Parse(activity);
+		if (ea.IsBpmn)
+		{
+			if (ea.WorkflowIdentity == null)
+				throw new InvalidProgramException("WorkflowIdentity is null");
+			var inst = await _engine.CreateAsync(ea.WorkflowIdentity, _instance.Id);
+			var result = await _engine.RunAsync(inst.Id, prms);
+			return result;
+		}
+		else
+			throw new WorkflowException($"ExecutionContext.Call Invalid activity '{activity}'");
+    }
 }
 

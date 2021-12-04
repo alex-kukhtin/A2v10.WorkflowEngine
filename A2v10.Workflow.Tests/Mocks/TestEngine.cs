@@ -21,6 +21,11 @@ namespace A2v10.Workflow.Tests
 
 		private static IServiceProvider? _provider;
 
+		public static void Clear()
+        {
+			_provider = null;
+        }
+
 		public static IServiceProvider ServiceProvider()
 		{
 			if (_provider != null)
