@@ -23,7 +23,6 @@ public class CallActivity
 	private readonly IWorkflowStorage _workflowStorage;
 	private readonly IWorkflowCatalog _workflowCatalog;
 	private readonly IWorkflowEngine _workflowEngine;
-	private readonly IDbContext _dbContext;
 
 	public CallActivity()
 	{
@@ -31,7 +30,6 @@ public class CallActivity
 		_workflowStorage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
 		_workflowCatalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
 		_workflowEngine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
-		_dbContext = _serviceProvider.GetRequiredService<IDbContext>();
     }
 
 
@@ -43,20 +41,15 @@ public class CallActivity
 
 		await TestEngine.PrepareDatabase(childId);
 		await TestEngine.PrepareDatabase(parentId);
-		var sp = TestEngine.ServiceProvider();
-		var wfs = sp.GetRequiredService<IWorkflowStorage>();
-		var wfc = sp.GetRequiredService<IWorkflowCatalog>();
-		var wfe = sp.GetRequiredService<IWorkflowEngine>();
-		var ist = sp.GetRequiredService<IInstanceStorage>();
 
 		var xamlChild = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\SimpleChildTimer.bpmn");
-		await wfc.SaveAsync(new WorkflowDescriptor(childId, xamlChild));
-		var childIdent = await wfs.PublishAsync(wfc, childId);
+		await _workflowCatalog.SaveAsync(new WorkflowDescriptor(childId, xamlChild));
+		var childIdent = await _workflowStorage.PublishAsync(_workflowCatalog, childId);
 		Assert.AreEqual(1, childIdent.Version);
 
 		var xamlParent = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\SimpleParent.bpmn");
-		await wfc.SaveAsync(new WorkflowDescriptor(parentId, xamlParent));
-		var parentIdent = await wfs.PublishAsync(wfc, parentId);
+		await _workflowCatalog.SaveAsync(new WorkflowDescriptor(parentId, xamlParent));
+		var parentIdent = await _workflowStorage.PublishAsync(_workflowCatalog, parentId);
 		Assert.AreEqual(1, parentIdent.Version);
 
 		var prms = new ExpandoObject()
@@ -64,15 +57,15 @@ public class CallActivity
 			{"A", 2 },
 			{"B", 2 },
 		};
-		var inst = await wfe.CreateAsync(new WorkflowIdentity(parentId));
-		inst = await wfe.RunAsync(inst.Id, prms);
+		var inst = await _workflowEngine.CreateAsync(new WorkflowIdentity(parentId));
+		inst = await _workflowEngine.RunAsync(inst.Id, prms);
 
 		Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
 		await Task.Delay(1010);
-		await wfe.ProcessPending();
+		await _workflowEngine.ProcessPending();
 
-		var res = await wfe.LoadInstance(inst.Id);
+		var res = await _workflowEngine.LoadInstance(inst.Id);
 
 		var res0 = res.Result;
 		Assert.AreEqual(4, res0.Get<Double>("R"));
