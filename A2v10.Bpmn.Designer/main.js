@@ -2,7 +2,7 @@
 
 'use strict';
 
-const { app, BrowserWindow, dialog, Menu} = require('electron')
+const { app, BrowserWindow, dialog, Menu, shell } = require('electron')
 
 const { mainMenu } = require('./mainmenu');
 const document = require('./document');
@@ -24,6 +24,13 @@ function createWindow() {
 	document.setMainWindow(mainWindow);
 	// and load the index.html of the app.
 	mainWindow.loadFile('index.html');
+
+
+	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+		// open url in a browser and prevent default
+		shell.openExternal(url);
+		return { action: 'deny' };
+	});
 
 	// Open the DevTools.
 	//mainWindow.webContents.openDevTools()
