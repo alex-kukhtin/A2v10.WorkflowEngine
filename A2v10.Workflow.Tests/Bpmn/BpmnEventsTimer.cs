@@ -14,8 +14,8 @@ using System.Threading;
 namespace A2v10.Workflow.Tests
 {
 	[TestClass]
-	[TestCategory("Bmpn.Events")]
-	public class BpmnEvents
+	[TestCategory("Bmpn.Events.Timer")]
+	public class BpmnTimerEvents
 	{
 		[TestMethod]
 		public async Task BoundaryTimer()

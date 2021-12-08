@@ -12,6 +12,7 @@ public interface IWorkflowEngine
 
 	ValueTask<IInstance> ResumeAsync(Guid id, String bookmark, Object? reply = null);
 	ValueTask<IInstance> HandleEventAsync(Guid id, String eventKey, Object? reply = null);
+	ValueTask<IInstance> SendMessageAsync(Guid id, String message);
 
 	ValueTask<IInstance> LoadInstance(Guid id);
 

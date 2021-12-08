@@ -5,5 +5,6 @@ public interface IWorkflow
 {
 	IWorkflowIdentity Identity { get; }
 	IActivity Root { get; }
+	IActivityWrapper? Wrapper { get; }
 }
 

@@ -2,29 +2,26 @@
 
 using System.Dynamic;
 
-using A2v10.Workflow.Interfaces; 
 
-namespace A2v10.Workflow
+namespace A2v10.Workflow;
+public class Instance : IInstance
 {
-	public class Instance : IInstance
-	{
-		public Instance(IWorkflow workflow, Guid id, Guid? parent = null)
-        {
-			Workflow = workflow;
-			Id = id;
-			Parent = parent;
-        }
-		public IWorkflow Workflow { get; init; }
+	public Instance(IWorkflow workflow, Guid id, Guid? parent = null)
+    {
+		Workflow = workflow;
+		Id = id;
+		Parent = parent;
+    }
+	public IWorkflow Workflow { get; init; }
+	public Guid Id { get; init; }
+	public Guid? Parent { get; init; }
 
-		public Guid Id { get; init; }
-		public Guid? Parent { get; init; }
+	public WorkflowExecutionStatus ExecutionStatus { get; set; }
+	public Guid? Lock { get; init; }
 
-		public WorkflowExecutionStatus ExecutionStatus { get; set; }
-		public Guid? Lock { get; init; }
+	public ExpandoObject? Result { get; set; }
+	public ExpandoObject? State { get; set; }
 
-		public ExpandoObject? Result { get; set; }
-		public ExpandoObject? State { get; set; }
-
-		public IInstanceData? InstanceData { get; set; }
-	}
+	public IInstanceData? InstanceData { get; set; }
 }
+

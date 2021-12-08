@@ -10,6 +10,7 @@ public enum ActivityTrackAction
 	Resume = 3,
 	Event = 4,
 	HandleEvent = 5,
+	HandleMessage = 6,
 	Exception = 999
 }
 

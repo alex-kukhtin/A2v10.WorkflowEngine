@@ -6,8 +6,8 @@ using System.Text.Json;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.Tracker;
+using A2v10.Workflow.Bpmn;
 
 namespace A2v10.Workflow;
 
@@ -155,6 +155,22 @@ public partial class ExecutionContext : IExecutionContext
 			throw new WorkflowException($"Bookmark '{bookmark}' not found");
 	}
 
+
+	public async ValueTask HandleMessageAsync(String message)
+    {
+		// MessageName => MessageId
+		var msg = _instance?.Workflow?.Wrapper?.FindElement<Message>(m => m.Name == message);
+		if (msg == null)
+			return;
+		foreach (var (eventKey, eventItem) in _events)
+        {
+			if (eventItem.Event.Ref == msg.Id)
+            {
+				_tracker.Track(new ActivityTrackRecord(ActivityTrackAction.HandleMessage, null, $"{{message:'{message}', event:{eventKey}}}"));
+				await eventItem.Action(this, eventItem.Event, null);
+			}
+		}
+    }
 
 	public ValueTask HandleEventAsync(String eventKey, Object? result)
 	{

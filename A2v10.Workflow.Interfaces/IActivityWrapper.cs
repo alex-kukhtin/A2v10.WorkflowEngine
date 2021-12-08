@@ -5,5 +5,6 @@ namespace A2v10.Workflow.Interfaces;
 public interface IActivityWrapper
 {
 	IActivity Root();
+    public T? FindElement<T>(Func<T, Boolean> predicate) where T : class;
 }
 

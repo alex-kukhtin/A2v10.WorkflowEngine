@@ -1,11 +1,8 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 
-using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow;
 public partial class ExecutionContext : IExecutionContext

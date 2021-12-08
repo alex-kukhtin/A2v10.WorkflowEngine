@@ -154,6 +154,11 @@ public class WorkflowEngine : IWorkflowEngine
 		return inst;
 	}
 
+	public ValueTask<IInstance> SendMessageAsync(Guid id, String message)
+    {
+		return Handle(id, context => context.HandleMessageAsync(message));
+	}
+
 	private async ValueTask CheckParent(IInstance inst)
     {
 		if (inst.Parent == null || inst.ExecutionStatus != WorkflowExecutionStatus.Complete)

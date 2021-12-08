@@ -115,6 +115,8 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 
 	protected virtual void CompleteTask(IExecutionContext context)
 	{
+		ParentContainer.KillToken(_token);
+		_token = null;
 		IsComplete = true;
 		foreach (var ev in ParentContainer.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
 			context.RemoveEvent(ev.Id);

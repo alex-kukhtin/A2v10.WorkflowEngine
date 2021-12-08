@@ -48,7 +48,7 @@ namespace A2v10.Workflow.Tests.Serialization
 
 			var json = s.SerializeActitity(p, "json");
 
-			var r = s.DeserializeActitity(json, "json") as Process;
+			var r = s.DeserializeActitity(json, "json").Activity as Process;
 			Assert.IsNotNull(r);
 
 			Assert.AreEqual(r.Id, p.Id);
@@ -83,7 +83,7 @@ namespace A2v10.Workflow.Tests.Serialization
 			var ser = new WorkflowSerializer(null);
 			var json = ser.SerializeActitity(s, "json");
 
-			var r = ser.DeserializeActitity(json, "json") as Sequence;
+			var r = ser.DeserializeActitity(json, "json").Activity as Sequence;
 
 			Assert.IsNotNull(r);
 			Assert.AreEqual(r.Id, s.Id);
