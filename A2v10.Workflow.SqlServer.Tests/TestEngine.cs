@@ -59,5 +59,20 @@ namespace A2v10.Workflow.SqlServer.Tests
 			};
 			return dbContext.ExecuteExpandoAsync(null, "a2wf_test.[Tests.Prepare]", prms);
 		}
+
+		public static async ValueTask<IInstance> SimpleRun(String id, String text, ExpandoObject? prms = null)
+		{
+			var sp = ServiceProvider();
+			var wfs = sp.GetRequiredService<IWorkflowStorage>();
+			var wfc = sp.GetRequiredService<IWorkflowCatalog>();
+
+			await wfc.SaveAsync(new WorkflowDescriptor(id, text));
+			var ident = await wfs.PublishAsync(wfc, id);
+
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
+			var inst = await wfe.CreateAsync(ident);
+			return await wfe.RunAsync(inst, prms);
+		}
+
 	}
 }
