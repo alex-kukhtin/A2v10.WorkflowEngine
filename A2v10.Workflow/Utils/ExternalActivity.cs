@@ -24,7 +24,7 @@ internal class ExternalActivity
         var match = regex.Match(name);
         if (match.Groups.Count != 6)
             throw new WorkflowException(ErrorMessage(name));
-       var type = match.Groups[1].Value.ToLowerInvariant();
+        var type = match.Groups[1].Value.ToLowerInvariant();
         if (type == "bpmn")
         {
             var processName = match.Groups[2].Value;
@@ -39,6 +39,11 @@ internal class ExternalActivity
                 Kind = ExternalActivityKind.Bpmn,
                 WorkflowIdentity = new WorkflowIdentity(processName, processVersion)
             };
+        } 
+        else if (type == "clr")
+        {
+            throw new NotImplementedException($"External clr activity yet not implemented");
+
         }
         throw new NotImplementedException($"External activity: {name}");
     }
