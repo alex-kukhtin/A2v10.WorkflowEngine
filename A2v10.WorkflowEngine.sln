@@ -33,6 +33,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "A2v10.Workflow.Engine", "A2
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "A2v10.Bpmn.Designer", "Installer\A2v10.Bpmn.Designer\A2v10.Bpmn.Designer.vdproj", "{651FFB31-7779-4246-AC87-FC3F0863C330}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation.RU", "Documentation.RU", "{F0732DA0-A869-475B-9CAA-883DBE4199C6}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation.RU\index.md = Documentation.RU\index.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

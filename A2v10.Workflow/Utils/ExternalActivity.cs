@@ -28,7 +28,8 @@ internal class ExternalActivity
         if (type == "bpmn")
         {
             var processName = match.Groups[2].Value;
-            if (match.Groups[4].Value.ToLowerInvariant() != "version")
+            var versionTag = match.Groups[4].Value.ToLowerInvariant();
+            if (!String.IsNullOrEmpty(versionTag) && versionTag != "version")
                 throw new WorkflowException(ErrorMessage(name));
             var verString = match.Groups[5].Value;
             var processVersion = 0;
