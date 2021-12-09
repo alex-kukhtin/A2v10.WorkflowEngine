@@ -1,22 +1,25 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
-using System.Threading.Tasks;
 
-using A2v10.Workflow.Interfaces;
+namespace A2v10.Workflow.Bpmn;
 
-namespace A2v10.Workflow.Bpmn
+public class EndEvent : Event
 {
-	public class EndEvent : Event
+	public override async ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 	{
-		public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
-		{
-			if (!String.IsNullOrEmpty(Script))
-				context.Execute(Id, nameof(Script));
+		if (!String.IsNullOrEmpty(Script))
+			context.Execute(Id, nameof(Script));
 
-			ParentContainer.KillToken(token);
-			Parent?.TryComplete(context, this);
-			return ValueTask.CompletedTask;
+		ParentContainer.KillToken(token);
+
+		var ed = EventDefinition;
+		if (ed != null)
+		{
+			var evt = ed.CreateEvent(Id, context);
+			await context.HandleEvent(evt);
 		}
+
+		Parent?.TryComplete(context, this);
 	}
 }
+

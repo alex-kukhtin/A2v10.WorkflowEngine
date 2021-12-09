@@ -184,6 +184,18 @@ public partial class ExecutionContext : IExecutionContext
 			throw new WorkflowException($"Event '{eventKey}' not found");
 	}
 
+	public async ValueTask HandleEvent(IWorkflowEvent evt)
+    {
+		foreach (var (eventKey, eventItem) in _events)
+		{
+			if (eventItem.Event.Ref == evt.Ref)
+			{
+				_tracker.Track(new ActivityTrackRecord(ActivityTrackAction.HandleMessage, null, $"{{message:'{evt.Ref}', event:{eventKey}}}"));
+				await eventItem.Action(this, eventItem.Event, null);
+			}
+		}
+	}
+
 	public async ValueTask<IInstance> Call(String activity, ExpandoObject? prms)
     {
 		var ea = ExternalActivity.Parse(activity);

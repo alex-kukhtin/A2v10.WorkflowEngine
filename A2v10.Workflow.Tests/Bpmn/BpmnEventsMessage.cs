@@ -69,5 +69,19 @@ public class BpmnEventsMessage
 		Assert.AreEqual(5, log.Length);
 		Assert.AreEqual("startProcess|startSub|messageBoundary|endBoundary|endProcess", String.Join('|', log));
 	}
+
+	[TestMethod]
+	public async Task MessageEnd()
+	{
+		var wfId = "MessageEnd";
+		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\messages\\endevent.bpmn");
+		var inst = await TestEngine.SimpleRun(wfId, xaml);
+		Assert.IsNotNull(inst);
+		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+		var log = inst.Result?.GetNotNull<Object[]>("log");
+		Assert.IsNotNull(log);
+		Assert.AreEqual(5, log.Length);
+		Assert.AreEqual("start|task1|endMessage|task2|end", String.Join('|', log));
+	}
 }
 

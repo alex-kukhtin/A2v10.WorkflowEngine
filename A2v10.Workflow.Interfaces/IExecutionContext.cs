@@ -21,5 +21,7 @@ public interface IExecutionContext
 	void ExecuteResult(String refer, String name, Object? result);
 
 	ValueTask<IInstance> Call(String activity, ExpandoObject? prms);
+
+	ValueTask HandleEvent(IWorkflowEvent evt);
 }
 
