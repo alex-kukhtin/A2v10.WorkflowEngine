@@ -58,5 +58,13 @@ namespace A2v10.Workflow.WebHost.Controllers
 		{
 			return Ok(2);
 		}
+
+		[HttpPost]
+		[ActionName("sendmessage")]
+		[Consumes("application/json")]
+		public ActionResult SendMessage()
+		{
+			return Ok(2);
+		}
 	}
 }

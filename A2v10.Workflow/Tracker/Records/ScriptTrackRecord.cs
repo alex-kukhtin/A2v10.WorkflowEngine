@@ -1,10 +1,7 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
 using System.Dynamic;
 using System.Text.Json;
-
-using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Tracker
 {
@@ -25,7 +22,8 @@ namespace A2v10.Workflow.Tracker
 			: base()
 		{
 			_action = action;
-			String strResult = result != null ? $", result:{JsonSerializer.Serialize(result)}" : String.Empty;
+
+			String strResult = result != null ? $", result:{JsonSerializer.Serialize(result, TextJsonOptions.Default)}" : String.Empty;
 			Message = $"Script:{action}: {{id: {refer}, name: '{name}'{strResult}}}";
 		}
 

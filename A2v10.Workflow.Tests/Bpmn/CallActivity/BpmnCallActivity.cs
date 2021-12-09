@@ -79,5 +79,28 @@ public class BpmnCallActivity
 		var res0 = res.Result;
 		Assert.AreEqual(4, res0.Get<Double>("R"));
 	}
+
+
+	[TestMethod]
+	public async Task SimpleEmpty()
+	{
+		TestEngine.Clear();
+		var sp = TestEngine.ServiceProvider();
+		var wfs = sp.GetRequiredService<IWorkflowStorage>();
+		var wfc = sp.GetRequiredService<IWorkflowCatalog>();
+
+		String childId = "SimpleChild";
+		var xamlChild = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\SimpleChild.bpmn");
+		await wfc.SaveAsync(new WorkflowDescriptor(childId, xamlChild));
+		var ident = await wfs.PublishAsync(wfc, childId);
+		Assert.AreEqual(1, ident.Version);
+
+		String parentId = "SimpleParent";
+		var xamlParent = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\SimpleEmpty.bpmn");
+		var inst = await TestEngine.SimpleRun(parentId, xamlParent, null);
+
+		var res0 = inst.Result;
+		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+	}
 }
 
