@@ -1,7 +1,5 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using A2v10.Workflow.Interfaces;
-
 namespace A2v10.Workflow.Bpmn;
 public class MessageEventDefinition : EventDefinition
 {

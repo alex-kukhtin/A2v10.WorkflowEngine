@@ -18,7 +18,7 @@ public class BpmnEventsMessage
 	public async Task BoundaryUninterrapted()
 	{
 		var boundaryId = "BoundaryMessage";
-		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\messages\\boundary.bpmn");
+		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\messages\\boundary.bpmn");
 		var inst = await TestEngine.SimpleRun(boundaryId, xaml);
 		Assert.IsNotNull(inst);
 		Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
@@ -50,7 +50,7 @@ public class BpmnEventsMessage
 	public async Task BoundaryInterrapted()
 	{
 		var boundaryId = "BoundaryInterruptedMessage";
-		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\messages\\boundary_interrupted.bpmn");
+		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\messages\\boundary_interrupted.bpmn");
 		var inst = await TestEngine.SimpleRun(boundaryId, xaml);
 		Assert.IsNotNull(inst);
 		Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
@@ -74,7 +74,7 @@ public class BpmnEventsMessage
 	public async Task MessageEnd()
 	{
 		var wfId = "MessageEnd";
-		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\messages\\endevent.bpmn");
+		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\messages\\endevent.bpmn");
 		var inst = await TestEngine.SimpleRun(wfId, xaml);
 		Assert.IsNotNull(inst);
 		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);

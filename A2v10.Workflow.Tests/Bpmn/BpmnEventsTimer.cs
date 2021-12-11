@@ -52,7 +52,7 @@ namespace A2v10.Workflow.Tests
 		[TestMethod]
 		public async Task IntermediateTimer()
 		{
-			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\intermediate_timer.bpmn");
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\timer\\intermediate_timer.bpmn");
 
 			var sp = TestEngine.ServiceProvider();
 
@@ -81,7 +81,7 @@ namespace A2v10.Workflow.Tests
 		[TestMethod]
 		public async Task VariableTimer()
 		{
-			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\variable_timer.bpmn");
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\timer\\variable_timer.bpmn");
 
 			String wfId = "VariableTimer";
 			var prms = new ExpandoObject()
@@ -108,7 +108,7 @@ namespace A2v10.Workflow.Tests
 		[TestMethod]
 		public async Task IntermediageTimerDate()
 		{
-			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\intermediate_timer_date.bpmn");
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\timer\\intermediate_timer_date.bpmn");
 
 			String wfId = "Intermediate";
 
