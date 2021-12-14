@@ -29,5 +29,20 @@ public class BpmnErrorEvents
 		//Assert.AreEqual(6, log.Length);
 		Assert.AreEqual("start|task1|endError|endBoundary", String.Join('|', log));
 	}
+
+	[TestMethod]
+	public async Task SubProcess()
+	{
+		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\error\\error_sub.bpmn");
+
+		String wfId = "Error1";
+		var inst = await TestEngine.SimpleRun(wfId, xaml);
+
+		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+		var log = inst.Result?.GetNotNull<Object[]>("log");
+		Assert.IsNotNull(log);
+		//Assert.AreEqual(6, log.Length);
+		Assert.AreEqual("start|startSub|endErrorSub|endError", String.Join('|', log));
+	}
 }
 

@@ -1,12 +1,8 @@
 ﻿
 // Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 using A2v10.System.Xaml;
-using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Bpmn;
 [ContentProperty("Children")]
@@ -15,6 +11,8 @@ public class SubProcess : ProcessBase, ILoopable
 	protected Int32 _loopCounter;
 
 	const String LOOP_COUNTER = "LoopCounter";
+
+	public Boolean Canceled { get;  protected set; }
 
 	public override void Store(IActivityStorage storage)
 	{
@@ -52,17 +50,24 @@ public class SubProcess : ProcessBase, ILoopable
 			SubProcessComplete(context);
 	}
 
-	public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
+	public override async ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 	{
 		_token = token;
-
+		Canceled = false;
 		if (HasLoop && TestBefore && !CanCountinue(context))
 		{
 			SubProcessComplete(context);
-			return ValueTask.CompletedTask;
+			return;
 		}
+		if (_loopCounter == 0)
+		{
+			// boundary events
+			foreach (var ev in ParentContainer.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
+				await ev.ExecuteAsync(context, ParentContainer.NewToken());
+		}
+
 		_loopCounter += 1;
-		return ExecuteBody(context);
+		await ExecuteBody(context);
 	}
 
 	public ValueTask ExecuteBody(IExecutionContext context)
@@ -76,12 +81,22 @@ public class SubProcess : ProcessBase, ILoopable
 		return ValueTask.CompletedTask;
 	}
 
-	void SubProcessComplete(IExecutionContext context)
+	public override void Cancel(IExecutionContext context)
+	{
+		Canceled = true;
+		base.Cancel(context);
+	}
+
+    void SubProcessComplete(IExecutionContext context)
 	{
 		if (ParentContainer == null)
 			throw new WorkflowException("ParentContainer is null");
+		foreach (var ev in ParentContainer.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
+			context.RemoveEvent(ev.Id);
 		if (Outgoing == null)
 			return;
+		if (Canceled)
+			return; // already complete with cancel
 		var count = Outgoing.Count();
 		if (count == 1)
 		{
