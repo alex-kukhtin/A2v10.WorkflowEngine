@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 
 namespace A2v10.Workflow.Bpmn;
-public abstract class BpmnActivity : BaseElement, IActivity, ICancelable
+public abstract class BpmnActivity : BaseElement, IActivity
 {
 	public String? Name { get; init; }
 

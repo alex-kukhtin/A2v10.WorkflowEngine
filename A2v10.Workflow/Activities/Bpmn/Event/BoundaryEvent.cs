@@ -45,7 +45,7 @@ namespace A2v10.Workflow.Bpmn
 			ScheduleOutgoing(context, _token);
 			if (CancelActivity == null || CancelActivity.Value)
 			{
-				var cancelable = ParentContainer.FindElement<ICancelable>(AttachedToRef);
+				var cancelable = ParentContainer.FindElement<BpmnActivity>(AttachedToRef);
 				SetComplete(context);
 				cancelable.Cancel(context);
 			}

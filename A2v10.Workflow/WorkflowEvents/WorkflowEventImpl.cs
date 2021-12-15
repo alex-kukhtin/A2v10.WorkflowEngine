@@ -13,6 +13,7 @@ public static class WorkflowEventImpl
 		{
 			"Timer" => new WorkflowTimerEvent(key, exp),
 			"Message" => new WorkflowMessageEvent(key, exp),
+			"Error" => new WorkflowErrorEvent(key, exp),
 			_ => throw new WorkflowException($"Invalid event kind ({kind})"),
 		};
 	}

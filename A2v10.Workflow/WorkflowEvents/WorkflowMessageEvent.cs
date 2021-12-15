@@ -6,7 +6,9 @@ namespace A2v10.Workflow;
 public class WorkflowMessageEvent : IWorkflowEvent
 {
 	public String Key { get; }
-	public String Ref { get; }	
+	public String Ref { get; }
+
+	public EventKind Kind => EventKind.Message;
 
 	public WorkflowMessageEvent(String key, String refer)
 	{

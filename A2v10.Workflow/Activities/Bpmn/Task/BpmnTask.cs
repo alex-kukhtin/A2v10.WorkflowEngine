@@ -1,7 +1,7 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Bpmn;
-public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoopable, ICancelable
+public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoopable
 {
 	protected IToken? _token;
 	protected Int32 _loopCounter;

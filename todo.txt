@@ -2,6 +2,10 @@ BPMN
 =====
 2. RemoveBookmak for Cancel activity
 4. Task multiInstanceLoopCharacteristics 
+5. EscalationCodeVariable - убрать?
+6. CorrelationId ?
+7. Boundary: Any Error
+8.
 
 Designer
 ========
@@ -12,7 +16,7 @@ Designer
 
 Engine
 ======
-3. Properties expressions: timeDuration = ${Duration}
+4.
 
 WebHost
 =======

@@ -68,6 +68,11 @@ public partial class ExecutionContext : IExecutionContext
 		}
 	}
 
+	ExpandoObject? GetEndEvent()
+    {
+		return _endEvent;
+    }
+
 	ExpandoObject? GetEvents()
 	{
 		if (_events == null || _events.Count == 0)
@@ -131,6 +136,7 @@ public partial class ExecutionContext : IExecutionContext
 		res.SetNotNull("Variables", GetScriptVariables());
 		res.SetNotNull("Bookmarks", GetBookmarks());
 		res.SetNotNull("Events", GetEvents());
+		res.SetNotNull("EndEvent", GetEndEvent());
 		return res;
 	}
 
@@ -220,6 +226,7 @@ public partial class ExecutionContext : IExecutionContext
 		SetScriptVariables(state.Get<ExpandoObject>("Variables"));
 		SetBookmarks(state.Get<ExpandoObject>("Bookmarks"));
 		SetEvents(state.Get<ExpandoObject>("Events"));
+		_endEvent = state.Get<ExpandoObject>("EndEvent");
 	}
 
 	public List<Object>? GetTrackRecords()

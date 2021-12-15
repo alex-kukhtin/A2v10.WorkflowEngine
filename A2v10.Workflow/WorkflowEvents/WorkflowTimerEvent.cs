@@ -10,7 +10,8 @@ public class WorkflowTimerEvent : IWorkflowEvent
 	public String Ref { get; } = String.Empty;
 
 	public DateTime TriggerTime { get; }
-		
+
+	public EventKind Kind => EventKind.Timer;
 
 	public WorkflowTimerEvent(String key, DateTime triggerTime)
 	{

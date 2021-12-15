@@ -23,5 +23,7 @@ public interface IExecutionContext
 	ValueTask<IInstance> Call(String activity, ExpandoObject? prms);
 
 	ValueTask HandleEvent(IWorkflowEvent evt);
+	void ProcessEndEvent(IWorkflowEvent evt);
+	ValueTask HandleEndEvent(ExpandoObject? evt);
 }
 

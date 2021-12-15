@@ -8,6 +8,8 @@ public class WorkflowErrorEvent : IWorkflowEvent
 	public String Key { get; }
 	public String Ref { get; }	
 
+	public EventKind Kind => EventKind.Error;
+
 	public WorkflowErrorEvent(String key, String refer)
 	{
 		Key = key;

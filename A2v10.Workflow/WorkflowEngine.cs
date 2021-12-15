@@ -25,17 +25,25 @@ public class WorkflowEngine : IWorkflowEngine
 
 	public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, Guid? parent = null)
 	{
-		var wf = new Workflow(identity ?? new WorkflowIdentity(String.Empty), root);
+		var wf = new Workflow(identity ?? new WorkflowIdentity(String.Empty), root, new DymmyActivityWrapper());
 		var inst = new Instance(wf, Guid.NewGuid(), parent);
 		root.OnEndInit(null);
 		await _instanceStorage.Create(inst);
 		return inst;
 	}
 
+	public async ValueTask<IInstance> CreateAsync(IWorkflow workflow, Guid? parent = null)
+    {
+		var inst = new Instance(workflow, Guid.NewGuid(), parent);
+		workflow.Root.OnEndInit(null);
+		await _instanceStorage.Create(inst);
+		return inst;
+    }
+
 	public async ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, Guid? parent = null)
 	{
 		var wf = await _workflowStorage.LoadAsync(identity);
-		return await CreateAsync(wf.Root, wf.Identity, parent);
+		return await CreateAsync(wf, parent);
 	}
 
 	public async ValueTask<IInstance> RunAsync(IInstance instance, Object? args = null)

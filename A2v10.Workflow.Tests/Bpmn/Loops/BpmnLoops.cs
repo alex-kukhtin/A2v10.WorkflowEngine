@@ -86,13 +86,42 @@ public class BpmnLoops
 		{
 			{ "Answer", 0 }
 		};
-			
+
 		var inst2 = await eng.ResumeAsync(inst.Id, "EnterSaldo", reply);
 		var res2 = inst2.Result;
 		Assert.IsNotNull(res2);
 
 		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst2.ExecutionStatus);
+    }
+
+    [TestMethod]
+    public async Task LoopSubSub()
+    {
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\loop\\loop_sub_sub.bpmn");
+
+        String wfId = "LoopSubSub";
+        var inst = await TestEngine.SimpleRun(wfId, xaml);
+
+		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+		var log = inst.Result?.GetNotNull<Object[]>("log");
+		Assert.IsNotNull(log);
+		Assert.AreEqual(12, log.Length);
+		Assert.AreEqual("start|startSub|startSubSub|count:1|endSubSub|endSub|startSub|startSubSub|count:0|endSubSub|endSub|end", String.Join('|', log));
+
 	}
 
-}
+	[TestMethod]
+	public async Task LoopSubSubError()
+	{
+		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\loop\\loop_sub_sub_error.bpmn");
 
+		String wfId = "LoopSubSubError";
+		var inst = await TestEngine.SimpleRun(wfId, xaml);
+
+		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+		var log = inst.Result?.GetNotNull<Object[]>("log");
+		Assert.IsNotNull(log);
+		Assert.AreEqual(17, log.Length);
+		Assert.AreEqual("start|startSub|startSubSub|count:2|endSubSubError|endSubError|startSub|startSubSub|count:1|endSubSub|endSub|startSub|startSubSub|count:0|endSubSub|endSub|end", String.Join('|', log));
+	}
+}

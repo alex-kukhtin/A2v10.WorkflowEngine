@@ -42,6 +42,8 @@ public partial class ExecutionContext : IExecutionContext
 	private readonly ITracker _tracker;
 	private readonly IWorkflowEngine _engine;
 
+	private ExpandoObject? _endEvent;
+
 	public ExecutionContext(IServiceProvider serviceProvider, ITracker tracker, IInstance instance, Object? args = null)
 	{
 		_serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -80,7 +82,14 @@ public partial class ExecutionContext : IExecutionContext
 
 	public ExpandoObject? GetResult()
 	{
-		return _script.GetResult();
+		var res = _script.GetResult();
+		if (_endEvent != null)
+        {
+			if (res == null)
+				res = new ExpandoObject();
+			res.Set("EndEvent", _endEvent);
+        }
+		return res;	
 	}
 
 	#region IExecutionContext
@@ -155,6 +164,28 @@ public partial class ExecutionContext : IExecutionContext
 			throw new WorkflowException($"Bookmark '{bookmark}' not found");
 	}
 
+	public void ProcessEndEvent(IWorkflowEvent evt) 
+	{ 
+		switch (evt.Kind)
+        {
+			case EventKind.Error:
+				var err = _instance?.Workflow?.Wrapper?.FindElement<Error>(e => e.Id == evt.Ref);
+				if (err != null)
+				{
+					_endEvent = new ExpandoObject()
+					{
+						{ "Kind", "Error" },
+						{ "Error", err.Name },
+						{ "ErrorCode", err.ErrorCode }
+					};
+				}
+				break;
+			case EventKind.Message:
+				var msg = _instance?.Workflow?.Wrapper?.FindElement<Message>(m => m.Id == evt.Ref);
+				//throw new NotImplementedException("EndEvent (Message)");
+				break;
+		}
+	}
 
 	public async ValueTask HandleMessageAsync(String message)
     {
@@ -193,6 +224,23 @@ public partial class ExecutionContext : IExecutionContext
 				_tracker.Track(new ActivityTrackRecord(ActivityTrackAction.HandleMessage, null, $"{{message:'{evt.Ref}', event:{eventKey}}}"));
 				await eventItem.Action(this, eventItem.Event, null);
 			}
+		}
+	}
+
+	public async ValueTask HandleEndEvent(ExpandoObject? evt)
+    {
+		if (evt == null)
+			return;
+		var kind = evt.Get<String>("Kind");
+		switch (kind)
+        {
+			case "Error":
+				var name = evt.GetNotNull<String>("Error");
+				var err = _instance?.Workflow?.Wrapper?.FindElement<Error>(e => e.Name == name);
+				if (err != null)
+					await HandleEvent(new WorkflowErrorEvent(name, err.Id));
+				break;
+
 		}
 	}
 

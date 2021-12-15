@@ -21,6 +21,9 @@ public class CallActivity : BpmnTask
         var result = await context.Call(CalledElement, prms);
         if (result.ExecutionStatus == WorkflowExecutionStatus.Complete)
         {
+            await context.HandleEndEvent(result.State?.Get<ExpandoObject>("EndEvent"));
+            if (IsComplete)
+                return;
             context.ExecuteResult(Id, nameof(Script), result.Result);
             await CompleteBody(context);
         }
@@ -31,8 +34,16 @@ public class CallActivity : BpmnTask
     [StoreName("OnActivityComplete")]
     ValueTask OnActivityComplete(IExecutionContext context, String bookmark, Object? result)
     {
-        CompleteTask(context);
+        if (result is ExpandoObject resexp)
+        {
+            var ee = resexp.Get<ExpandoObject>("EndEvent");
+            if (ee != null)
+                context.HandleEndEvent(ee);
+        }
         context.RemoveBookmark(bookmark);
+        if (IsComplete)
+            return ValueTask.CompletedTask;
+        CompleteTask(context);
         if (!String.IsNullOrEmpty(Script))
             context.ExecuteResult(Id, nameof(Script), result);
         return CompleteBody(context);

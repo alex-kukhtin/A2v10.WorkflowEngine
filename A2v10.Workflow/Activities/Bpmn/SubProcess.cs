@@ -12,7 +12,7 @@ public class SubProcess : ProcessBase, ILoopable
 
 	const String LOOP_COUNTER = "LoopCounter";
 
-	public Boolean Canceled { get;  protected set; }
+	public Boolean Cancelled => _token == null;
 
 	public override void Store(IActivityStorage storage)
 	{
@@ -53,7 +53,6 @@ public class SubProcess : ProcessBase, ILoopable
 	public override async ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 	{
 		_token = token;
-		Canceled = false;
 		if (HasLoop && TestBefore && !CanCountinue(context))
 		{
 			SubProcessComplete(context);
@@ -83,7 +82,8 @@ public class SubProcess : ProcessBase, ILoopable
 
 	public override void Cancel(IExecutionContext context)
 	{
-		Canceled = true;
+		ParentContainer?.KillToken(_token);
+		_token = null; // cancel activity
 		base.Cancel(context);
 	}
 
@@ -93,10 +93,8 @@ public class SubProcess : ProcessBase, ILoopable
 			throw new WorkflowException("ParentContainer is null");
 		foreach (var ev in ParentContainer.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
 			context.RemoveEvent(ev.Id);
-		if (Outgoing == null)
+		if (Cancelled || Outgoing == null)
 			return;
-		if (Canceled)
-			return; // already complete with cancel
 		var count = Outgoing.Count();
 		if (count == 1)
 		{

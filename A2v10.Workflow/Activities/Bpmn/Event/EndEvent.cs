@@ -17,6 +17,7 @@ public class EndEvent : Event
 		{
 			var evt = ed.CreateEvent(Id, context);
 			await context.HandleEvent(evt);
+			context.ProcessEndEvent(evt);
 		}
 
 		Parent?.TryComplete(context, this);

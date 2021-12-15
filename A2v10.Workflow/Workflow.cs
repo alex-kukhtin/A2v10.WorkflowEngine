@@ -4,10 +4,11 @@
 namespace A2v10.Workflow;
 public class Workflow : IWorkflow
 {
-	public Workflow(IWorkflowIdentity identity, IActivity root)
+	public Workflow(IWorkflowIdentity identity, IActivity root, IActivityWrapper wrapper)
     {
 		Identity = identity;
 		Root = root;
+		Wrapper = wrapper;
     }
 	public Workflow(IWorkflowIdentity identity, DeserializeResult deserializeResult)
 	{
