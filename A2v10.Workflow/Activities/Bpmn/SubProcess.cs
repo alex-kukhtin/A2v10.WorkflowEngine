@@ -92,7 +92,10 @@ public class SubProcess : ProcessBase, ILoopable
 		if (ParentContainer == null)
 			throw new WorkflowException("ParentContainer is null");
 		foreach (var ev in ParentContainer.FindAll<BoundaryEvent>(ev => ev.AttachedToRef == Id))
+		{
 			context.RemoveEvent(ev.Id);
+			ParentContainer.KillToken(ev.CurrentToken);
+		}
 		if (Cancelled || Outgoing == null)
 			return;
 		var count = Outgoing.Count();

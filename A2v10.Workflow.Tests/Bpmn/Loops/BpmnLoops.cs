@@ -124,4 +124,19 @@ public class BpmnLoops
 		Assert.AreEqual(17, log.Length);
 		Assert.AreEqual("start|startSub|startSubSub|count:2|endSubSubError|endSubError|startSub|startSubSub|count:1|endSubSub|endSub|startSub|startSubSub|count:0|endSubSub|endSub|end", String.Join('|', log));
 	}
+
+	[TestMethod]
+	public async Task LoopSubSubErrorWithoutError()
+	{
+		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\loop\\loop_sub_sub_error2.bpmn");
+
+		String wfId = "LoopSubSubError";
+		var inst = await TestEngine.SimpleRun(wfId, xaml);
+
+		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+		var log = inst.Result?.GetNotNull<Object[]>("log");
+		Assert.IsNotNull(log);
+		Assert.AreEqual(12, log.Length);
+		Assert.AreEqual("start|startSub|startSubSub|count:1|endSubSub|endSub|startSub|startSubSub|count:0|endSubSub|endSub|end", String.Join('|', log));
+	}
 }

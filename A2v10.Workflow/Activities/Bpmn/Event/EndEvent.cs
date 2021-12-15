@@ -20,7 +20,7 @@ public class EndEvent : Event
 			context.ProcessEndEvent(evt);
 		}
 
-		Parent?.TryComplete(context, this);
+		ParentContainer.TryComplete(context, this);
 	}
 }
 
