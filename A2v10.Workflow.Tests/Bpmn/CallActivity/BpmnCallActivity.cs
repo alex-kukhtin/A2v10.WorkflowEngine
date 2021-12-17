@@ -101,6 +101,7 @@ public class BpmnCallActivity
 
 		var res0 = inst.Result;
 		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+		Assert.IsNull(res0.Get<Object>("R"));
 	}
 }
 

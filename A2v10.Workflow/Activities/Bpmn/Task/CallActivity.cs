@@ -32,21 +32,21 @@ public class CallActivity : BpmnTask
     }
 
     [StoreName("OnActivityComplete")]
-    ValueTask OnActivityComplete(IExecutionContext context, String bookmark, Object? result)
+    async ValueTask OnActivityComplete(IExecutionContext context, String bookmark, Object? result)
     {
         if (result is ExpandoObject resexp)
         {
             var ee = resexp.Get<ExpandoObject>("EndEvent");
             if (ee != null)
-                context.HandleEndEvent(ee);
+                await context.HandleEndEvent(ee);
         }
         context.RemoveBookmark(bookmark);
         if (IsComplete)
-            return ValueTask.CompletedTask;
+            return;
         CompleteTask(context);
         if (!String.IsNullOrEmpty(Script))
             context.ExecuteResult(Id, nameof(Script), result);
-        return CompleteBody(context);
+        await CompleteBody(context);
     }
 
     public override void BuildScriptBody(IScriptBuilder builder)

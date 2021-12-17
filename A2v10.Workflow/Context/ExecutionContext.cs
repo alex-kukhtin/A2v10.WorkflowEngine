@@ -21,11 +21,7 @@ public record QueueItem
 	IToken? Token
 );
 
-public record EventItem
-(
-	EventAction Action,
-	IWorkflowEvent Event
-);
+public record EventItem(EventAction Action, IWorkflowEvent Event);
 
 public partial class ExecutionContext : IExecutionContext
 {
