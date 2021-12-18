@@ -176,6 +176,18 @@ public partial class ExecutionContext : IExecutionContext
 					};
 				}
 				break;
+			case EventKind.Escalation:
+				var esc = _instance.Workflow?.Wrapper?.FindElement<Escalation>(e => e.Id == evt.Ref);
+				if (esc != null)
+                {
+					_endEvent = new ExpandoObject()
+					{
+						{ "Kind", "Escalation" },
+						{ "Escalation", esc.Name },
+						{ "EscalationCode", esc.EscalationCode }
+					};
+                }
+				break;
 			case EventKind.Message:
 				var msg = _instance?.Workflow?.Wrapper?.FindElement<Message>(m => m.Id == evt.Ref);
 				//throw new NotImplementedException("EndEvent (Message)");
@@ -231,10 +243,16 @@ public partial class ExecutionContext : IExecutionContext
 		switch (kind)
         {
 			case "Error":
-				var name = evt.GetNotNull<String>("Error");
-				var err = _instance?.Workflow?.Wrapper?.FindElement<Error>(e => e.Name == name);
+				var errname = evt.GetNotNull<String>("Error");
+				var err = _instance?.Workflow?.Wrapper?.FindElement<Error>(e => e.Name == errname);
 				if (err != null)
-					await HandleEvent(new WorkflowErrorEvent(name, err.Id));
+					await HandleEvent(new WorkflowErrorEvent(errname, err.Id));
+				break;
+			case "Escalation":
+				var escname = evt.GetNotNull<String>("Escalation");
+				var esc = _instance?.Workflow?.Wrapper?.FindElement<Escalation>(e => e.Name == escname);
+				if (esc != null)
+					await HandleEvent(new WorkflowEscalationEvent(escname, esc.Id));
 				break;
 
 		}
