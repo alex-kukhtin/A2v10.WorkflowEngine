@@ -20,8 +20,8 @@ internal class ExternalActivity
     public IWorkflowIdentity? WorkflowIdentity { get; init; }
     public static ExternalActivity Parse(String name)
     {
-        var regex = new Regex(@"^\s*(bpmn|clr):\s*([\w|\.|\/]+)\s*(;\s*(\w+)\s*=\s*(\w+)\s*)*$");
-        var match = regex.Match(name);
+        var regptrn = @"^\s*(bpmn|clr):\s*([\w|\.|\/]+)\s*(;\s*(\w+)\s*=\s*(\w+)\s*)*$";
+        var match = Regex.Match(name, regptrn, RegexOptions.Compiled, TimeSpan.FromMilliseconds(100));
         if (match.Groups.Count != 6)
             throw new WorkflowException(ErrorMessage(name));
         var type = match.Groups[1].Value.ToLowerInvariant();
