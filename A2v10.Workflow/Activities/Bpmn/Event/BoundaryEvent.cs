@@ -53,7 +53,10 @@ public class BoundaryEvent : Event, IStorable
 		{
 			var eventDef = EventDefinition;
 			if (eventDef != null && eventDef.CanRepeat)
+			{
+				context.RemoveEvent(Id);
 				context.AddEvent(eventDef.CreateEvent(Id, context), this, OnTrigger);
+			}
 			else
 				SetComplete(context);
 		}

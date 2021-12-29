@@ -79,6 +79,52 @@ namespace A2v10.Workflow.Tests
 		}
 
 		[TestMethod]
+		public async Task IntermediateTimerMultiply()
+		{
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\timer\\intermediate_timer_2.bpmn");
+
+			String wfId = "IntermediateMult";
+
+			var inst = await TestEngine.SimpleRun(wfId, xaml);
+
+			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+			var log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(1, log.Length);
+			Assert.AreEqual("start", String.Join('|', log));
+
+			var sp = TestEngine.ServiceProvider();
+			var wfe = sp.GetRequiredService<IWorkflowEngine>();
+			var ins = sp.GetRequiredService<IInstanceStorage>();
+
+			await Task.Delay(1010);
+			await wfe.ProcessPending();
+
+			inst = await ins.Load(inst.Id);
+			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(3, log.Length);
+			Assert.AreEqual("start|timer|endTimer", String.Join('|', log));
+
+			await Task.Delay(1010);
+			await wfe.ProcessPending();
+			inst = await ins.Load(inst.Id);
+			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(5, log.Length);
+			Assert.AreEqual("start|timer|endTimer|timer|endTimer", String.Join('|', log));
+
+			inst = await wfe.ResumeAsync(inst.Id, "Bookmark");
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(7, log.Length);
+			Assert.AreEqual("start|timer|endTimer|timer|endTimer|userTask|endUser", String.Join('|', log));
+		}
+
+		[TestMethod]
 		public async Task VariableTimer()
 		{
 			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\timer\\variable_timer.bpmn");
