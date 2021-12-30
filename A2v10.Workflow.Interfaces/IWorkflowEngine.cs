@@ -12,10 +12,10 @@ public interface IWorkflowEngine
 	ValueTask<IInstance> RunAsync(IInstance instance, Object? args = null);
 
 	ValueTask<IInstance> ResumeAsync(Guid id, String bookmark, Object? reply = null);
-	ValueTask<IInstance> HandleEventAsync(Guid id, String eventKey, Object? reply = null);
+	ValueTask<IInstance> HandleEventsAsync(Guid id, IEnumerable<String> eventKeys);
 	ValueTask<IInstance> SendMessageAsync(Guid id, String message);
 
-	ValueTask<IInstance> LoadInstance(Guid id);
+	ValueTask<IInstance> LoadInstanceRaw(Guid id);
 
 	ValueTask ProcessPending();
 }

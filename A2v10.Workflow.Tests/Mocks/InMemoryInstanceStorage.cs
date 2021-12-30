@@ -31,6 +31,11 @@ namespace A2v10.Workflow.Tests
 			_workflowStorage = workflowStorage;
 		}
 
+		public Task<IInstance> LoadRaw(Guid id)
+        {
+			return Load(id);
+        }
+
 		public async Task<IInstance> Load(Guid id)
 		{
 			if (_memory.TryGetValue(id, out SavedInstance? saved))
@@ -79,22 +84,19 @@ namespace A2v10.Workflow.Tests
 			return Task.CompletedTask;
 		}
 
-		private static String? IsTimerExpired(List<Object>? events)
+		private static String? IsTimerExpired(Object ev)
 		{
-			if (events == null)
+			if (ev == null)
 				return null;
-			var now = DateTime.UtcNow + TimeSpan.FromSeconds(2); // for testing propouses
-			foreach (var t in events)
+			var now = DateTime.UtcNow; // + TimeSpan.FromSeconds(2); // for testing propouses
+			if (ev is ExpandoObject eo)
 			{
-				if (t is ExpandoObject eo)
+				var kind = eo.Get<String>("Kind");
+				if (kind == "T")
 				{
-					var kind = eo.Get<String>("Kind");
-					if (kind == "T")
-					{
-						var exp = eo.Get<DateTime>("Pending");
-						if (exp <= now)
-							return eo.Get<String>("Event");
-					}
+					var exp = eo.Get<DateTime>("Pending");
+					if (exp <= now)
+						return eo.Get<String>("Event");
 				}
 			}
 			return null;
@@ -106,9 +108,26 @@ namespace A2v10.Workflow.Tests
 			var pendingList = new List<IPendingInstance>();
 			foreach (var (k, v) in _memory)
 			{
-				var eventKey = IsTimerExpired(v.InstanceData?.ExternalEvents);
-				if (!String.IsNullOrEmpty(eventKey))
-					pendingList.Add(new PendingInstance() { InstanceId = k, EventKey = eventKey });
+				var extEvents = v.InstanceData?.ExternalEvents;
+				if (extEvents != null)
+				{
+					var pendDict = new Dictionary<Guid, PendingInstance>();
+					foreach (var ev in extEvents)
+					{
+						var eventKey = IsTimerExpired(ev);
+						if (String.IsNullOrEmpty(eventKey))
+							continue;
+						if (!pendDict.TryGetValue(k, out PendingInstance? pendingInstance))
+                        {
+							pendingInstance = new PendingInstance() { InstanceId = k };
+							pendDict.Add(k, pendingInstance);
+
+						}
+						pendingInstance.AddEventKey(eventKey);
+					}
+					foreach (var pi in pendDict.Values)
+						pendingList.Add(pi);
+				}
 			}
 			var autoStartList = new List<IAutoStartInstance>();
 			var res = new PendingElement(Pending: pendingList, AutoStart: autoStartList);

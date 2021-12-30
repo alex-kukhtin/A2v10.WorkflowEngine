@@ -89,7 +89,7 @@ public class BpmnEscalationEvents
 		var wfe = TestEngine.ServiceProvider().GetRequiredService<IWorkflowEngine>();
 		await wfe.ProcessPending();
 
-		var inst2 = await wfe.LoadInstance(inst.Id);
+		var inst2 = await wfe.LoadInstanceRaw(inst.Id);
 		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst2.ExecutionStatus);
 		log = inst2.Result?.GetNotNull<Object[]>("log");
 		Assert.IsNotNull(log);

@@ -3,7 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-using A2v10.Workflow.Interfaces;
+using System.Collections.Generic;
 
 namespace A2v10.Workflow;
 public class WorkflowEngine : IWorkflowEngine
@@ -78,9 +78,13 @@ public class WorkflowEngine : IWorkflowEngine
 		return Handle(id, context => context.ResumeAsync(bookmark, reply));
 	}
 
-	public ValueTask<IInstance> HandleEventAsync(Guid id, String eventKey, Object? reply = null)
+	public ValueTask<IInstance> HandleEventsAsync(Guid id, IEnumerable<String> eventKeys)
 	{
-		return Handle(id, context => context.HandleEventAsync(eventKey, reply));
+		return Handle(id, async context =>
+		{
+			foreach (var eventKey in eventKeys)
+				await context.HandleEventAsync(eventKey, null);
+		});
 	}
 
 	void SetInstanceState(IInstance inst, ExecutionContext context)
@@ -111,9 +115,7 @@ public class WorkflowEngine : IWorkflowEngine
         }
 		foreach (var pi in pend.Pending)
 		{
-			if (pi.EventKey == null)
-				throw new InvalidProgramException("EventKey is null");
-			await HandleEventAsync(pi.InstanceId, pi.EventKey);
+			await HandleEventsAsync(pi.InstanceId, pi.EventKeys);
 		}
 	}
 
@@ -139,9 +141,9 @@ public class WorkflowEngine : IWorkflowEngine
 		}
 	}
 
-	public async ValueTask<IInstance> LoadInstance(Guid id)
+	public async ValueTask<IInstance> LoadInstanceRaw(Guid id)
     {
-		var inst = await _instanceStorage.Load(id);
+		var inst = await _instanceStorage.LoadRaw(id);
 		inst.Workflow.Root.OnEndInit(null);
 		var context = new ExecutionContext(_serviceProvider, _tracker, inst);
 		context.SetState(inst.State);

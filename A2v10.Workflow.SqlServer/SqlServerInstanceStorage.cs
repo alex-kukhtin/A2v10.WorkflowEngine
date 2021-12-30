@@ -38,14 +38,24 @@ public class SqlServerInstanceStorage : IInstanceStorage
 	}
 
 	#region IInstanceStorage
-	public async Task<IInstance> Load(Guid instanceId)
+	public Task<IInstance> Load(Guid instanceId)
 	{
+		return LoadImpl(instanceId, "Load");
+	}
+
+	public Task<IInstance> LoadRaw(Guid instanceId)
+    {
+		return LoadImpl(instanceId, "LoadRaw");
+	}
+
+	private async Task<IInstance> LoadImpl(Guid instanceId, String suffix)
+	{ 
 		var prms = new ExpandoObject()
 		{
 			{ "Id", instanceId }
 		};
 		_dbIdentity.SetIdentityParams(prms);
-		var dbi = await _dbContext.LoadAsync<DatabaseInstance>(null, $"{SqlDefinitions.SqlSchema}.[Instance.Load]", prms);
+		var dbi = await _dbContext.LoadAsync<DatabaseInstance>(null, $"{SqlDefinitions.SqlSchema}.[Instance.{suffix}]", prms);
 		if (dbi == null)
 			throw new SqlServerStorageException($"Instance '{instanceId}' not found");
 
@@ -138,16 +148,23 @@ public class SqlServerInstanceStorage : IInstanceStorage
 		var pendList = root.Get<List<ExpandoObject>>("Pending");
 		if (pendList == null)
 			return result;
+		// group by InstanceId - may be multiply
+		var pendInstances = new Dictionary<Guid, PendingInstance>();
 		foreach (var pe in pendList)
 		{
 			if (pe is not ExpandoObject pee)
 				continue;
-			result.Add(new PendingInstance()
-			{
-				InstanceId = pee.GetNotNull<Guid>("InstanceId"),
-				EventKey = pee.Get<String>("EventKey"),
-			});
+			var instId = pee.GetNotNull<Guid>("InstanceId");
+			var eventKey = pee.Get<String>("EventKey") ?? throw new WorkflowException("Invalid event key");
+            if (!pendInstances.TryGetValue(instId, out PendingInstance? pendingInstance))
+            {
+                pendingInstance = new PendingInstance() { InstanceId = instId };
+                pendInstances.Add(instId, pendingInstance);
+            }
+            pendingInstance.AddEventKey(eventKey);
 		}
+		foreach (var pi in pendInstances.Values)
+			result.Add(pi);
 		return result;
 	}
 

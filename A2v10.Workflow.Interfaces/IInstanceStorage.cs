@@ -7,6 +7,7 @@ public record PendingElement(IEnumerable<IPendingInstance> Pending, IEnumerable<
 public interface IInstanceStorage
 {
 	Task<IInstance> Load(Guid id);
+	Task<IInstance> LoadRaw(Guid id);
 
 	Task Create(IInstance instance);
 	Task Save(IInstance instance);

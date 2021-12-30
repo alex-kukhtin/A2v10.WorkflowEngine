@@ -219,8 +219,7 @@ public partial class ExecutionContext : IExecutionContext
 			_tracker.Track(new ActivityTrackRecord(ActivityTrackAction.HandleEvent, null, $"{{event:'{eventKey}'{strResult}}}"));
 			return eventItem.Action(this, eventItem.Event, result);
 		}
-		else
-			throw new WorkflowException($"Event '{eventKey}' not found");
+		return ValueTask.CompletedTask; // Possibly already done!
 	}
 
 	public async ValueTask HandleEvent(IWorkflowEvent evt)

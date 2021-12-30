@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using A2v10.Workflow.Interfaces;
 using System.Dynamic;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace A2v10.Workflow.Tests
 {
@@ -38,7 +39,8 @@ namespace A2v10.Workflow.Tests
 			Assert.IsNull(res0.Get<String>("Result"));
 			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
-			var instTimer = await wfe.HandleEventAsync(inst.Id, "Event1");
+			var evList = new List<String>() { "Event1" };
+			var instTimer = await wfe.HandleEventsAsync(inst.Id, evList);
 			var res1 = instTimer.Result;
 			Assert.AreEqual("Timer", res1.Get<String>("Result"));
 			Assert.AreEqual(WorkflowExecutionStatus.Idle, instTimer.ExecutionStatus);
@@ -71,6 +73,7 @@ namespace A2v10.Workflow.Tests
 			Assert.AreEqual("Start", res0.Get<String>("Result"));
 			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
+			await Task.Delay(1001);
 			await wfe.ProcessPending();
 			var instAfter = await ins.Load(inst.Id);
 			var res1 = instAfter.Result;
@@ -178,6 +181,94 @@ namespace A2v10.Workflow.Tests
 			var res1 = instAfter.Result;
 			Assert.AreEqual("AfterTimer", res1.Get<String>("Result"));
 			Assert.AreEqual(WorkflowExecutionStatus.Complete, instAfter.ExecutionStatus);
+		}
+
+
+		[TestMethod]
+		public async Task IntermediageTimerBookmarks()
+		{
+			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\timer\\intermediate_timer_with_bookmarks.bpmn");
+
+			String wfId = "IntermediateMultWithBookmark";
+
+			var wfe = TestEngine.ServiceProvider().GetRequiredService<IWorkflowEngine>();
+			var ist = TestEngine.ServiceProvider().GetRequiredService<IInstanceStorage>();
+
+			var inst = await TestEngine.SimpleRun(wfId, xaml);
+			var log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(1, log.Length);
+			Assert.AreEqual("start", String.Join('|', log));
+
+			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+			await Task.Delay(1100); // 1
+			await wfe.ProcessPending();
+			inst = await ist.Load(inst.Id);
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(2, log.Length);
+			Assert.AreEqual("start|timerNI", String.Join('|', log));
+
+			await Task.Delay(1100); // 2
+			await wfe.ProcessPending();
+			inst = await ist.Load(inst.Id);
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(3, log.Length);
+			Assert.AreEqual("start|timerNI|timerNI", String.Join('|', log));
+
+			await Task.Delay(1100); // 3
+			await wfe.ProcessPending();
+			inst = await ist.Load(inst.Id);
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(5, log.Length);
+			Assert.AreEqual("start|timerNI|timerNI|timerNI|timerI", String.Join('|', log));
+
+			inst = await wfe.ResumeAsync(inst.Id, "BookMark2", new ExpandoObject()
+			{
+				{"Answer", "CONTINUE"}
+			});
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(6, log.Length);
+			Assert.AreEqual("start|timerNI|timerNI|timerNI|timerI|Bookmark2:CONTINUE", String.Join('|', log));
+			Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+			await Task.Delay(1100); // 1
+			await wfe.ProcessPending();
+			inst = await ist.Load(inst.Id);
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(7, log.Length);
+			Assert.AreEqual("start|timerNI|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI", String.Join('|', log));
+
+			await Task.Delay(1100); // 2
+			await wfe.ProcessPending();
+			inst = await ist.Load(inst.Id);
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(8, log.Length);
+			Assert.AreEqual("start|timerNI|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI", String.Join('|', log));
+
+			await Task.Delay(1100); // 3
+			await wfe.ProcessPending();
+			inst = await ist.Load(inst.Id);
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(10, log.Length);
+			Assert.AreEqual("start|timerNI|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI|timerNI|timerI", String.Join('|', log));
+
+			inst = await wfe.ResumeAsync(inst.Id, "BookMark2", new ExpandoObject()
+			{
+				{"Answer", "CANCEL"}
+			});
+			log = inst.Result?.GetNotNull<Object[]>("log");
+			Assert.IsNotNull(log);
+			Assert.AreEqual(12, log.Length);
+			Assert.AreEqual("start|timerNI|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI|timerNI|timerI|Bookmark2:CANCEL|end", String.Join('|', log));
+			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
 		}
 	}
 }
