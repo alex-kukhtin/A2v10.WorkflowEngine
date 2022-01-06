@@ -5,7 +5,7 @@ BPMN
 5. EscalationCodeVariable - убрать?
 6. CorrelationId ?
 7. Boundary: Any Error
-8.
+8. Script - single line comment
 
 Designer
 ========

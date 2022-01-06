@@ -9,7 +9,7 @@
 		<Authors>Oleksandr Kukthin</Authors>
 		<Company>Oleksandr Kukthin</Company>
 		<Description>A2v10 workflow abstractions</Description>
-		<Copyright>Copyright © 2015-2021 Oleksandr Kukthin. All rights reserved.</Copyright>
+		<Copyright>Copyright © 2015-2022 Oleksandr Kukthin. All rights reserved.</Copyright>
 		<RepositoryType>github</RepositoryType>
 		<RepositoryUrl>https://github.com/alex-kukhtin/A2v10.WorkflowEngine</RepositoryUrl>
 		<PackageTags>A2v10 Platform Workflow</PackageTags>
