@@ -71,6 +71,7 @@
     <Content Include="app\provider\workflow\parts\bpmn\processProps.js" />
     <Content Include="app\provider\workflow\parts\globalScriptProps.js" />
     <Content Include="app\provider\workflow\parts\impl\extensionElements.js" />
+    <Content Include="app\provider\workflow\parts\inboxProps.js" />
     <Content Include="app\provider\workflow\parts\scriptProps.js" />
     <Content Include="app\provider\workflow\parts\variablesDetailProps.js" />
     <Content Include="app\provider\workflow\parts\variablesProps.js" />

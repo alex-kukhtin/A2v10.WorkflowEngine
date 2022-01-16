@@ -12,6 +12,7 @@ import linkProps from '../workflow/parts/bpmn/linkProps';
 import eventProps from '../workflow/parts/bpmn/eventProps';
 
 import scriptProps from './parts/scriptProps';
+import inboxProps from './parts/inboxProps';
 import variablesProps from './parts/variablesProps';
 import variablesDetailProps from './parts/variablesDetailProps';
 import globalScriptGroup from './parts/globalScriptProps';
@@ -41,6 +42,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 	linkProps(detailsGroup, element, translate);
 	eventProps(detailsGroup, element, bpmnFactory, elementRegistry, translate);
 	callActivityProps(detailsGroup, element, bpmnFactory, translate);
+	inboxProps(detailsGroup, element, bpmnFactory, translate);
 	scriptProps(detailsGroup, element, bpmnFactory, translate);
 	conditionalProps(detailsGroup, element, bpmnFactory, translate);
 
