@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using A2v10.Workflow.Interfaces;
 
-namespace A2v10.Workflow.Tests;
+namespace A2v10.Workflow.SqlServer.Tests;
 
 [TestClass]
 [TestCategory("Bmpn.Inbox")]

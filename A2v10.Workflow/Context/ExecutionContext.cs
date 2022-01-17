@@ -29,7 +29,7 @@ public partial class ExecutionContext : IExecutionContext
 	private readonly Dictionary<String, IActivity> _activities = new();
 	private readonly Dictionary<String, ResumeAction> _bookmarks = new();
 	private readonly Dictionary<String, EventItem> _events = new();
-	private readonly Dictionary<Guid, ExpandoObject> _inboxCreate = new();
+	private readonly List<ExpandoObject> _inboxCreate = new();
 	private readonly List<Guid> _inboxRemove = new();
 
 	private readonly IActivity _root;
@@ -114,7 +114,9 @@ public partial class ExecutionContext : IExecutionContext
 	public void SetInbox(Guid id, ExpandoObject inbox, IActivity activity)
 	{
 		_tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Inbox, activity, $"{{inbox:'{id}'}}"));
-		_inboxCreate.Add(id, inbox);
+		var eo = inbox.Clone();
+		eo.Set("Id", id);
+		_inboxCreate.Add(eo);
 	}
 
 	public void RemoveInbox(Guid? id)

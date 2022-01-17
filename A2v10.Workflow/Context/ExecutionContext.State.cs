@@ -243,5 +243,12 @@ public partial class ExecutionContext : IExecutionContext
 			return null;
 		return lst;
 	}
+
+	public DeferredInboxes? GetInboxes()
+    {
+		if (_inboxCreate.Count == 0 && _inboxRemove.Count == 0)
+			return null;
+		return new DeferredInboxes(_inboxCreate, _inboxRemove);
+    }
 }
 

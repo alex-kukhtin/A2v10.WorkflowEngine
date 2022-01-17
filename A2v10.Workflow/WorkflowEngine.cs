@@ -98,7 +98,8 @@ public class WorkflowEngine : IWorkflowEngine
 			ExternalBookmarks = context.GetExternalBookmarks(),
 			ExternalEvents = context.GetExternalEvents(),
 			TrackRecords = context.GetTrackRecords(),
-			Deferred = _deferredTarget.Deferred
+			Deferred = _deferredTarget.Deferred,
+			Inboxes = context.GetInboxes()
 		};
 		inst.InstanceData = instData;
 	}

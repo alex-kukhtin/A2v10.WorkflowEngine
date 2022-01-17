@@ -79,3 +79,54 @@ begin
 	where i.Id=@InstanceId;
 end
 go
+------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'Inbox')
+begin
+	create table a2wf.[Inbox]
+	(
+		Id uniqueidentifier not null,
+		InstanceId uniqueidentifier not null,
+		Void bit,
+		Bookmark nvarchar(255),
+		[For] nvarchar(255),
+		ForUser bigint,
+		Model nvarchar(255),
+		ModelId bigint,
+		constraint PK_Inbox primary key clustered(Id, InstanceId)
+	);
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[Instance.Inbox.Create]
+@UserId bigint = null,
+@Id uniqueidentifier,
+@InstanceId uniqueidentifier,
+@Bookmark nvarchar(255),
+@For nvarchar(255),
+@ForUser bigint,
+@Model nvarchar(255),
+@ModelId bigint
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+	set xact_abort on;
+	insert into a2wf.[Inbox] (Id, InstanceId, Bookmark, [For], ForUser, Model, ModelId)
+	values (@Id, @InstanceId, @Bookmark, @For, @ForUser, @Model, @ModelId);
+end
+go
+
+------------------------------------------------
+create or alter procedure a2wf.[Instance.Inbox.Remove]
+@UserId bigint = null,
+@Id uniqueidentifier,
+@InstanceId uniqueidentifier
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+	set xact_abort on;
+
+	update a2wf.Inbox set Void = 1 where Id=@Id and InstanceId=@InstanceId;
+end
+go

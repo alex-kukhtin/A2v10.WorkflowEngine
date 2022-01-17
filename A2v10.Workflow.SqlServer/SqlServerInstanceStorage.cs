@@ -126,27 +126,23 @@ public class SqlServerInstanceStorage : IInstanceStorage
 					batches.Add(new BatchProcedure(defer.Name, epxParam));
 				}
 			}
-			if (instanceData?.Inboxes != null)
-            {
-				var inboxes = instanceData?.Inboxes;
-				if (inboxes != null)
+			var inboxes = instanceData?.Inboxes;
+			if (inboxes != null)
+			{
+				foreach (var inboxCreate in inboxes.InboxCreate)
 				{
-					foreach (var inboxCreate in inboxes.InboxCreate)
-					{
-						var eo = inboxCreate.Clone();
-						_dbIdentity.SetIdentityParams(eo);
-						eo.Set("Id", inboxCreate);
-						eo.Set("InstanceId", instance.Id);
-						batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Create]", eo));
-					}
-					foreach (var inboxDelete in inboxes.InboxRemove)
-					{
-						var eo = new ExpandoObject();
-						_dbIdentity.SetIdentityParams(eo);
-						eo.Set("Id", inboxDelete);
-						eo.Set("InstanceId", instance.Id);
-						batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Remove]", eo));
-					}
+					var eo = inboxCreate.Clone();
+					_dbIdentity.SetIdentityParams(eo);
+					eo.Set("InstanceId", instance.Id);
+					batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Create]", eo));
+				}
+				foreach (var inboxDelete in inboxes.InboxRemove)
+				{
+					var eo = new ExpandoObject();
+					_dbIdentity.SetIdentityParams(eo);
+					eo.Set("Id", inboxDelete);
+					eo.Set("InstanceId", instance.Id);
+					batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Remove]", eo));
 				}
 			}
 		}

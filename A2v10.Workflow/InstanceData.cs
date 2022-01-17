@@ -12,7 +12,7 @@ public class InstanceData : IInstanceData
 	public List<Object>? ExternalEvents { get; init; }
 	public List<Object>? TrackRecords { get; init; }
 	public List<DeferredElement>? Deferred { get; init; }
-	public DeferredInboxes? Inboxes { get; }
+	public DeferredInboxes? Inboxes { get; init; }
 	public Boolean HasBatches => Deferred != null || Inboxes != null;
 }
 
