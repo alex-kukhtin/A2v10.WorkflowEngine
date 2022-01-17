@@ -29,6 +29,8 @@ public partial class ExecutionContext : IExecutionContext
 	private readonly Dictionary<String, IActivity> _activities = new();
 	private readonly Dictionary<String, ResumeAction> _bookmarks = new();
 	private readonly Dictionary<String, EventItem> _events = new();
+	private readonly Dictionary<Guid, ExpandoObject> _inboxCreate = new();
+	private readonly List<Guid> _inboxRemove = new();
 
 	private readonly IActivity _root;
 	private readonly IInstance _instance;
@@ -107,6 +109,19 @@ public partial class ExecutionContext : IExecutionContext
 	{
 		if (_bookmarks.ContainsKey(bookmark))
 			_bookmarks.Remove(bookmark);
+	}
+
+	public void SetInbox(Guid id, ExpandoObject inbox, IActivity activity)
+	{
+		_tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Inbox, activity, $"{{inbox:'{id}'}}"));
+		_inboxCreate.Add(id, inbox);
+	}
+
+	public void RemoveInbox(Guid? id)
+	{
+		if (id == null)
+			return;
+		_inboxRemove.Add(id.Value);
 	}
 
 	public void AddEvent(IWorkflowEvent wfEvent, IActivity activity, EventAction onTrigger)

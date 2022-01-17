@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 
 namespace A2v10.Workflow.Interfaces;
@@ -9,6 +9,8 @@ public enum DeferredElementType
 
 public record DeferredElement(DeferredElementType Type, String Name, ExpandoObject? Parameters, String Refer);
 
+public record DeferredInboxes(List<ExpandoObject> InboxCreate, List<Guid> InboxRemove);
+
 public interface IInstanceData
 {
 	ExpandoObject? ExternalVariables { get; }
@@ -17,5 +19,9 @@ public interface IInstanceData
 	List<Object>? ExternalEvents { get; }
 
 	List<DeferredElement>? Deferred { get; }
+
+	DeferredInboxes? Inboxes { get; } 
+
+	Boolean HasBatches { get; }
 }
 

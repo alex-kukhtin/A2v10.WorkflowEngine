@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
 public enum ActivityTrackAction
@@ -11,6 +11,7 @@ public enum ActivityTrackAction
 	Event = 4,
 	HandleEvent = 5,
 	HandleMessage = 6,
+	Inbox = 7,
 	Exception = 999
 }
 

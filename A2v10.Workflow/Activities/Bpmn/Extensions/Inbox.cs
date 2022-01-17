@@ -9,7 +9,7 @@ namespace A2v10.Workflow;
 
 /*two classes with same name is required !*/
 [ContentProperty("Text")]
-public class Script : BaseElement
+public class Inbox : BaseElement
 {
 	public String? Text { get; init; }
 }

@@ -112,16 +112,42 @@ public class SqlServerInstanceStorage : IInstanceStorage
 		};
 
 		List<BatchProcedure>? batches = null;
-		if (instanceData?.Deferred != null)
+		if (instanceData?.HasBatches == true)
 		{
 			batches = new List<BatchProcedure>();
-			foreach (var defer in instanceData.Deferred.Where(d => d.Type == DeferredElementType.Sql))
+			if (instanceData?.Deferred != null)
 			{
-				var epxParam = defer.Parameters.Clone();
-				_dbIdentity.SetIdentityParams(epxParam);
-				epxParam.Add("InstanceId", instance.Id);
-				epxParam.Add("Activity", defer.Refer);
-				batches.Add(new BatchProcedure(defer.Name, epxParam));
+				foreach (var defer in instanceData.Deferred.Where(d => d.Type == DeferredElementType.Sql))
+				{
+					var epxParam = defer.Parameters.Clone();
+					_dbIdentity.SetIdentityParams(epxParam);
+					epxParam.Add("InstanceId", instance.Id);
+					epxParam.Add("Activity", defer.Refer);
+					batches.Add(new BatchProcedure(defer.Name, epxParam));
+				}
+			}
+			if (instanceData?.Inboxes != null)
+            {
+				var inboxes = instanceData?.Inboxes;
+				if (inboxes != null)
+				{
+					foreach (var inboxCreate in inboxes.InboxCreate)
+					{
+						var eo = inboxCreate.Clone();
+						_dbIdentity.SetIdentityParams(eo);
+						eo.Set("Id", inboxCreate);
+						eo.Set("InstanceId", instance.Id);
+						batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Create]", eo));
+					}
+					foreach (var inboxDelete in inboxes.InboxRemove)
+					{
+						var eo = new ExpandoObject();
+						_dbIdentity.SetIdentityParams(eo);
+						eo.Set("Id", inboxDelete);
+						eo.Set("InstanceId", instance.Id);
+						batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Remove]", eo));
+					}
+				}
 			}
 		}
 

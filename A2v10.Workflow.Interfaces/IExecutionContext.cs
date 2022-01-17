@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 
 namespace A2v10.Workflow.Interfaces;
@@ -12,6 +12,9 @@ public interface IExecutionContext
 
 	void SetBookmark(String bookmark, IActivity activity, ResumeAction onComplete);
 	void RemoveBookmark(String bookmark);
+
+	void SetInbox(Guid id, ExpandoObject inbox, IActivity activity);
+	void RemoveInbox(Guid? id);
 
 	void AddEvent(IWorkflowEvent wfEvent, IActivity activity, EventAction onComplete);
 	void RemoveEvent(String eventKey);
