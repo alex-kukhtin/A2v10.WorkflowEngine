@@ -726,6 +726,7 @@ begin
 	(
 		Id uniqueidentifier not null,
 		InstanceId uniqueidentifier not null,
+		Bookmark nvarchar(255) not null,
 		DateCreated datetime not null
 			constraint DF_Inbox_DateCreated default(getutcdate()),
 		DateRemoved datetime null
@@ -740,14 +741,16 @@ create or alter procedure a2wf.[Instance.Inbox.Create]
 @UserId bigint = null,
 @Id uniqueidentifier,
 @InstanceId uniqueidentifier,
+@Bookmark nvarchar(255),
 ... -- other parametets
 as
 begin
 	set nocount on;
 	set transaction isolation level read committed;
 	set xact_abort on;
-	insert into a2wf.[Inbox] (Id, InstanceId, ...)
-	values (@Id, @InstanceId, ...);
+
+	insert into a2wf.[Inbox] (Id, InstanceId, Bookmark, ...)
+	values (@Id, @InstanceId, @Bookmark, ...);
 end
 go
 ------------------------------------------------
