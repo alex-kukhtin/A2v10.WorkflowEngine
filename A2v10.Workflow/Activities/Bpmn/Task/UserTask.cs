@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 
 using System.Dynamic;
@@ -37,7 +37,13 @@ public class UserTask : BpmnTask
 		return CompleteBody(context);
 	}
 
-	public override void BuildScriptBody(IScriptBuilder builder)
+    public override void Cancel(IExecutionContext context)
+    {
+        base.Cancel(context);
+		context.RemoveInbox(_inboxId);
+    }
+
+    public override void BuildScriptBody(IScriptBuilder builder)
 	{
 		builder.BuildExecuteResult(nameof(Script), Script);
 		builder.BuildEvaluate(nameof(Inbox), Inbox);

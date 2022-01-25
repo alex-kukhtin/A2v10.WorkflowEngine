@@ -11,7 +11,7 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Tests;
 [TestClass]
-[TestCategory("Bmpn.Events.Message")]
+[TestCategory("Bpmn.Events.Message")]
 public class BpmnEventsMessage
 {
 	[TestMethod]

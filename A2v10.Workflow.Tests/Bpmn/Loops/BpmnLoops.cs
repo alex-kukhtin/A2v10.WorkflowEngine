@@ -13,7 +13,7 @@ using System.Dynamic;
 namespace A2v10.Workflow.Tests;
 
 [TestClass]
-[TestCategory("Bmpn.Loops")]
+[TestCategory("Bpmn.Loops")]
 public class BpmnLoops
 {
 	[TestMethod]

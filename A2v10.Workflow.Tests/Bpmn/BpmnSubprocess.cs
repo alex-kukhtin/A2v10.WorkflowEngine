@@ -12,7 +12,7 @@ using A2v10.Workflow.Interfaces;
 namespace A2v10.Workflow.Tests
 {
 	[TestClass]
-	[TestCategory("Bmpn.Subprocess")]
+	[TestCategory("Bpmn.Subprocess")]
 	public class BpmnSubprocess
 	{
 		[TestMethod]

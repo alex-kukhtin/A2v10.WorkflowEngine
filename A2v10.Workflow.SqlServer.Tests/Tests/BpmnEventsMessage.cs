@@ -12,7 +12,7 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 [TestClass]
-[TestCategory("Bmpn.SqlServer.Events.Message")]
+[TestCategory("Bpmn.SqlServer.Events.Message")]
 public class BpmnEventsMessage
 {
 	[TestMethod]

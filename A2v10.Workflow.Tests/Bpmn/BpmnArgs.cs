@@ -13,7 +13,7 @@ using A2v10.Workflow.Interfaces;
 namespace A2v10.Workflow.Tests
 {
 	[TestClass]
-	[TestCategory("Bmpn.Args")]
+	[TestCategory("Bpmn.Args")]
 	public class BpmnArgs
 	{
 		[TestMethod]

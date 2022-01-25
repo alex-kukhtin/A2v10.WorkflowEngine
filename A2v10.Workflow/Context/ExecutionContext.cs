@@ -115,8 +115,8 @@ public partial class ExecutionContext : IExecutionContext
 	{
 		_tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Inbox, activity, $"{{inbox:'{id}'}}"));
 		var eo = inbox.Clone();
-		eo.Set("Id", id);
-		eo.Set("Bookmark", activity.Id);
+		eo.SetOrReplace("Id", id);
+		eo.SetOrReplace("Bookmark", activity.Id);
 		_inboxCreate.Add(eo);
 	}
 
