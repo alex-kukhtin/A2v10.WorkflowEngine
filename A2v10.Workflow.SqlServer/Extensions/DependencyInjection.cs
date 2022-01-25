@@ -1,20 +1,18 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.SqlServer;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+public static class WorkflowSqlDependencyInjection
 {
-	public static class WorkflowSqlDependencyInjection
+	public static IServiceCollection UseSqlServerWorkflow(this IServiceCollection coll)
 	{
-		public static IServiceCollection UseSqlServerWorkflow(this IServiceCollection coll)
-		{
-			coll.UseWorkflow();
+		coll.UseWorkflow();
 
-			coll.AddScoped<IWorkflowStorage, SqlServerWorkflowStorage>()
-			.AddScoped<IInstanceStorage, SqlServerInstanceStorage>()
-			.AddScoped<IWorkflowCatalog, SqlServerWorkflowCatalog>();
-			return coll;
-		}
+		coll.AddScoped<IWorkflowStorage, SqlServerWorkflowStorage>()
+		.AddScoped<IInstanceStorage, SqlServerInstanceStorage>()
+		.AddScoped<IWorkflowCatalog, SqlServerWorkflowCatalog>();
+		return coll;
 	}
 }
