@@ -8,8 +8,6 @@ public static class WorkflowSqlDependencyInjection
 {
 	public static IServiceCollection UseSqlServerWorkflow(this IServiceCollection coll)
 	{
-		coll.UseWorkflow();
-
 		coll.AddScoped<IWorkflowStorage, SqlServerWorkflowStorage>()
 		.AddScoped<IInstanceStorage, SqlServerInstanceStorage>()
 		.AddScoped<IWorkflowCatalog, SqlServerWorkflowCatalog>();

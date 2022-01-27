@@ -38,7 +38,7 @@ public class SqlServerWorkflowStorage : IWorkflowStorage
 		var eo = await LoadWorkflowAsync(identity);
 		if (eo == null)
 			throw new SqlServerStorageException($"Workflow not found. (Id:'{identity.Id}', Version:{identity.Version})");
-		var wf = new Workflow(
+		var wf = new WorkflowElement(
 			new WorkflowIdentity(
 				eo.GetNotNull<String>("Id"),
 				eo.Get<Int32>("Version")

@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using A2v10.Runtime.Interfaces;
 using A2v10.Workflow.Interfaces;
 using System.IO;
-using A2v10.Data;
 
 namespace A2v10.Workflow.SqlServer.Tests
 {

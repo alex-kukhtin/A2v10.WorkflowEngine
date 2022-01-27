@@ -25,7 +25,7 @@ public class WorkflowEngine : IWorkflowEngine
 
 	public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, Guid? parent = null)
 	{
-		var wf = new Workflow(identity ?? new WorkflowIdentity(String.Empty), root, new DymmyActivityWrapper());
+		var wf = new WorkflowElement(identity ?? new WorkflowIdentity(String.Empty), root, new DymmyActivityWrapper());
 		var inst = new Instance(wf, Guid.NewGuid(), parent);
 		root.OnEndInit(null);
 		await _instanceStorage.Create(inst);

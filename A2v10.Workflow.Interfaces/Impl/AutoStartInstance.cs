@@ -1,9 +1,6 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
-using System.Dynamic;
-using A2v10.Workflow.Interfaces;
-
-namespace A2v10.Workflow;
+namespace A2v10.Workflow.Interfaces;
 public class AutoStartInstance : IAutoStartInstance
 {
     public Int64 Id { get; init; }
@@ -13,4 +10,3 @@ public class AutoStartInstance : IAutoStartInstance
 
     public ExpandoObject? Params { get; init; }
 }
-

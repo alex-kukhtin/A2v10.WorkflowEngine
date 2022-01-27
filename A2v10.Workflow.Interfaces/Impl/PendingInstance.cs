@@ -1,9 +1,6 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
-
-using System.Collections.Generic;
-
-namespace A2v10.Workflow;
+namespace A2v10.Workflow.Interfaces;
 public class PendingInstance : IPendingInstance
 {
     private readonly List<String> _eventKeys = new();
@@ -17,4 +14,3 @@ public class PendingInstance : IPendingInstance
         _eventKeys.Add(key);
     }
 }
-

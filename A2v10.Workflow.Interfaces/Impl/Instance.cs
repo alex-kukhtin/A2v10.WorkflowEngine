@@ -1,17 +1,14 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
-using System.Dynamic;
-
-
-namespace A2v10.Workflow;
+namespace A2v10.Workflow.Interfaces;
 public class Instance : IInstance
 {
 	public Instance(IWorkflow workflow, Guid id, Guid? parent = null)
-    {
+	{
 		Workflow = workflow;
 		Id = id;
 		Parent = parent;
-    }
+	}
 	public IWorkflow Workflow { get; init; }
 	public Guid Id { get; init; }
 	public Guid? Parent { get; init; }
@@ -24,4 +21,3 @@ public class Instance : IInstance
 
 	public IInstanceData? InstanceData { get; set; }
 }
-

@@ -36,6 +36,7 @@ namespace A2v10.Workflow.SqlServer.Tests
 			collection.AddSingleton<IConfiguration>(TestConfig.GetRoot());
 
 			collection.UseSimpleDbContext();
+			collection.UseWorkflow();
 			collection.UseSqlServerWorkflow();
 
 			collection.AddSingleton<IDbIdentity, UserIdentity>();

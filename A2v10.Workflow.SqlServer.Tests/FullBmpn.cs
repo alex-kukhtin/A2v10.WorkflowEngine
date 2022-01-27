@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 using A2v10.Workflow.Interfaces;
-using A2v10.Data;
 using A2v10.Data.Interfaces;
 
 namespace A2v10.Workflow.SqlServer.Tests

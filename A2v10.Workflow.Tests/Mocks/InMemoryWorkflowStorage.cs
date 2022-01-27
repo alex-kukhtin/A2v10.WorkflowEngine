@@ -43,7 +43,7 @@ public class InMemoryWorkflowStorage : IWorkflowStorage
 		if (swf == null)
 			throw new KeyNotFoundException($"Workflow '{identity}' not found");
 		var root = _serializer.DeserializeActitity(swf.Text, swf.Format);
-		var wf = new Workflow(
+		var wf = new WorkflowElement(
 			new WorkflowIdentity(identity.Id, v),
 			root
 		);

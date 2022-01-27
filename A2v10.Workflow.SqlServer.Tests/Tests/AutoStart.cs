@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using A2v10.Data.Interfaces;
-using A2v10.Workflow.Interfaces;
 using System.Dynamic;
 using Newtonsoft.Json;
-using A2v10.Data;
+
+using A2v10.Data.Interfaces;
+using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
