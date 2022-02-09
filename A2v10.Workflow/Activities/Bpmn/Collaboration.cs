@@ -59,7 +59,9 @@ public class Collaboration : BpmnActivity, IScoped, IExternalScoped
 			var prc = processes.FirstOrDefault(p => p.Id == participant.ProcessRef);
 			if (prc == null)
 				throw new WorkflowException($"Process '{participant.ProcessRef}' not found");
-			//participant.EnsureChildren();
+			participant.EnsureChildren();
+			if (participant.Children == null)
+				throw new WorkflowException($"Participant '{participant.ProcessRef}' has no children");
 			participant.Children?.Add(prc);
 		}
 	}
