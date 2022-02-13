@@ -7,7 +7,7 @@ using A2v10.Workflow;
 namespace Microsoft.Extensions.DependencyInjection;
 public static class WorkflowDependencyInjection
 {
-	public static IServiceCollection UseWorkflow(this IServiceCollection coll)
+	public static IServiceCollection AddWorkflow(this IServiceCollection coll)
 	{
 		coll.AddSingleton<IXamlReaderService, WorkflowXamlReaderService>();
 		coll.AddScoped<IWorkflowEngine, WorkflowEngine>()

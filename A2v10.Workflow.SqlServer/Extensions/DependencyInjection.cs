@@ -6,7 +6,7 @@ using A2v10.Workflow.SqlServer;
 namespace Microsoft.Extensions.DependencyInjection;
 public static class WorkflowSqlDependencyInjection
 {
-	public static IServiceCollection UseSqlServerWorkflow(this IServiceCollection coll)
+	public static IServiceCollection AddSqlServerWorkflow(this IServiceCollection coll)
 	{
 		coll.AddScoped<IWorkflowStorage, SqlServerWorkflowStorage>()
 		.AddScoped<IInstanceStorage, SqlServerInstanceStorage>()

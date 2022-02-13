@@ -27,6 +27,11 @@ namespace A2v10.Workflow.SqlServer.Tests
 			return ServiceProvider().GetRequiredService<IWorkflowEngine>();
 		}
 
+		private readonly static NativeType[] _nativeTypes = new NativeType[]
+		{
+			new NativeType(Name: "External", Type:typeof(TestExternalNatvieType))
+		};
+
 		public static IServiceProvider ServiceProvider()
 		{
 			if (_provider != null)
@@ -35,14 +40,11 @@ namespace A2v10.Workflow.SqlServer.Tests
 			var collection = new ServiceCollection();
 			collection.AddSingleton<IConfiguration>(TestConfig.GetRoot());
 
+			collection.AddWorkflowEngine(options =>
+            {
+				options.NativeTypes = _nativeTypes;
+            });
 			collection.UseSimpleDbContext();
-			collection.UseWorkflow();
-			collection.UseSqlServerWorkflow();
-
-			collection.AddSingleton<IDbIdentity, UserIdentity>();
-			collection.AddSingleton<IScriptNativeObjectProvider, AppScriptNativeObjects>();
-			collection.AddSingleton<ISerializer, WorkflowSerializer>();
-
 			collection.AddSingleton<IRuntimeInvokeTarget, WorkflowInvokeTarget>();
 
 			_provider = collection.BuildServiceProvider();
