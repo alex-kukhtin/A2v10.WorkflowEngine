@@ -1,6 +1,5 @@
 BPMN
 =====
-2. RemoveBookmak for Cancel activity
 4. Task multiInstanceLoopCharacteristics 
 5. EscalationCodeVariable - убрать?
 6. CorrelationId ?
@@ -10,7 +9,6 @@ BPMN
 Designer
 ========
 1. Add/Remove buttons css (wrapper & remove position:absolute)
-2. Properties expressions. f.e: timeDuration = ${Duration}
 4. fileName in command line
 5. Task: multiInstanceLoopCharacteristics
 

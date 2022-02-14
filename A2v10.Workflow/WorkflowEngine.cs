@@ -23,27 +23,27 @@ public class WorkflowEngine : IWorkflowEngine
 		_tracker = tracker;
 	}
 
-	public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, Guid? parent = null)
+	public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, String? correlationId = null, Guid? parent = null)
 	{
 		var wf = new WorkflowElement(identity ?? new WorkflowIdentity(String.Empty), root, new DymmyActivityWrapper());
-		var inst = new Instance(wf, Guid.NewGuid(), parent);
+		var inst = new Instance(wf, Guid.NewGuid(), correlationId, parent);
 		root.OnEndInit(null);
 		await _instanceStorage.Create(inst);
 		return inst;
 	}
 
-	public async ValueTask<IInstance> CreateAsync(IWorkflow workflow, Guid? parent = null)
+	public async ValueTask<IInstance> CreateAsync(IWorkflow workflow, String? correlationId = null, Guid? parent = null)
     {
-		var inst = new Instance(workflow, Guid.NewGuid(), parent);
+		var inst = new Instance(workflow, Guid.NewGuid(), correlationId, parent);
 		workflow.Root.OnEndInit(null);
 		await _instanceStorage.Create(inst);
 		return inst;
     }
 
-	public async ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, Guid? parent = null)
+	public async ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, String? correlationId = null, Guid? parent = null)
 	{
 		var wf = await _workflowStorage.LoadAsync(identity);
-		return await CreateAsync(wf, parent);
+		return await CreateAsync(wf, correlationId, parent);
 	}
 
 	public async ValueTask<IInstance> RunAsync(IInstance instance, Object? args = null)
@@ -92,6 +92,7 @@ public class WorkflowEngine : IWorkflowEngine
 		inst.Result = context.GetResult();
 		inst.State = context.GetState();
 		inst.ExecutionStatus = context.GetExecutionStatus();
+		inst.CorrelationId = context.GetCorrelationId(inst.State);
 		var instData = new InstanceData()
 		{
 			ExternalVariables = context.GetExternalVariables(inst.State),

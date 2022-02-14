@@ -47,6 +47,11 @@ export default {
 					"type": "Boolean"
 				},
 				{
+					"name": "CorrelationId",
+					"isAttr": true,
+					"type": "Boolean"
+				},
+				{
 					"name": "Value",
 					"isAttr": true,
 					"type": "String"

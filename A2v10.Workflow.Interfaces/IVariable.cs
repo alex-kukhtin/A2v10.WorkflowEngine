@@ -28,9 +28,9 @@ public interface IVariable
 	VariableType Type { get; }
 	VariableDirection Dir { get; set; }
 	Boolean External { get; }
-
+	Boolean CorrelationId { get; }
 	String Name { get; }
-	String? Value { get; }
+	String? Value { get; set; }
 
 	public Boolean IsArgument { get; }
 	public Boolean IsResult { get; }

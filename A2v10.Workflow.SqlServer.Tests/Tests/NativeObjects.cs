@@ -17,15 +17,11 @@ namespace A2v10.Workflow.SqlServer.Tests;
 public class NativeObjects
 {
 	private readonly IServiceProvider _serviceProvider;
-	private readonly IWorkflowStorage _workflowStorage;
-	private readonly IWorkflowCatalog _workflowCatalog;
 	private readonly IWorkflowEngine _workflowEngine;
 
 	public NativeObjects()
 	{
 		_serviceProvider = TestEngine.ServiceProvider();
-		_workflowStorage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
-		_workflowCatalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
 		_workflowEngine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
     }
 
@@ -44,7 +40,7 @@ public class NativeObjects
 		var res = await _workflowEngine.LoadInstanceRaw(inst.Id);
 
 		var res0 = res.Result;
-		var log = inst.Result?.GetNotNull<Object[]>("log");
+		var log = res0?.GetNotNull<Object[]>("log");
 		Assert.IsNotNull(log);
 		Assert.AreEqual(5, log.Length);
 		Assert.AreEqual("start|task|res:5|success:true|end", String.Join('|', log));

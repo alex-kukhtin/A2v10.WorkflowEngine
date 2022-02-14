@@ -8,6 +8,8 @@ public class CreateRequest
 {
 	public String? Workflow { get; set; }
 	public Int32 Version { get; set; }
+
+	public String? CorrelationId { get; set; }
 }
 
 public class CreateResponse

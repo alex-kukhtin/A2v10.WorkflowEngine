@@ -1,4 +1,4 @@
-﻿// Copyright © 2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2021-2022 Alex Kukhtin. All rights reserved.
 
 using System;
 using System.Threading.Tasks;
@@ -32,7 +32,7 @@ namespace A2v10.Workflow.WebHost.Controllers
 			_logger.LogInformation("Create {wf}:{ver}", rq.Workflow, rq.Version);
 			if (String.IsNullOrEmpty(rq.Workflow))
 				return BadRequest("Invalid workflow id");
-			var res = await _engine.CreateAsync(new WorkflowIdentity(rq.Workflow, rq.Version));
+			var res = await _engine.CreateAsync(new WorkflowIdentity(rq.Workflow, rq.Version), rq.CorrelationId);
 			return Ok(new CreateResponse()
 			{
 				InstanceId = res.Id

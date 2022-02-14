@@ -4,9 +4,9 @@
 namespace A2v10.Workflow.Interfaces;
 public interface IWorkflowEngine
 {
-	ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, Guid? parent = null);
-	ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, Guid? parent = null);
-	ValueTask<IInstance> CreateAsync(IWorkflow workflow, Guid? parent = null);
+	ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, String? correlationId = null, Guid? parent = null);
+	ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, String? correlationId = null, Guid? parent = null);
+	ValueTask<IInstance> CreateAsync(IWorkflow workflow, String? correlationId = null, Guid? parent = null);
 
 	ValueTask<IInstance> RunAsync(Guid id, Object? args = null);
 	ValueTask<IInstance> RunAsync(IInstance instance, Object? args = null);

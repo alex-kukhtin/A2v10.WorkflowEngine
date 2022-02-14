@@ -2,7 +2,7 @@
 
 'use strict';
 
-const version = '10.1.8080'
+const version = '10.1.8086'
 
 const { dialog } = require('electron')
 const fs = require('fs');

@@ -109,5 +109,16 @@ export default function VariablesDetailProps(group, element, translate) {
 				return setValue('External', elem, values, node);
 			}
 		}));
+		group.entries.push(entryFactory.checkbox(translate, {
+			id: 'var_correlation_id',
+			label: 'CorrelationId',
+			modelProperty: 'CorrelationId',
+			get(elem, node) {
+				return extensionElementsImpl.getSelectedVariableObject(node, elem) || {};
+			},
+			set(elem, values, node) {
+				return setValue('CorrelationId', elem, values, node);
+			}
+		}));
 	}
 }

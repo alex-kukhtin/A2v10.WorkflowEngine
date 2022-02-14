@@ -57,9 +57,21 @@ public partial class ExecutionContext : IExecutionContext
 		};
 		_root.Traverse(toMapArg);
 
+		SetCorrelationId(); // before script
+
 		_script = BuildScript(args);
 		_tracker.Start();
 	}
+	void SetCorrelationId()
+    {
+		if (_instance.CorrelationId == null)
+			return;
+		if (_root is not IScoped rootScoped)
+			return;
+		var corrVariable = rootScoped.Variables?.FirstOrDefault(v => v.CorrelationId);
+		if (corrVariable != null)
+			corrVariable.Value = _instance.CorrelationId;
+    }
 
 	ScriptEngine BuildScript(Object? args)
 	{
@@ -282,7 +294,8 @@ public partial class ExecutionContext : IExecutionContext
 		{
 			if (ea.WorkflowIdentity == null)
 				throw new InvalidProgramException("WorkflowIdentity is null");
-			var inst = await _engine.CreateAsync(ea.WorkflowIdentity, _instance.Id);
+			var correlationId = prms.Get<String>("CorrelationId");
+			var inst = await _engine.CreateAsync(ea.WorkflowIdentity, correlationId, _instance.Id);
 			var result = await _engine.RunAsync(inst.Id, prms);
 			return result;
 		}

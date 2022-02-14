@@ -17,7 +17,7 @@ using A2v10.Data.Interfaces;
 namespace A2v10.Workflow.SqlServer.Tests
 {
 	[TestClass]
-	[TestCategory("Bpmn.Full")]
+	[TestCategory("Bpmn.Timers")]
 	public class FullBmpn
 	{
 		private readonly IServiceProvider _serviceProvider;

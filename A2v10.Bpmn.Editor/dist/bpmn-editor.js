@@ -125,6 +125,10 @@ var _default = {
       "isAttr": true,
       "type": "Boolean"
     }, {
+      "name": "CorrelationId",
+      "isAttr": true,
+      "type": "Boolean"
+    }, {
       "name": "Value",
       "isAttr": true,
       "type": "String"
@@ -3492,6 +3496,20 @@ function VariablesDetailProps(group, element, translate) {
 
       set(elem, values, node) {
         return setValue('External', elem, values, node);
+      }
+
+    }));
+    group.entries.push(_entryFactory.default.checkbox(translate, {
+      id: 'var_correlation_id',
+      label: 'CorrelationId',
+      modelProperty: 'CorrelationId',
+
+      get(elem, node) {
+        return _extensionElements.default.getSelectedVariableObject(node, elem) || {};
+      },
+
+      set(elem, values, node) {
+        return setValue('CorrelationId', elem, values, node);
       }
 
     }));

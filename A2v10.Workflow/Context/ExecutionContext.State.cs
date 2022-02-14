@@ -140,14 +140,40 @@ public partial class ExecutionContext : IExecutionContext
 		return res;
 	}
 
-	public ExpandoObject? GetExternalVariables(ExpandoObject state)
-	{
+	private List<IVariable>? GetVariables()
+    {
 		List<IVariable>? variables = null;
 		if (_root is IExternalScoped extScoped)
 			variables = extScoped.ExternalVariables();
 		else if (_root is IScoped scoped)
 			variables = scoped.Variables;
 		if (variables == null || variables.Count == 0)
+			return null;
+		return variables;
+	}
+
+	public String? GetCorrelationId(ExpandoObject state)
+	{
+		List<IVariable>? variables = GetVariables();
+		if (variables == null)
+			return null;
+		var corrId = variables.Where(v => v.CorrelationId).FirstOrDefault();
+		if (corrId == null)
+			return null;
+		var values = state.Get<ExpandoObject>("Variables");
+		if (values == null)
+			return null;
+		var rootValues = values.Get<ExpandoObject>(_root.Id);
+		var val = rootValues.Get<Object>(corrId.Name);
+		if (val == null)
+			return null;
+		return val.ToString();
+	}
+
+	public ExpandoObject? GetExternalVariables(ExpandoObject state)
+	{
+		List<IVariable>? variables = GetVariables();
+		if (variables == null)
 			return null;
 		var result = new ExpandoObject();
 		var values = state.Get<ExpandoObject>("Variables");

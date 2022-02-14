@@ -19,6 +19,8 @@ public interface IInstance
 	WorkflowExecutionStatus ExecutionStatus { get; set; }
 	Guid? Lock { get; }
 
+	String? CorrelationId { get; set; }
+
 	ExpandoObject? Result { get; set; }
 	ExpandoObject? State { get; set; }
 

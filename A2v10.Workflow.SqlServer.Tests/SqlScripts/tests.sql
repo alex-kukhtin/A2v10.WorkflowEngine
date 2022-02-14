@@ -130,3 +130,28 @@ begin
 	update a2wf.Inbox set Void = 1 where Id=@Id and InstanceId=@InstanceId;
 end
 go
+------------------------------------------------
+create or alter procedure a2wf_test.[Instance.External.Load]
+@UserId bigint = null,
+@InstanceId uniqueidentifier
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+	set xact_abort on;
+
+	select [Instance!TInstance!Object] = null, [Id!!Id] = Id, CorrelationId,
+		[Strings!TString!Array] = null, [Integers!TInt!Array] = null,
+		[Guids!TGuid!Array] = null
+	from a2wf.Instances where Id=@InstanceId;
+	
+	select [!TString!Array] = null, [Value], [!TInstance.Strings!ParentId] = InstanceId
+	from a2wf.InstanceVariablesString where InstanceId = @InstanceId;
+
+	select [!TInt!Array] = null, [Value], [!TInstance.Integers!ParentId] = InstanceId
+	from a2wf.InstanceVariablesInt where InstanceId = @InstanceId;
+
+	select [!TGuid!Array] = null, [Value], [!TInstance.Guids!ParentId] = InstanceId
+	from a2wf.InstanceVariablesGuid where InstanceId = @InstanceId;
+end
+go

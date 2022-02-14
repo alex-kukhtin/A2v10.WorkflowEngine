@@ -1,8 +1,7 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 using System.Globalization;
 
-using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow;
 public class Variable : IVariable
@@ -17,6 +16,8 @@ public class Variable : IVariable
 	public VariableType Type { get; set; }
 
 	public Boolean External { get; set; }
+
+	public Boolean CorrelationId { get; set; }
 	public String? Value { get; set; }
 
 	public Boolean IsArgument => Dir == VariableDirection.In || Dir == VariableDirection.InOut;

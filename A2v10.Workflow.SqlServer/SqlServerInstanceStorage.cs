@@ -20,6 +20,8 @@ public record DatabaseInstance
 	public WorkflowExecutionStatus ExecutionStatus { get; set; }
 
 	public Guid? Lock { get; set; }
+
+	public String? CorrelationId { get; set; }
 }
 
 public class SqlServerInstanceStorage : IInstanceStorage
@@ -71,7 +73,8 @@ public class SqlServerInstanceStorage : IInstanceStorage
 			Parent = dbi.Parent,
 			State = _serializer.Deserialize(dbi.State),
 			ExecutionStatus = dbi.ExecutionStatus,
-			Lock = dbi.Lock
+			Lock = dbi.Lock,
+			CorrelationId = dbi.CorrelationId
 		};
 	}
 
@@ -83,7 +86,8 @@ public class SqlServerInstanceStorage : IInstanceStorage
 			{ "Parent", instance.Parent},
 			{ "Version", instance.Workflow.Identity.Version},
 			{ "WorkflowId", instance.Workflow.Identity.Id },
-			{ "ExecutionStatus", instance.ExecutionStatus.ToString() }
+			{ "ExecutionStatus", instance.ExecutionStatus.ToString() },
+			{ "CorrelationId", instance.CorrelationId },
 		};
 		_dbIdentity.SetIdentityParams(ieo);
 		await _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Create]", ieo);
@@ -99,6 +103,7 @@ public class SqlServerInstanceStorage : IInstanceStorage
 			{ "WorkflowId", instance.Workflow.Identity.Id},
 			{ "ExecutionStatus", instance.ExecutionStatus.ToString() },
 			{ "Lock", instance.Lock },
+			{ "CorrelationId", instance.CorrelationId },
 			{ "State", _serializer.Serialize(instance.State) },
 			{ "Variables", instanceData?.ExternalVariables },
 			{ "Bookmarks", instanceData?.ExternalBookmarks},
@@ -253,8 +258,9 @@ public class SqlServerInstanceStorage : IInstanceStorage
 		{
 			Parent = dbi.Parent,
 			State = _serializer.Deserialize(dbi.State),
-			ExecutionStatus = dbi.ExecutionStatus ,
-			Lock = dbi.Lock
+			ExecutionStatus = dbi.ExecutionStatus,
+			Lock = dbi.Lock,
+			CorrelationId = dbi.CorrelationId
 		};
 	}
 
