@@ -2573,6 +2573,29 @@
         }
         "FileType"
         {
+            "{5EB83D71-FA18-4901-BE56-DE22E13CC478}:_EE6D1A3E543E4BBF855A568114D8AD1F"
+            {
+            "Name" = "8:BPMN Diagram"
+            "Description" = "8:"
+            "Extensions" = "8:bpmn"
+            "MIME" = "8:"
+            "Icon" = "8:_0051E459060D416DADCD94B27956DDA6"
+            "IconIndex" = "3:0"
+                "Command"
+                {
+                "Command" = "8:_ADA88A3A6C1F4ACBB4965107BE31AA55"
+                }
+                "Verbs"
+                {
+                    "{95C0C507-CBF0-42B8-B119-07219E384A4A}:_C447A88D39F4439FBEC67DD341E0AD07"
+                    {
+                    "Command" = "8:&Open"
+                    "Verb" = "8:open"
+                    "Arguments" = "8:\"%1\""
+                    "Order" = "3:0"
+                    }
+                }
+            }
         }
         "Folder"
         {
@@ -2725,15 +2748,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:A2v10.Bpmn.Designer"
-        "ProductCode" = "8:{DB15C11B-078F-4D5E-8AAE-84D5D54BA8EF}"
-        "PackageCode" = "8:{B96F8983-763F-4E15-8200-ADD1F844648F}"
+        "ProductCode" = "8:{2A0D5BB4-AE57-41D6-8025-74360B5B9D94}"
+        "PackageCode" = "8:{E1A6D993-F073-401D-A6F8-DFA2D03F92BA}"
         "UpgradeCode" = "8:{8A965950-0BA8-40A7-B6AE-DBDC34F9E90C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:10.1.8086"
+        "ProductVersion" = "8:10.1.8087"
         "Manufacturer" = "8:Oleksandr Kukhtin"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

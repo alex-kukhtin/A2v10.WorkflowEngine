@@ -120,5 +120,40 @@ public class ExternalVariables
 		Assert.AreEqual(3, log.Length);
 		Assert.AreEqual("start|task|end", String.Join('|', log));
 	}
+
+	[TestMethod]
+	public async Task BigintCorrelationId()
+	{
+		String wfId = "createCorrelationId";
+
+		await TestEngine.PrepareDatabase(wfId);
+		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\externalVariables\\bigint_correlationId.bpmn");
+		String corrId = "123457";
+
+		var inst = await TestEngine.SimpleRun(wfId, xaml, null, corrId);
+
+		Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+
+		var res = await _workflowEngine.LoadInstanceRaw(inst.Id);
+		var dm = await _dbContext.LoadModelAsync(null, "a2wf_test.[Instance.External.Load]", new { InstanceId = inst.Id });
+
+		Assert.AreEqual(corrId, res.CorrelationId);
+		Assert.AreEqual(corrId, dm.Eval<String>("Instance.CorrelationId"));
+		Assert.AreEqual(corrId, res.State?.Eval<Double>("Variables.Collaboration1.DocId").ToString());
+
+		var log = inst.Result?.GetNotNull<Object[]>("log");
+		Assert.IsNotNull(log);
+		Assert.AreEqual(1, log.Length);
+		Assert.AreEqual("start", String.Join('|', log));
+
+
+		inst = await _workflowEngine.ResumeAsync(inst.Id, "Bookmark1", null);
+		Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+		log = inst.Result?.GetNotNull<Object[]>("log");
+		Assert.IsNotNull(log);
+		Assert.AreEqual(3, log.Length);
+		Assert.AreEqual("start|task|end", String.Join('|', log));
+	}
 }
 

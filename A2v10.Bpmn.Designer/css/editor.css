@@ -2,14 +2,17 @@
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
 
 #canvas {
   height: 100%;
-  border-top: 1px solid #ccc; }
+  border-top: 1px solid #ccc;
+}
 
 *, :before, :after {
-  box-sizing: border-box; }
+  box-sizing: border-box;
+}
 
 .properties-panel-parent {
   position: absolute;
@@ -20,13 +23,18 @@
   z-index: 10;
   border-left: 1px solid #ccc;
   border-top: 1px solid #ccc;
-  overflow: auto; }
+  overflow: auto;
+}
 
 .properties-panel-parent:empty {
-  display: none; }
+  display: none;
+}
 
 .properties-panel-parent > .bpp-properties-panel {
   padding-bottom: 70px;
-  min-height: 100%; }
-  .properties-panel-parent > .bpp-properties-panel .js-text {
-    font-family: Consolas, 'Courier New', Courier, monospace; }
+  min-height: 100%;
+}
+.properties-panel-parent > .bpp-properties-panel .js-text {
+  font-family: Consolas, "Courier New", Courier, monospace;
+  white-space: pre;
+}

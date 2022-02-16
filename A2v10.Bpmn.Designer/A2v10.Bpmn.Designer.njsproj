@@ -6,6 +6,7 @@
     <RootNamespace>A2v10.Bpmn.Designer</RootNamespace>
     <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
     <NodeExePath>.\node_modules\electron\dist\electron.exe</NodeExePath>
+    <ScriptArguments>D:\Git\A2v10.WorkflowEngine\A2v10.Workflow.Tests\TestFiles\user_task_1.bpmn</ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>

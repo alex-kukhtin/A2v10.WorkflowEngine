@@ -2,9 +2,9 @@ BPMN
 =====
 4. Task multiInstanceLoopCharacteristics 
 5. EscalationCodeVariable - убрать?
-6. CorrelationId ?
 7. Boundary: Any Error
 8. Script - single line comment
+9. x != null && x.T можно как "x is {T: true}" - попробовать.
 
 Designer
 ========

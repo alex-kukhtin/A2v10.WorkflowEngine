@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 'use strict';
 
@@ -21,16 +21,27 @@ function createWindow() {
 			enableRemoteModule: true
 		}
 	});
-	document.setMainWindow(mainWindow);
-	// and load the index.html of the app.
-	mainWindow.loadFile('index.html');
+	let fileName = '';
+	if (process.argv.length > 1) {
+		fileName = process.argv[process.argv.length - 1];
+	}
 
+	document.setMainWindow(mainWindow, fileName);
+
+
+	// and load the index.html of the app.
+	mainWindow.loadFile('index.html', {
+		query: {
+			filename: fileName
+		}
+	});
 
 	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
 		// open url in a browser and prevent default
 		shell.openExternal(url);
 		return { action: 'deny' };
 	});
+
 
 	// Open the DevTools.
 	//mainWindow.webContents.openDevTools()

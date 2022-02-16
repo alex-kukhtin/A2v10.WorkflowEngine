@@ -30,8 +30,10 @@ const document = {
 	isModified() {
 		return this.file.modified;
 	},
-	setMainWindow(window) {
+	setMainWindow(window, filename) {
 		this.mainWindow = window;
+		if (filename)
+			this.file.setFileName(filename);
 		ipcMain.on('FILE.MODIFIED', (ev, arg) => {
 			this.file.modified = arg.modified;
 			this.setTitle();

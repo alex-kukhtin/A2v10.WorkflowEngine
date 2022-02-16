@@ -36,7 +36,7 @@ public class ScriptEngine
 		if (nativeObjects != null)
 			_engine.AddNativeObjects(nativeObjects);
 
-		// Console.WriteLine(script);
+		Console.WriteLine(script);
 		var func = _engine.Evaluate(script);
 		_scriptData = _engine.Invoke(func).ToObject() as ExpandoObject;
 		if (args != null)

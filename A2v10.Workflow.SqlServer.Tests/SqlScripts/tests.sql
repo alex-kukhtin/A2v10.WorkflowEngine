@@ -13,34 +13,6 @@ go
 grant execute on schema ::a2wf_test to public;
 go
 ------------------------------------------------
-create or alter procedure a2wf_test.[Tests.Prepare]
-@Id nvarchar(255)
-as
-begin
-	set nocount on;
-	set transaction isolation level read committed;
-
-	delete from a2wf.InstanceVariablesInt 
-		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
-	delete from a2wf.InstanceVariablesString 
-		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
-	delete from a2wf.InstanceVariablesGuid 
-		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
-	delete from a2wf.InstanceTrack
-		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
-	delete from a2wf.InstanceEvents
-		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
-	delete from a2wf.InstanceBookmarks
-		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
-
-	delete from a2wf.[Instances] where WorkflowId = @Id;
-
-	delete from a2wf.[Workflows] where Id=@Id;
-	delete from a2wf.[Catalog] where Id=@Id;
-	delete from a2wf.[AutoStart] where WorkflowId = @Id;
-end
-go
-------------------------------------------------
 create or alter procedure a2wf_test.[Instance.Load.Unlocked]
 @UserId bigint = null,
 @Id uniqueidentifier
@@ -153,5 +125,43 @@ begin
 
 	select [!TGuid!Array] = null, [Value], [!TInstance.Guids!ParentId] = InstanceId
 	from a2wf.InstanceVariablesGuid where InstanceId = @InstanceId;
+end
+go
+------------------------------------------------
+create or alter procedure a2wf_test.[SetState]
+@Id bigint
+as
+begin
+	set nocount on;
+end
+go
+------------------------------------------------
+create or alter procedure a2wf_test.[Tests.Prepare]
+@Id nvarchar(255)
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+
+	delete from a2wf.InstanceVariablesInt 
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf.InstanceVariablesString 
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf.InstanceVariablesGuid 
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf.InstanceTrack
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf.InstanceEvents
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf.InstanceBookmarks
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf.Inbox
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+
+	delete from a2wf.[Instances] where WorkflowId = @Id;
+
+	delete from a2wf.[Workflows] where Id=@Id;
+	delete from a2wf.[Catalog] where Id=@Id;
+	delete from a2wf.[AutoStart] where WorkflowId = @Id;
 end
 go
