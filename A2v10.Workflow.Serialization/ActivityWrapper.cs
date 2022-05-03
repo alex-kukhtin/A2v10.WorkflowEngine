@@ -4,8 +4,8 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Serialization
 {
-	public record ActivityWrapper
-	{
-		public IActivity? Root { get; init; }
-	}
+    public record ActivityWrapper
+    {
+        public IActivity? Root { get; init; }
+    }
 }

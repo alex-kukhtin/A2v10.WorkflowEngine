@@ -6,16 +6,16 @@ public record PendingElement(IEnumerable<IPendingInstance> Pending, IEnumerable<
 
 public interface IInstanceStorage
 {
-	Task<IInstance> Load(Guid id);
-	Task<IInstance> LoadRaw(Guid id);
+    Task<IInstance> Load(Guid id);
+    Task<IInstance> LoadRaw(Guid id);
 
-	Task Create(IInstance instance);
-	Task Save(IInstance instance);
+    Task Create(IInstance instance);
+    Task Save(IInstance instance);
 
-	Task WriteException(Guid id, Exception ex);
+    Task WriteException(Guid id, Exception ex);
 
-	Task<PendingElement?> GetPendingAsync();
-	Task AutoStartComplete(Int64 Id, Guid instanceId);
-	Task<IInstance?> LoadBookmark(String bookmark);
+    Task<PendingElement?> GetPendingAsync();
+    Task AutoStartComplete(Int64 Id, Guid instanceId);
+    Task<IInstance?> LoadBookmark(String bookmark);
 }
 

@@ -5,48 +5,48 @@ using System.Dynamic;
 namespace A2v10.Workflow;
 public class WorkflowMessageEvent : IWorkflowEvent
 {
-	public String Key { get; }
-	public String Ref { get; }
+    public String Key { get; }
+    public String Ref { get; }
 
-	public EventKind Kind => EventKind.Message;
+    public EventKind Kind => EventKind.Message;
 
-	public WorkflowMessageEvent(String key, String refer)
-	{
-		Key = key;
-		Ref = refer;
-	}
-
-	public WorkflowMessageEvent(String key, ExpandoObject exp)
+    public WorkflowMessageEvent(String key, String refer)
     {
-		Key = key;
-		Ref = exp.GetNotNull<String>("Text");
+        Key = key;
+        Ref = refer;
     }
 
-	// State
-	public ExpandoObject ToExpando()
-	{
-		return new ExpandoObject()
-		{
-			{ "Kind", "Message"},
-			{ "Text", Ref}
-		};
-	}
+    public WorkflowMessageEvent(String key, ExpandoObject exp)
+    {
+        Key = key;
+        Ref = exp.GetNotNull<String>("Text");
+    }
 
-	// Instance Store
-	public ExpandoObject ToStore()
-	{
-		return new ExpandoObject()
-		{
-			{ "Event", Key},
-			{ "Kind", "M" } /*M(essage)*/,
-			{ "Text", Ref }
-		};
-	}
+    // State
+    public ExpandoObject ToExpando()
+    {
+        return new ExpandoObject()
+        {
+            { "Kind", "Message"},
+            { "Text", Ref}
+        };
+    }
 
-	public override String ToString()
-	{
-		return $"{{key: '{Key}', kind: 'Message', ref:'{Ref}'}}";
-	}
+    // Instance Store
+    public ExpandoObject ToStore()
+    {
+        return new ExpandoObject()
+        {
+            { "Event", Key},
+            { "Kind", "M" } /*M(essage)*/,
+            { "Text", Ref }
+        };
+    }
+
+    public override String ToString()
+    {
+        return $"{{key: '{Key}', kind: 'Message', ref:'{Ref}'}}";
+    }
 
 }
 

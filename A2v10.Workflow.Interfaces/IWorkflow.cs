@@ -3,8 +3,8 @@
 namespace A2v10.Workflow.Interfaces;
 public interface IWorkflow
 {
-	IWorkflowIdentity Identity { get; }
-	IActivity Root { get; }
-	IActivityWrapper? Wrapper { get; }
+    IWorkflowIdentity Identity { get; }
+    IActivity Root { get; }
+    IActivityWrapper? Wrapper { get; }
 }
 

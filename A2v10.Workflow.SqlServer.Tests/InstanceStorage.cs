@@ -1,57 +1,55 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
+using A2v10.Workflow.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Extensions.DependencyInjection;
-
-using A2v10.Workflow.Interfaces;
-
 namespace A2v10.Workflow.SqlServer.Tests
 {
-	[TestClass]
-	[TestCategory("Storage.Instance")]
-	public class InstanceStorage
-	{
-		private readonly IServiceProvider _serviceProvider;
+    [TestClass]
+    [TestCategory("Storage.Instance")]
+    public class InstanceStorage
+    {
+        private readonly IServiceProvider _serviceProvider;
 
-		public InstanceStorage()
+        public InstanceStorage()
         {
-			_serviceProvider = TestEngine.ServiceProvider();
-		}
+            _serviceProvider = TestEngine.ServiceProvider();
+        }
 
-		[TestInitialize]
-		public void Init()
-		{
-		}
+        [TestInitialize]
+        public void Init()
+        {
+        }
 
-		[TestMethod]
-		public async Task SimpleInstance()
-		{
-			var id = "Simple_Instance_1";
-			await TestEngine.PrepareDatabase(id);
+        [TestMethod]
+        public async Task SimpleInstance()
+        {
+            var id = "Simple_Instance_1";
+            await TestEngine.PrepareDatabase(id);
 
-			var storage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
-			var catalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
-			var engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
+            var storage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
+            var catalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
+            var engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
 
 
-			var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");
-			var format = "text/xml";
+            var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");
+            var format = "text/xml";
 
-			await catalog.SaveAsync(new WorkflowDescriptor(id, xaml, format));
+            await catalog.SaveAsync(new WorkflowDescriptor(id, xaml, format));
 
-			var ident = await storage.PublishAsync(catalog, id);
+            var ident = await storage.PublishAsync(catalog, id);
 
-			Assert.AreEqual(1, ident.Version);
+            Assert.AreEqual(1, ident.Version);
 
-			var inst = await engine.CreateAsync(ident);
+            var inst = await engine.CreateAsync(ident);
 
-			inst = await engine.RunAsync(inst);
+            inst = await engine.RunAsync(inst);
 
-			Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
-		}
-	}
+            Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+        }
+    }
 }

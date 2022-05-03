@@ -6,13 +6,13 @@ public readonly record struct TraverseArg(Action<IActivity>? Start, Action<IActi
 
 public static class ActivityExtensions
 {
-	public static void Traverse(this IActivity activity, TraverseArg traverse)
-	{
-		traverse.Start?.Invoke(activity);
-		traverse.Action?.Invoke(activity);
-		foreach (var ch in activity.EnumChildren())
-			ch.Traverse(traverse);
-		traverse.End?.Invoke(activity);
-	}
+    public static void Traverse(this IActivity activity, TraverseArg traverse)
+    {
+        traverse.Start?.Invoke(activity);
+        traverse.Action?.Invoke(activity);
+        foreach (var ch in activity.EnumChildren())
+            ch.Traverse(traverse);
+        traverse.End?.Invoke(activity);
+    }
 }
 

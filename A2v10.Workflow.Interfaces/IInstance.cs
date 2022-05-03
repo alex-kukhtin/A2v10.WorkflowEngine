@@ -3,27 +3,27 @@
 namespace A2v10.Workflow.Interfaces;
 public enum WorkflowExecutionStatus
 {
-	Init,
-	Idle,
-	Complete,
-	Faulted
+    Init,
+    Idle,
+    Complete,
+    Faulted
 }
 
 public interface IInstance
 {
-	IWorkflow Workflow { get; }
+    IWorkflow Workflow { get; }
 
-	Guid Id { get; }
-	Guid? Parent { get; }
+    Guid Id { get; }
+    Guid? Parent { get; }
 
-	WorkflowExecutionStatus ExecutionStatus { get; set; }
-	Guid? Lock { get; }
+    WorkflowExecutionStatus ExecutionStatus { get; set; }
+    Guid? Lock { get; }
 
-	String? CorrelationId { get; set; }
+    String? CorrelationId { get; set; }
 
-	ExpandoObject? Result { get; set; }
-	ExpandoObject? State { get; set; }
+    ExpandoObject? Result { get; set; }
+    ExpandoObject? State { get; set; }
 
-	IInstanceData? InstanceData { get; set; }
+    IInstanceData? InstanceData { get; set; }
 }
 

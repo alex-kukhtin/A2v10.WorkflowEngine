@@ -7,10 +7,10 @@ namespace A2v10.Workflow.Bpmn;
 [ContentProperty("Expression")]
 public abstract class TimeBase : BaseElement
 {
-	public String Type { get; init; } = String.Empty;
-	public String Expression { get; init; } = String.Empty;
+    public String Type { get; init; } = String.Empty;
+    public String Expression { get; init; } = String.Empty;
 
-	public abstract Boolean CanRepeat { get; }
-	public abstract DateTime NextTriggerTime(Object? arg);
+    public abstract Boolean CanRepeat { get; }
+    public abstract DateTime NextTriggerTime(Object? arg);
 }
 

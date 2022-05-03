@@ -3,10 +3,10 @@
 namespace A2v10.Workflow.Interfaces;
 public interface IAutoStartInstance
 {
-	Int64 Id { get; }
-	String? WorkflowId { get; }
-	Int32 Version { get; }
+    Int64 Id { get; }
+    String? WorkflowId { get; }
+    Int32 Version { get; }
 
-	ExpandoObject? Params { get; }
+    ExpandoObject? Params { get; }
 }
 

@@ -3,7 +3,7 @@
 namespace A2v10.Workflow.Interfaces;
 public interface IWorkflowIdentity
 {
-	String Id { get; }
-	Int32 Version { get; }
+    String Id { get; }
+    Int32 Version { get; }
 }
 

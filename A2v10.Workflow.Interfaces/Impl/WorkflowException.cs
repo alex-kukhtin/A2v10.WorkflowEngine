@@ -3,8 +3,8 @@
 namespace A2v10.Workflow.Interfaces;
 public sealed class WorkflowException : Exception
 {
-	public WorkflowException(String message)
-		: base(message)
-	{
-	}
+    public WorkflowException(String message)
+        : base(message)
+    {
+    }
 }

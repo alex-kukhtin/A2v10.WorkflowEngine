@@ -3,7 +3,7 @@
 namespace A2v10.Workflow.Interfaces;
 public interface IPendingInstance
 {
-	Guid InstanceId { get; }
-	IEnumerable<String> EventKeys { get; }
+    Guid InstanceId { get; }
+    IEnumerable<String> EventKeys { get; }
 }
 

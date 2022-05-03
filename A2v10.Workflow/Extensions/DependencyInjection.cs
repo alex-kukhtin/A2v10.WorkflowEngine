@@ -7,15 +7,15 @@ using A2v10.Workflow;
 namespace Microsoft.Extensions.DependencyInjection;
 public static class WorkflowDependencyInjection
 {
-	public static IServiceCollection AddWorkflow(this IServiceCollection coll)
-	{
-		coll.AddSingleton<IXamlReaderService, WorkflowXamlReaderService>();
-		coll.AddScoped<IWorkflowEngine, WorkflowEngine>()
-		.AddScoped<IDeferredTarget, WorkflowDeferred>();
+    public static IServiceCollection AddWorkflow(this IServiceCollection coll)
+    {
+        coll.AddSingleton<IXamlReaderService, WorkflowXamlReaderService>();
+        coll.AddScoped<IWorkflowEngine, WorkflowEngine>()
+        .AddScoped<IDeferredTarget, WorkflowDeferred>();
 
-		coll.AddScoped<ITracker, InstanceTracker>();
+        coll.AddScoped<ITracker, InstanceTracker>();
 
-		return coll;
-	}
+        return coll;
+    }
 }
 

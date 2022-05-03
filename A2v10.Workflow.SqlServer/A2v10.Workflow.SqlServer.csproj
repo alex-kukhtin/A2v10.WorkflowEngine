@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<Version>10.1.8087</Version>
+		<Version>10.1.8089</Version>
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
@@ -18,7 +18,7 @@
 
 
 	<ItemGroup>
-	  <PackageReference Include="A2v10.Data.Core" Version="10.0.7306" />
+	  <PackageReference Include="A2v10.Data.Core" Version="10.0.7308" />
 	</ItemGroup>
 
 	<ItemGroup>

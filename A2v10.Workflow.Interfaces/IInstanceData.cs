@@ -4,7 +4,7 @@
 namespace A2v10.Workflow.Interfaces;
 public enum DeferredElementType
 {
-	Sql
+    Sql
 }
 
 public record DeferredElement(DeferredElementType Type, String Name, ExpandoObject? Parameters, String Refer);
@@ -13,15 +13,15 @@ public record DeferredInboxes(List<ExpandoObject> InboxCreate, List<Guid> InboxR
 
 public interface IInstanceData
 {
-	ExpandoObject? ExternalVariables { get; }
-	List<Object>? ExternalBookmarks { get; }
-	List<Object>? TrackRecords { get; }
-	List<Object>? ExternalEvents { get; }
+    ExpandoObject? ExternalVariables { get; }
+    List<Object>? ExternalBookmarks { get; }
+    List<Object>? TrackRecords { get; }
+    List<Object>? ExternalEvents { get; }
 
-	List<DeferredElement>? Deferred { get; }
+    List<DeferredElement>? Deferred { get; }
 
-	DeferredInboxes? Inboxes { get; } 
+    DeferredInboxes? Inboxes { get; }
 
-	Boolean HasBatches { get; }
+    Boolean HasBatches { get; }
 }
 

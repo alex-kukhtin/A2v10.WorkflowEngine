@@ -2,7 +2,6 @@
 
 
 using A2v10.System.Xaml;
-
 using A2v10.Workflow.Bpmn;
 
 namespace A2v10.Workflow;
@@ -11,6 +10,6 @@ namespace A2v10.Workflow;
 [ContentProperty("Text")]
 public class Inbox : BaseElement
 {
-	public String? Text { get; init; }
+    public String? Text { get; init; }
 }
 

@@ -6,6 +6,6 @@ public record NativeType(Type Type, String Name);
 
 public interface IScriptNativeObjectProvider
 {
-	IEnumerable<NativeType> NativeTypes();
+    IEnumerable<NativeType> NativeTypes();
 }
 

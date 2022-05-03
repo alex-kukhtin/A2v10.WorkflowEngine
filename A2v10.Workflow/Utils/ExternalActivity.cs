@@ -1,7 +1,6 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 using System.Text.RegularExpressions;
-using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow;
 
@@ -40,7 +39,7 @@ internal class ExternalActivity
                 Kind = ExternalActivityKind.Bpmn,
                 WorkflowIdentity = new WorkflowIdentity(processName, processVersion)
             };
-        } 
+        }
         else if (type == "clr")
         {
             throw new NotImplementedException($"External clr activity yet not implemented");

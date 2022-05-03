@@ -1,12 +1,10 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
-using System;
-using System.Threading.Tasks;
-using System.IO;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 using A2v10.Workflow.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace A2v10.Workflow.Tests;
 
@@ -14,14 +12,14 @@ namespace A2v10.Workflow.Tests;
 [TestCategory("Bpmn.GlobalScript")]
 public class TestGlobalScript
 {
-	[TestMethod]
-	public async Task GlobalScriptProcess()
-	{
-		var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\globalscript_process.bpmn");
+    [TestMethod]
+    public async Task GlobalScriptProcess()
+    {
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\globalscript_process.bpmn");
 
-		String wfId = "GlobalScriptProcess";
-		var res = await TestEngine.SimpleRun(wfId, xaml);
-		Assert.AreEqual("RESULT", res.Result.Get<String>("S"));
-	}
+        String wfId = "GlobalScriptProcess";
+        var res = await TestEngine.SimpleRun(wfId, xaml);
+        Assert.AreEqual("RESULT", res.Result.Get<String>("S"));
+    }
 }
 

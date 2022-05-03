@@ -4,6 +4,6 @@ namespace A2v10.Workflow.SqlServer;
 
 internal static class SqlDefinitions
 {
-	public const String SqlSchema = "a2wf";
+    public const String SqlSchema = "a2wf";
 }
 

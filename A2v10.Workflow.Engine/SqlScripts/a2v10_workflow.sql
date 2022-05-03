@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2022 Alex Kukhtin
 
-Last updated : 14 feb 2022
-module version : 8086
+Last updated : 16 feb 2022
+module version : 8088
 */
 ------------------------------------------------
 set nocount on;
@@ -27,7 +27,7 @@ go
 begin
 	set nocount on;
 	declare @version int;
-	set @version = 8086;
+	set @version = 8088;
 	if exists(select * from a2wf.Versions where Module = N'main')
 		update a2wf.Versions set [Version] = @version where Module = N'main';
 	else
@@ -309,7 +309,7 @@ begin
 	output inserted.Id into @inst(Id)
 	where Id=@Id and Lock is null;
 
-	select i.Id, [WorkflowId], [Version], [State], ExecutionStatus, Lock, Parent
+	select i.Id, [WorkflowId], [Version], [State], ExecutionStatus, Lock, Parent, CorrelationId
 	from @inst t inner join a2wf.Instances i on t.Id = i.Id
 	where t.Id = @Id;
 end
@@ -346,7 +346,7 @@ begin
 	from a2wf.Instances i inner join a2wf.InstanceBookmarks b on i.Id = b.InstanceId and i.WorkflowId = b.WorkflowId
 	where b.Bookmark=@Bookmark and Lock is null;
 
-	select i.Id, [WorkflowId], [Version], [State], ExecutionStatus, Lock, Parent
+	select i.Id, [WorkflowId], [Version], [State], ExecutionStatus, Lock, Parent, CorrelationId
 	from @inst t inner join a2wf.Instances i on t.Id = i.Id;
 end
 go

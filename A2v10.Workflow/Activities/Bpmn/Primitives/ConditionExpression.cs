@@ -8,7 +8,7 @@ namespace A2v10.Workflow.Bpmn;
 [ContentProperty("Expression")]
 public class ConditionExpression : BaseElement
 {
-	public String? Type { get; init; }
-	public String? Expression { get; init; }
+    public String? Type { get; init; }
+    public String? Expression { get; init; }
 }
 
