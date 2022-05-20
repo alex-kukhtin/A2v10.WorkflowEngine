@@ -3,6 +3,7 @@ A2v10.Workflow.Engine
 	A2v10.Workflow.Interfaces
 	A2v10.Workflow
 		A2v10.Workflow.Interfaces
+		A2v10.System.Xaml
 	A2v10.Workflow.SqlServer
 		A2v10.Workflow.Interfaces
 	A2v10.Workflow.Serialization
