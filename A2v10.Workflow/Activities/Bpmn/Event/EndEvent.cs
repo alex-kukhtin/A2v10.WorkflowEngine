@@ -15,7 +15,7 @@ public class EndEvent : Event
         var ed = EventDefinition;
         if (ed != null)
         {
-            var evt = ed.CreateEvent(Id, context);
+            var evt = await ed.CreateEvent(Id, context);
             await context.HandleEvent(evt);
             context.ProcessEndEvent(evt);
         }

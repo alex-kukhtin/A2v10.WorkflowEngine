@@ -1,12 +1,11 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
-namespace A2v10.Workflow.Bpmn
+namespace A2v10.Workflow.Bpmn;
+
+public class IntermediateThrowEvent : Event
 {
-    public class IntermediateThrowEvent : Event
+    public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
     {
-        public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

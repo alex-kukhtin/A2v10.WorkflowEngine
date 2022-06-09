@@ -28,5 +28,7 @@ public interface IExecutionContext
     ValueTask HandleEvent(IWorkflowEvent evt);
     void ProcessEndEvent(IWorkflowEvent evt);
     ValueTask HandleEndEvent(ExpandoObject? evt);
+
+    ValueTask<DateTime> Now();
 }
 

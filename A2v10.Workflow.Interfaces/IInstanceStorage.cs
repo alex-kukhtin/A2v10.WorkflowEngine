@@ -17,5 +17,6 @@ public interface IInstanceStorage
     Task<PendingElement?> GetPendingAsync();
     Task AutoStartComplete(Int64 Id, Guid instanceId);
     Task<IInstance?> LoadBookmark(String bookmark);
+    ValueTask<DateTime> GetNowTime();
 }
 

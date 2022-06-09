@@ -9,7 +9,6 @@ BPMN
 Designer
 ========
 1. Add/Remove buttons css (wrapper & remove position:absolute)
-4. fileName in command line
 5. Task: multiInstanceLoopCharacteristics
 
 Engine
@@ -19,9 +18,6 @@ Engine
 WebHost
 =======
 2. Handle Exceptions ?
-
-SqlServer
-1. Доделать проверку версий скприптов SQL.
 
 SqlServer.Tests
 ===============

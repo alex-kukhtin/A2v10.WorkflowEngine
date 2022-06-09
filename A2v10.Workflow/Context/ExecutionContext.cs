@@ -37,6 +37,7 @@ public partial class ExecutionContext : IExecutionContext
     private readonly IServiceProvider _serviceProvider;
     private readonly ITracker _tracker;
     private readonly IWorkflowEngine _engine;
+    private readonly IInstanceStorage _instanceStorage;
 
     private ExpandoObject? _endEvent;
 
@@ -47,6 +48,7 @@ public partial class ExecutionContext : IExecutionContext
         _instance = instance;
         _root = instance.Workflow.Root;
         _engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
+        _instanceStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
 
         // store all activites
         var toMapArg = new TraverseArg()
@@ -299,5 +301,10 @@ public partial class ExecutionContext : IExecutionContext
         else
             throw new WorkflowException($"ExecutionContext.Call Invalid activity '{activity}'");
     }
+
+    public ValueTask<DateTime> Now()
+	{
+        return _instanceStorage.GetNowTime();
+	}
 }
 

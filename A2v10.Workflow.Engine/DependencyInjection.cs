@@ -16,7 +16,6 @@ public static class WorkflowDependencyInjection
         services.AddSqlServerWorkflow();
 
         services.AddSingleton<ISerializer, WorkflowSerializer>();
-
         services.AddSingleton<IDbIdentity, DbIdentity>();
 
         IEnumerable<NativeType>? nativeTypes = null;

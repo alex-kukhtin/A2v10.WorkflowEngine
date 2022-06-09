@@ -11,6 +11,6 @@ public abstract class TimeBase : BaseElement
     public String Expression { get; init; } = String.Empty;
 
     public abstract Boolean CanRepeat { get; }
-    public abstract DateTime NextTriggerTime(Object? arg);
+    public abstract ValueTask<DateTime> NextTriggerTime(IExecutionContext context, Object? arg);
 }
 

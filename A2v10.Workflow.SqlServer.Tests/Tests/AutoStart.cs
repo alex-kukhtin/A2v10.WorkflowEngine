@@ -55,7 +55,10 @@ public class AutoStart
 
         async Task AssertModel(Int64 val)
         {
-            var instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast");
+            var instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast",
+                new ExpandoObject() {
+                    {"WorkflowId", TestId }
+             });
             Assert.AreEqual("Complete", instModel.Eval<String>("Instance.ExecutionStatus"));
             String? state = instModel.Eval<String>("Instance.State");
             Assert.IsNotNull(state);
@@ -78,6 +81,79 @@ public class AutoStart
 
         await _workflowEngine.ProcessPending();
         await AssertModel(128);
+    }
+
+    [TestMethod]
+    public async Task AutoStartAt()
+	{
+        var wfId = "AutoStartAt";
+        await TestEngine.PrepareDatabase("AutoStartAt");
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");
+        var ident = await TestEngine.SimplePublish(wfId, xaml);
+        Assert.AreEqual(1, ident.Version);
+        await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]",
+            new ExpandoObject() {
+                {"WorkflowId", wfId },
+                {"StartAt", DateTime.UtcNow + TimeSpan.FromSeconds(1) }
+            });
+
+        var prms = new ExpandoObject() {
+            { "WorkflowId", wfId }
+        };
+        await _workflowEngine.ProcessPending();
+        var instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast", prms);
+        Assert.IsNull(instModel.Root.Get<Object>("Instance"));
+
+        await Task.Delay(1100);
+        await _workflowEngine.ProcessPending();
+        instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast", prms);
+        Assert.IsNotNull(instModel.Root.Get<Object>("Instance"));
+        var instanceId = instModel.Root.Eval<Guid>("Instance.Id");
+        var wfInst = await _workflowEngine.LoadInstanceRaw(instanceId);
+        Assert.AreEqual(wfInst.ExecutionStatus, WorkflowExecutionStatus.Complete);
+        Assert.AreEqual(10F, wfInst.Result?.Eval<Double>("X"));
+    }
+
+
+    [TestMethod]
+    public async Task AutoStartAtTime()
+    {
+        var wfId = "AutoStartAt";
+        await TestEngine.PrepareDatabase("AutoStartAt");
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");
+        var ident = await TestEngine.SimplePublish(wfId, xaml);
+        Assert.AreEqual(1, ident.Version);
+
+        var now = DateTime.UtcNow;
+        var dt = new DateTime(2022, 03, 16, now.Hour, now.Minute, now.Second, now.Millisecond);
+
+        await _dbContext.ExecuteExpandoAsync(null, "a2wf.[CurrentDate.Set]",
+            new ExpandoObject()
+            {
+                { "Date", dt }
+            });
+
+        await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]",
+            new ExpandoObject() {
+                {"WorkflowId", wfId },
+                {"StartAt", dt + TimeSpan.FromSeconds(1) }
+            });
+
+        var prms = new ExpandoObject() {
+            { "WorkflowId", wfId }
+        };
+        await _workflowEngine.ProcessPending();
+        var instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast", prms);
+        Assert.IsNull(instModel.Root.Get<Object>("Instance"));
+
+        await Task.Delay(1100);
+        await _workflowEngine.ProcessPending();
+        instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast", prms);
+        Assert.IsNotNull(instModel.Root.Get<Object>("Instance"));
+        var instanceId = instModel.Root.Eval<Guid>("Instance.Id");
+        var wfInst = await _workflowEngine.LoadInstanceRaw(instanceId);
+        Assert.AreEqual(wfInst.ExecutionStatus, WorkflowExecutionStatus.Complete);
+        Assert.AreEqual(10F, wfInst.Result?.Eval<Double>("X"));
     }
 }
 

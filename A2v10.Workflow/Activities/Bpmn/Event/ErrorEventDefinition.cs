@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 
 namespace A2v10.Workflow.Bpmn;
@@ -7,9 +7,10 @@ public class ErrorEventDefinition : EventDefinition
 {
     public String? ErrorRef { get; init; }
 
-    public override IWorkflowEvent CreateEvent(string id, IExecutionContext context)
+    public override ValueTask<IWorkflowEvent> CreateEvent(string id, IExecutionContext context)
     {
-        return new WorkflowErrorEvent(id, ErrorRef ?? throw new InvalidProgramException("ErrorRef is null"));
+        var evt = new WorkflowErrorEvent(id, ErrorRef ?? throw new InvalidProgramException("ErrorRef is null"));
+        return ValueTask.FromResult<IWorkflowEvent>(evt);
     }
 }
 

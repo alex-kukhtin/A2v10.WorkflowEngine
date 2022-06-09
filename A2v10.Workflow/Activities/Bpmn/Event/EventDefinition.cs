@@ -4,7 +4,7 @@
 namespace A2v10.Workflow.Bpmn;
 public class EventDefinition : BpmnActivity
 {
-    public virtual IWorkflowEvent CreateEvent(String id, IExecutionContext context)
+    public virtual ValueTask<IWorkflowEvent> CreateEvent(String id, IExecutionContext context)
     {
         throw new NotImplementedException();
     }

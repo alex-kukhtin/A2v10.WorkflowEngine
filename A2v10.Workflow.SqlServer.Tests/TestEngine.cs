@@ -71,5 +71,15 @@ public static class TestEngine
         return await wfe.RunAsync(inst.Id, prms);
     }
 
+    public static async ValueTask<IWorkflowIdentity> SimplePublish(String id, String text, ExpandoObject? prms = null, String? correlationId = null)
+    {
+        var sp = ServiceProvider();
+        var wfs = sp.GetRequiredService<IWorkflowStorage>();
+        var wfc = sp.GetRequiredService<IWorkflowCatalog>();
+
+        await wfc.SaveAsync(new WorkflowDescriptor(id, text));
+        var ident = await wfs.PublishAsync(wfc, id);
+        return ident;
+    }
 }
 

@@ -4,9 +4,10 @@ namespace A2v10.Workflow.Bpmn;
 public class MessageEventDefinition : EventDefinition
 {
     public String? MessageRef { get; init; }
-    public override IWorkflowEvent CreateEvent(String id, IExecutionContext context)
+    public override ValueTask<IWorkflowEvent> CreateEvent(String id, IExecutionContext context)
     {
-        return new WorkflowMessageEvent(id, MessageRef ?? throw new InvalidProgramException("MessageRef is null"));
+        var evt = new WorkflowMessageEvent(id, MessageRef ?? throw new InvalidProgramException("MessageRef is null"));
+        return ValueTask.FromResult<IWorkflowEvent>(evt);
     }
 }
 

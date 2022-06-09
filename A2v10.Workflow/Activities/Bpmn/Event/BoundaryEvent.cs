@@ -24,19 +24,18 @@ public class BoundaryEvent : Event, IStorable
     }
     #endregion
 
-    public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
+    public async override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
     {
         _token = token;
         var eventDef = EventDefinition;
         if (eventDef != null)
-            context.AddEvent(eventDef.CreateEvent(Id, context), this, OnTrigger);
+            context.AddEvent(await eventDef.CreateEvent(Id, context), this, OnTrigger);
         else
             SetComplete(context);
-        return ValueTask.CompletedTask;
     }
 
     [StoreName("OnTrigger")]
-    public ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object? result)
+    public async ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object? result)
     {
         if (ParentContainer == null)
             throw new InvalidProgramException("Invalid ParentContainer");
@@ -53,12 +52,11 @@ public class BoundaryEvent : Event, IStorable
             if (eventDef is { CanRepeat: true })
             {
                 context.RemoveEvent(Id);
-                context.AddEvent(eventDef.CreateEvent(Id, context), this, OnTrigger);
+                context.AddEvent(await eventDef.CreateEvent(Id, context), this, OnTrigger);
             }
             else
                 SetComplete(context);
         }
-        return ValueTask.CompletedTask;
     }
 }
 

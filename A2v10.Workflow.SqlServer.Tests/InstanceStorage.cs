@@ -26,6 +26,15 @@ namespace A2v10.Workflow.SqlServer.Tests
         }
 
         [TestMethod]
+        public void CheckVersion()
+		{
+            var sv = _serviceProvider.GetRequiredService<IWorkflowStorageVersion>();
+            var version = sv.GetVersion();
+            Assert.IsTrue(version.Valid);
+            Assert.AreEqual(version.Required, version.Actual);
+        }
+
+        [TestMethod]
         public async Task SimpleInstance()
         {
             var id = "Simple_Instance_1";

@@ -1,5 +1,6 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
+using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -79,6 +80,106 @@ public class BpmnEventsMessage
 
 
         var wfe = TestEngine.ServiceProvider().GetRequiredService<IWorkflowEngine>();
+
+        var inst = await TestEngine.SimpleRun(wfId, xaml);
+        var log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(1, log.Length);
+        Assert.AreEqual("start", String.Join('|', log));
+
+        Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+        await Task.Delay(1000); // 1
+        await wfe.ProcessPending();
+        inst = await wfe.LoadInstanceRaw(inst.Id);
+        log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(2, log.Length);
+        Assert.AreEqual("start|timerNI", String.Join('|', log));
+
+        await Task.Delay(1000); // 2
+        await wfe.ProcessPending();
+        inst = await wfe.LoadInstanceRaw(inst.Id);
+        log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(3, log.Length);
+        Assert.AreEqual("start|timerNI|timerNI", String.Join('|', log));
+
+        await Task.Delay(1000); // 3
+        await wfe.ProcessPending();
+        inst = await wfe.LoadInstanceRaw(inst.Id);
+        log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(4, log.Length);
+        Assert.AreEqual("start|timerNI|timerNI|timerI", String.Join('|', log));
+
+        inst = await wfe.ResumeAsync(inst.Id, "BookMark2", new ExpandoObject()
+            {
+                {"Answer", "CONTINUE"}
+            });
+        log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(5, log.Length);
+        Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE", String.Join('|', log));
+        Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+        await Task.Delay(1000); // 1
+        await wfe.ProcessPending();
+        inst = await wfe.LoadInstanceRaw(inst.Id);
+        log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(6, log.Length);
+        Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI", String.Join('|', log));
+
+        await Task.Delay(1000); // 2
+        await wfe.ProcessPending();
+        inst = await wfe.LoadInstanceRaw(inst.Id);
+        log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(7, log.Length);
+        Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI", String.Join('|', log));
+
+        await Task.Delay(1000); // 3
+        await wfe.ProcessPending();
+        inst = await wfe.LoadInstanceRaw(inst.Id);
+        log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(8, log.Length);
+        Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI|timerI", String.Join('|', log));
+
+        inst = await wfe.ResumeAsync(inst.Id, "BookMark2", new ExpandoObject()
+            {
+                {"Answer", "CANCEL"}
+            });
+        log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(10, log.Length);
+        Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI|timerI|Bookmark2:CANCEL|end", String.Join('|', log));
+        Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+    }
+
+
+    [TestMethod]
+    public async Task IntermediageTimerBookmarksDebugDate()
+    {
+        String wfId = "IntermediateMultWithBookmark";
+        await TestEngine.PrepareDatabase(wfId);
+
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\intermediate_timer_with_bookmarks.bpmn");
+
+
+        var wfe = TestEngine.ServiceProvider().GetRequiredService<IWorkflowEngine>();
+
+
+        var now = DateTime.UtcNow;
+        var dt = new DateTime(2022, 03, 16, now.Hour, now.Minute, now.Second, now.Millisecond);
+
+        var dbContext = TestEngine.ServiceProvider().GetRequiredService<IDbContext>();
+        await dbContext.ExecuteExpandoAsync(null, "a2wf.[CurrentDate.Set]",
+            new ExpandoObject()
+            {
+                { "Date", dt }
+            });
 
         var inst = await TestEngine.SimpleRun(wfId, xaml);
         var log = inst.Result?.GetNotNull<Object[]>("log");

@@ -1,17 +1,35 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Bpmn;
 
 public class StartEvent : Event
 {
+
     public override Boolean IsStart => true;
 
-    public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
+    public override async ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
     {
+        var eventDef = EventDefinition;
+        if (eventDef != null)
+            context.AddEvent(await eventDef.CreateEvent(Id, context), this, OnTrigger);
+        else
+            Complete(context);
+    }
+
+    [StoreName("OnTrigger")]
+    public ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object? result)
+    {
+        SetComplete(context);
+        Complete(context);
+        return ValueTask.CompletedTask;
+    }
+
+    void Complete(IExecutionContext context)
+	{
         if (!String.IsNullOrEmpty(Script))
             context.Execute(Id, nameof(Script));
         if (Outgoing == null)
-            return ValueTask.CompletedTask;
+            return;
         foreach (var flow in Outgoing)
         {
             var flowElem = ParentContainer.FindElement<SequenceFlow>(flow.Text);
@@ -20,6 +38,5 @@ public class StartEvent : Event
             // generate new token for every outogoing flow!
             context.Schedule(flowElem, ParentContainer.NewToken());
         }
-        return ValueTask.CompletedTask;
     }
 }

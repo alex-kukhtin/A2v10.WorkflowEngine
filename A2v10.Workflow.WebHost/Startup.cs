@@ -1,11 +1,16 @@
 // Copyright © 2021 Alex Kukhtin. All rights reserved.
 
+using System;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+
+using A2v10.Workflow.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace A2v10.Workflow.WebHost;
 public class Startup
@@ -39,7 +44,8 @@ public class Startup
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
+        IHostApplicationLifetime lifetime)
     {
         if (env.IsDevelopment())
         {
@@ -56,6 +62,19 @@ public class Startup
         {
             endpoints.MapControllers();
         });
+
+        lifetime.ApplicationStarted.Register(() =>
+		{
+            var wfStorageVersion  = app.ApplicationServices.GetRequiredService<IWorkflowStorageVersion>()!;
+            var wfVersion = wfStorageVersion.GetVersion();
+            if (!wfVersion.Valid)
+            {
+                var logfact = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
+                var logger = logfact.CreateLogger("Startup");
+                logger.LogError($"Invalid storage version. Required: {wfVersion.Required}, Actual: {wfVersion.Actual}");
+                lifetime.StopApplication();
+            }
+		});
     }
 }
 

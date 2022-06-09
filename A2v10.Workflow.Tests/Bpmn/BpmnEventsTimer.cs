@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -267,6 +268,34 @@ public class BpmnTimerEvents
         Assert.AreEqual(12, log.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI|timerNI|timerI|Bookmark2:CANCEL|end", String.Join('|', log));
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+    }
+
+
+	[TestMethod]
+    public async Task TimerStartVariable()
+	{
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\timer\\start_timer_var.bpmn");
+
+        String wfId = "VariableTimer";
+        var prms = new ExpandoObject()
+        {
+            { "StartTime", (DateTime.UtcNow + TimeSpan.FromSeconds(1)) } //.ToString("yyyy-MM-ddTHH\\:mm\\:ss", CultureInfo.InvariantCulture) }
+        };
+
+        var wfe = TestEngine.ServiceProvider().GetRequiredService<IWorkflowEngine>();
+        var ins = TestEngine.ServiceProvider().GetRequiredService<IInstanceStorage>();
+
+        var inst = await TestEngine.SimpleRun(wfId, xaml, prms);
+
+        Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+        Thread.Sleep(1100);
+        await wfe.ProcessPending();
+
+        var instAfter = await ins.Load(inst.Id);
+        var res1 = instAfter.Result;
+        Assert.AreEqual("AfterTimer", res1.Get<String>("Result"));
+        Assert.AreEqual(WorkflowExecutionStatus.Complete, instAfter.ExecutionStatus);
     }
 }
 

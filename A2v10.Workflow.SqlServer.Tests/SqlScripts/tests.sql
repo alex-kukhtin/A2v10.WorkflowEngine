@@ -1,8 +1,8 @@
 /*
-Copyright © 2020-2021 Alex Kukhtin
+Copyright © 2020-2022 Alex Kukhtin
 
-Last updated : 04 dec 2021
-module version : 8072
+Last updated : 09 jun 2021
+module version : 8091
 */
 ------------------------------------------------
 set nocount on;
@@ -38,13 +38,16 @@ end
 go
 ------------------------------------------------
 create or alter procedure a2wf_test.AutoStartLast
+@WorkflowId nvarchar(255) = null
 as
 begin
 	set nocount on;
 	set transaction isolation level read uncommitted;
 	declare @InstanceId uniqueidentifier;
 	select top(1) @InstanceId = InstanceId from a2wf.AutoStart where InstanceId is not null
+		and (@WorkflowId is null or WorkflowId = @WorkflowId)
 	order by DateCreated desc;
+
 	select [Instance!TInstance!Object] = null, [Id!!Id] = i.Id, [WorkflowId], [Version], [State], 
 		ExecutionStatus, Lock
 	from a2wf.Instances i
@@ -142,6 +145,8 @@ as
 begin
 	set nocount on;
 	set transaction isolation level read committed;
+
+	update a2wf.CurrentDate set [Date] = null;
 
 	delete from a2wf.InstanceVariablesInt 
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);

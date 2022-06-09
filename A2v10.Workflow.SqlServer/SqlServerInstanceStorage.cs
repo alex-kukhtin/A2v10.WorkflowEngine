@@ -23,6 +23,11 @@ public record DatabaseInstance
     public String? CorrelationId { get; set; }
 }
 
+public record DbDate
+{
+    public DateTime CurrentDate { get; set; }
+}
+
 public class SqlServerInstanceStorage : IInstanceStorage
 {
     private readonly IDbContext _dbContext;
@@ -262,6 +267,12 @@ public class SqlServerInstanceStorage : IInstanceStorage
             CorrelationId = dbi.CorrelationId
         };
     }
+
+    public async ValueTask<DateTime> GetNowTime()
+	{
+        var dbDate = await _dbContext.LoadAsync<DbDate>(null, "a2wf.[CurrentDate.Get]");
+        return dbDate?.CurrentDate ?? throw new SqlServerStorageException("CurrentDate is null");
+	}
 
     #endregion
 
