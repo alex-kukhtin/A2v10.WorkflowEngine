@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 using A2v10.Data.Interfaces;
 using A2v10.Runtime.Interfaces;
@@ -34,7 +34,7 @@ public static class TestEngine
         var collection = new ServiceCollection();
         collection.AddSingleton<IConfiguration>(TestConfig.GetRoot());
 
-        collection.AddWorkflowEngine(options =>
+        collection.AddWorkflowEngineSingleton(options =>
         {
             options.NativeTypes = _nativeTypes;
         });

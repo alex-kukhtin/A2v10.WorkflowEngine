@@ -1,6 +1,4 @@
-// Copyright © 2021 Alex Kukhtin. All rights reserved.
-
-using System;
+// Copyright © 2021-2022 Alex Kukhtin. All rights reserved.
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,7 +25,7 @@ public class Startup
     {
         services.UseSimpleDbContext();
 
-        services.AddWorkflowEngine(opts =>
+        services.AddWorkflowEngineScoped(opts =>
         {
         });
 
@@ -63,18 +61,7 @@ public class Startup
             endpoints.MapControllers();
         });
 
-        lifetime.ApplicationStarted.Register(() =>
-		{
-            var wfStorageVersion  = app.ApplicationServices.GetRequiredService<IWorkflowStorageVersion>()!;
-            var wfVersion = wfStorageVersion.GetVersion();
-            if (!wfVersion.Valid)
-            {
-                var logfact = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
-                var logger = logfact.CreateLogger("Startup");
-                logger.LogError($"Invalid storage version. Required: {wfVersion.Required}, Actual: {wfVersion.Actual}");
-                lifetime.StopApplication();
-            }
-		});
+        app.ApplicationServices.CheckStorageVersion(lifetime);
     }
 }
 
