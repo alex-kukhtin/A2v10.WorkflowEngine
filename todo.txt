@@ -10,6 +10,8 @@ Designer
 ========
 1. Add/Remove buttons css (wrapper & remove position:absolute)
 5. Task: multiInstanceLoopCharacteristics
+6. Reserved words : Date, String, Boolean, Number
+
 
 Engine
 ======
