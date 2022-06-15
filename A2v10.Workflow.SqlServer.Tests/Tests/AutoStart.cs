@@ -33,6 +33,37 @@ public class AutoStart
 
 
     [TestMethod]
+    public async Task AutoStartWithDate()
+    {
+        String TestId = "AutoStartDate";
+        await TestEngine.PrepareDatabase(TestId);
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\autostartdate.bpmn");
+        var format = "text/xml";
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(TestId, xaml, format));
+        var ident = await _workflowStorage.PublishAsync(_workflowCatalog, TestId);
+
+        Assert.AreEqual(1, ident.Version);
+
+        await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]",
+            new ExpandoObject()
+            {
+                {"WorkflowId", TestId },
+                {"Params", "{\"InDate\": \"2022-06-01T00:00:00Z\"}" }
+            });
+
+        await _workflowEngine.ProcessPending();
+        var instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast",
+            new ExpandoObject() {
+                    {"WorkflowId", TestId }
+         });
+        var instId = instModel.Eval<Guid>("Instance.Id");
+
+        var instRaw = await _workflowEngine.LoadInstanceRaw(instId);
+        Assert.AreEqual("Wed Jun 01 2022 03:00:00 GMT+0300", instRaw.Result.Eval<String>("OutDate"));
+    }
+
+
+    [TestMethod]
     public async Task SimpleAutoStart()
     {
         String TestId = "plus5";

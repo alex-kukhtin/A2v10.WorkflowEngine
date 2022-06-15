@@ -282,16 +282,20 @@ return __fmap__;
             var arg = new ExpandoObject()
             {
                 {"date", now },
-                {"ms", unixtime }
+                {"ms", unixtime },
+                {"iso", "2022-06-01T00:00:00Z" }
             };
 
-            var obj = eng.Evaluate("return function test(arg) { let d = new Date(arg.date); let x = new Date(arg.ms); return {d: d, x: x}; }").ToObject();
+            var obj = eng.Evaluate("return function test(arg) { let d = new Date(arg.date); let x = new Date(arg.ms); let s = new Date(arg.iso); return {d: d, x: x, s: s}; }").ToObject();
             var func = (obj as Func<JsValue?, JsValue[]?, JsValue>)!;
             var res = func.Invoke(null, new JsValue[] { JsValue.FromObject(eng, arg) }).ToObject() as ExpandoObject;
             var dt = res.Get<DateTime>("d");
             var xt = res.Get<DateTime>("x");
+            var xs = res.Get<DateTime>("s");
             Assert.AreEqual(0, (Int32)(dt - now).TotalSeconds);
             Assert.AreEqual(0, (Int32)(xt - now).TotalSeconds);
+            Assert.AreEqual(new DateTime(2022, 06, 01).ToString(), xs.ToString());
+
         }
     }
 }

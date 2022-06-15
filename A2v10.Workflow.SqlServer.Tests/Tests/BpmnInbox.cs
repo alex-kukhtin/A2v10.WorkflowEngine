@@ -20,6 +20,8 @@ public class BpmnInbox
 
         String wfId = "InboxSimple";
 
+        await TestEngine.PrepareDatabase(wfId);
+
         var inst = await TestEngine.SimpleRun(wfId, xaml);
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
