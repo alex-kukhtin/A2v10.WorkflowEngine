@@ -11,10 +11,17 @@ namespace A2v10.Workflow
             Id = guid;
         }
 
+        public static IToken Empty()
+		{
+            return new Token(Guid.Empty);
+		}
+
         public static IToken Create()
         {
             return new Token(Guid.NewGuid());
         }
+
+        public Boolean IsEmpty => Id == Guid.Empty;
 
         public override String ToString()
         {

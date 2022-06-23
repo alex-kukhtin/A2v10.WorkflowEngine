@@ -164,6 +164,11 @@ public partial class ExecutionContext : IExecutionContext
     {
         _script.ExecuteResult(refer, name, result);
     }
+
+    public void SetVariable(String refer, String name, Object? value)
+    {
+        _script.SetVariable(refer, name, value);
+    }
     #endregion
 
     public async ValueTask RunAsync()

@@ -17,21 +17,21 @@ public class SubProcess : ProcessBase, ILoopable
     public override void Store(IActivityStorage storage)
     {
         base.Store(storage);
-        if (HasLoop)
+        if (IsLoop)
             storage.Set<Int32>(LOOP_COUNTER, _loopCounter);
     }
 
     public override void Restore(IActivityStorage storage)
     {
         base.Restore(storage);
-        if (HasLoop)
+        if (IsLoop)
             _loopCounter = storage.Get<Int32>(LOOP_COUNTER);
     }
 
     public override void BuildScript(IScriptBuilder builder)
     {
         base.BuildScript(builder);
-        if (HasLoop)
+        if (IsLoop)
         {
             var expr = LoopCharacteristics?.LoopCondition;
             if (String.IsNullOrEmpty(expr))
@@ -44,7 +44,7 @@ public class SubProcess : ProcessBase, ILoopable
     {
         if (TokensCount > 0)
             return;
-        if (HasLoop && (TestBefore || CanCountinue(context)))
+        if (IsLoop && (TestBefore || CanCountinue(context)))
             context.Schedule(this, _token);
         else
             SubProcessComplete(context);
@@ -53,7 +53,7 @@ public class SubProcess : ProcessBase, ILoopable
     public override async ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
     {
         _token = token;
-        if (HasLoop && TestBefore && !CanCountinue(context))
+        if (IsLoop && TestBefore && !CanCountinue(context))
         {
             SubProcessComplete(context);
             return;
@@ -126,11 +126,12 @@ public class SubProcess : ProcessBase, ILoopable
 
     #region ILoopable
 
-    public Boolean HasLoop => Children != null && Children.OfType<StandardLoopCharacteristics>().Any();
+    public Boolean IsLoop => Children != null && Children.OfType<StandardLoopCharacteristics>().Any();
+    public Boolean IsMultiInstance => Children != null && Children.OfType<MultiInstanceLoopCharacteristics>().Any();
 
     public Boolean CanCountinue(IExecutionContext context)
     {
-        if (!HasLoop)
+        if (!IsLoop)
             return false;
         var max = LoopMaximum;
         if (max != 0 && _loopCounter >= max)

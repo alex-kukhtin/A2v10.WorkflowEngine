@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
 public interface IScriptBuilder
@@ -7,5 +7,6 @@ public interface IScriptBuilder
     void BuildExecute(String name, String? expression);
     void BuildEvaluate(String name, String? expression);
     void BuildExecuteResult(String name, String? expression);
+    void BuildSetVariable(String name, String? expression);
 }
 

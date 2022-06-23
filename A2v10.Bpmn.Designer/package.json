@@ -1,6 +1,6 @@
 {
 	"name": "a2v10.bpmn.designer",
-	"version": "10.1.8056",
+	"version": "10.1.8092",
 	"description": "A2v10.Bpmn.Designer",
 	"main": "main.js",
 	"private": true,

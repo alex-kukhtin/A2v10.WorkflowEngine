@@ -9,14 +9,9 @@ import elementHelper from 'bpmn-js-properties-panel/lib/helper/ElementHelper';
 
 import entryFactory from '../../../lib/factory/entryFactory';
 
-// todo: loopMaximum, multiInstance in another file
-
 /**
 	<StandardLoopCharacteristics testBefore = "false", loopMaximum="5">
 		<bpmn:loopCondition  xsi:type="bpmn:tFormalExpression" />
-	<MultiInstanceLoopCharacteristics isSequential="true" wf:collection="", wf:elementVariable="">
-		<bpmn:loopCardinality xsi:type="bpmn:tFormalExpression"/>
-		<bpmn:completionCondition xsi:type="bpmn:tFormalExpression"/>
 */
 
 function getLoopDefinition(elem) {
@@ -25,6 +20,7 @@ function getLoopDefinition(elem) {
 	let lc = bo.get('loopCharacteristics');
 	if (!lc) return null;
 	if (!is(lc, "bpmn:StandardLoopCharacteristics")) return null;
+	if (is(lc, "bpmn:MultiInstanceLoopCharacteristics")) return null;
 	return lc;
 }
 

@@ -17,6 +17,11 @@
 		<button id="logBtn">LOG</button>
 	</div>
 
+	<div style="position:absolute;bottom:20px;right:350px;display:flex;gap:10px">
+		<button id="zoomMinusBtn">zoom-</button>
+		<button id="zoomPlusBtn">zoom+</button>
+	</div>
+
 	<script type="text/javascript" src="/dist/bpmn-editor.js"></script>
 	<script type="text/javascript">
 		(async function () {
@@ -27,6 +32,21 @@
 				console.dir(bpmnModeler);
 				let xml = await bpmnModeler.saveXML();
 				console.log(xml.xml);
+			});
+			document.getElementById('zoomPlusBtn').addEventListener('click', () => {
+				let cv = bpmnModeler.get('canvas');
+				console.dir(cv);
+				let zl = cv.zoom();
+				zl += .5;
+				cv.zoom(zl);
+				cv.zoom('fit-viewport');
+			});
+			document.getElementById('zoomMinusBtn').addEventListener('click', () => {
+				console.dir(bpmnModeler);
+				let cv = bpmnModeler.get('canvas');
+				let zl = cv.zoom();
+				zl -= .5;
+				cv.zoom(zl, 'fit-viewport');
 			});
 		})();
 	</script>

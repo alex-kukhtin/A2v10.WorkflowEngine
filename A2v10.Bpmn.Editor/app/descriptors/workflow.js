@@ -109,6 +109,24 @@ export default {
 					"isBody": true
 				}
 			]
+		},
+		{
+			name: "wfMultiInstanceLoopCharacteristics",
+			extends: [
+				"bpmn:MultiInstanceLoopCharacteristics"
+			],
+			properties: [
+				{
+					"name": "collection",
+					"isAttr": true,
+					"type": "String"
+				},
+				{
+					"name": "variable",
+					"isAttr": true,
+					"type": "String"
+				}
+			]
 		}
 	]
 };

@@ -80,6 +80,8 @@ public class ActivityScriptBuilder : IScriptBuilder
             }
         }
 
+        // mtds.Add($"SetItem: (_arg_) => {{ item = _arg_; }}");
+
         if (mtds.Count > 0)
         {
             AddMethods(_activity.Id, mtds);
@@ -106,6 +108,14 @@ public class ActivityScriptBuilder : IScriptBuilder
             return;
         AddMethod(_activity.Id, $"{name}: () => {{ return {expression.Trim()};}}");
     }
+
+    public void BuildSetVariable(String name, String? expression)
+	{
+        if (String.IsNullOrEmpty(expression))
+            return;
+        AddMethod(_activity.Id, $"{name}: (_arg_) => {{ {expression} = _arg_;}}");
+
+	}
 
     #endregion
 

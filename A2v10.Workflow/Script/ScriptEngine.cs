@@ -125,5 +125,17 @@ public class ScriptEngine
         var arg = JsValue.FromObject(_engine, result ?? new ExpandoObject());
         func(JsValue.Undefined, new JsValue[] { arg });
     }
+
+    public void SetVariable(String refer, String name, Object? value)
+    {
+        _deferredTarget.Refer = refer;
+        _tracker.Track(new ScriptTrackRecord(ScriptTrackAction.SetVariable, refer, name, value));
+        var func = GetFunc(refer, name);
+        if (func == null)
+            return;
+        // result may be null
+        var arg = JsValue.FromObject(_engine, value);
+        func(JsValue.Undefined, new JsValue[] { arg });
+    }
 }
 

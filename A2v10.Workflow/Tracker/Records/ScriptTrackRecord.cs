@@ -11,7 +11,8 @@ namespace A2v10.Workflow.Tracker
         Evaluate = 0,
         EvaluateResult = 1,
         Execute = 2,
-        ExecuteResult = 3
+        ExecuteResult = 3,
+        SetVariable = 4,
     }
 
     public class ScriptTrackRecord : TrackRecord

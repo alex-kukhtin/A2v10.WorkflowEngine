@@ -4,7 +4,8 @@
 namespace A2v10.Workflow.Interfaces;
 public interface ILoopable
 {
-    Boolean HasLoop { get; }
+    Boolean IsLoop { get; }
+    Boolean IsMultiInstance { get; }
     Boolean CanCountinue(IExecutionContext context);
 }
 

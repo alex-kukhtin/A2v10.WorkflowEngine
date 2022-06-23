@@ -59,7 +59,7 @@ public class AutoStart
         var instId = instModel.Eval<Guid>("Instance.Id");
 
         var instRaw = await _workflowEngine.LoadInstanceRaw(instId);
-        Assert.AreEqual("Wed Jun 01 2022 03:00:00 GMT+0300", instRaw.Result.Eval<String>("OutDate"));
+        Assert.AreEqual("Wed Jun 01 2022 03:00:00 GMT+0300", instRaw?.Result?.Eval<String>("OutDate"));
     }
 
 
