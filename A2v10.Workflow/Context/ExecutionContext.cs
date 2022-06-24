@@ -122,12 +122,12 @@ public partial class ExecutionContext : IExecutionContext
             _bookmarks.Remove(bookmark);
     }
 
-    public void SetInbox(Guid id, ExpandoObject inbox, IActivity activity)
+    public void SetInbox(Guid id, ExpandoObject inbox, IActivity activity, String bookmark)
     {
         _tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Inbox, activity, $"{{inbox:'{id}'}}"));
         var eo = inbox.Clone();
         eo.SetOrReplace("Id", id);
-        eo.SetOrReplace("Bookmark", activity.Id);
+        eo.SetOrReplace("Bookmark", bookmark);
         _inboxCreate.Add(eo);
     }
 

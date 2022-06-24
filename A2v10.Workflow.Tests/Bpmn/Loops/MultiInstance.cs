@@ -35,7 +35,7 @@ public class BpmnMultiInstance
         var inst = await TestEngine.SimpleRun(wfId, xaml);
 
         var res0 = inst.Result;
-        Assert.AreEqual(41, res0.Get<Double>("X"));
+        Assert.AreEqual(35, res0.Get<Double>("X")); /* use index */
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
     }
 }

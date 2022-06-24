@@ -166,9 +166,9 @@ public class BpmnEventsMessage
 
 
     [TestMethod]
-    public async Task IntermediageTimerBookmarksDebugDate()
+    public async Task IntermediateTimerBookmarksDebugDate()
     {
-        String wfId = "IntermediateMultWithBookmark";
+        String wfId = "IntermediateMultWithBookmarkDebugDate";
         await TestEngine.PrepareDatabase(wfId);
 
         var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\events\\intermediate_timer_with_bookmarks.bpmn");

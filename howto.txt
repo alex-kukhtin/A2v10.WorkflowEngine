@@ -1,0 +1,12 @@
+BPMN
+=====
+== Extends element
+==================
+
+1. ƒобавление своего свойства как атрибута
+	- расшир€ем элемент в \app\descriptors\workflow.js (пример wfUserTask)
+	- добавл€ем редактор свойства в нужный блок
+	  (\app\provider\workflow\parts\bpmn)
+
+
+

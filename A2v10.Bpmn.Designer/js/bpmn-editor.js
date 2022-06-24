@@ -177,6 +177,14 @@ var _default = {
       "isAttr": true,
       "type": "String"
     }]
+  }, {
+    name: "wfUserTask",
+    extends: ["bpmn:UserTask"],
+    properties: [{
+      "name": "bookmark",
+      "isAttr": true,
+      "type": "String"
+    }]
   }]
 };
 exports.default = _default;
@@ -3346,34 +3354,41 @@ var _CmdHelper = _interopRequireDefault(require("bpmn-js-properties-panel/lib/he
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function inboxProps(group, element, bpmnFactory, translate) {
-  if ((0, _ModelingUtil.isAny)(element, ["bpmn:UserTask"])) {
-    let textBox = _EntryFactory.default.textBox(translate, {
-      id: 'inbox',
-      label: translate('Inbox'),
-      isScript: true,
-      modelProperty: 'text',
+  if (!(0, _ModelingUtil.isAny)(element, ["bpmn:UserTask"])) return;
 
-      get(elem, node) {
-        let ee = _extensionElements.default.getExtensionElement(elem, "wf:Inbox");
+  let inboxText = _EntryFactory.default.textBox(translate, {
+    id: 'inbox',
+    label: translate('Inbox'),
+    isScript: true,
+    modelProperty: 'text',
 
-        return ee ? {
-          text: ee.text
-        } : {};
-      },
+    get(elem, node) {
+      let ee = _extensionElements.default.getExtensionElement(elem, "wf:Inbox");
 
-      set(elem, values, node) {
-        let ee = _extensionElements.default.getOrCreateExtensionElement(elem, 'wf:Inbox', bpmnFactory);
+      return ee ? {
+        text: ee.text
+      } : {};
+    },
 
-        ee.commands.push(_CmdHelper.default.updateBusinessObject(elem, ee.elem, {
-          text: values.text
-        }));
-        return ee.commands;
-      }
+    set(elem, values, node) {
+      let ee = _extensionElements.default.getOrCreateExtensionElement(elem, 'wf:Inbox', bpmnFactory);
 
-    });
+      ee.commands.push(_CmdHelper.default.updateBusinessObject(elem, ee.elem, {
+        text: values.text
+      }));
+      return ee.commands;
+    }
 
-    group.entries.push(textBox);
-  }
+  });
+
+  let bookmarkBox = _EntryFactory.default.textField(translate, {
+    id: 'bookmark',
+    label: translate('Bookmark'),
+    modelProperty: 'bookmark'
+  });
+
+  group.entries.push(bookmarkBox);
+  group.entries.push(inboxText);
 }
 
 ;

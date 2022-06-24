@@ -13,7 +13,7 @@ public interface IExecutionContext
     void SetBookmark(String bookmark, IActivity activity, ResumeAction onComplete);
     void RemoveBookmark(String bookmark);
 
-    void SetInbox(Guid id, ExpandoObject inbox, IActivity activity);
+    void SetInbox(Guid id, ExpandoObject inbox, IActivity activity, String bookmark);
     void RemoveInbox(Guid? id);
 
     void AddEvent(IWorkflowEvent wfEvent, IActivity activity, EventAction onComplete);

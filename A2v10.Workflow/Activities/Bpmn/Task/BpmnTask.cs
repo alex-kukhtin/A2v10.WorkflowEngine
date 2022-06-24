@@ -1,6 +1,7 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
+using System.Dynamic;
 
 namespace A2v10.Workflow.Bpmn;
 public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoopable
@@ -43,6 +44,15 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 	#endregion
 
 
+	static ExpandoObject CreateVariable(Int32 index, Object value)
+	{
+		return new ExpandoObject()
+		{
+			{ "Index", index },
+			{ "Value", value }
+		};
+	}
+
 	public override async ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
 	{
 		_token = token;
@@ -77,7 +87,7 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 				{
 					for (int i = 0; i < coll.Length; i++)
 					{
-						context.SetVariable(Id, MultiInstanceVariableSet, coll[i]);
+						context.SetVariable(Id, MultiInstanceVariableSet, CreateVariable(i, coll[i]));
 						IsComplete = false;
 						context.Schedule(this, _tokens[i]);
 					}
@@ -89,7 +99,7 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 				var ix = _tokens.FindIndex(x => x == token);
 				if (ix < 0 || ix > coll.Length)
 					throw new WorkflowException("BPMNTask. Invalid token index");
-				context.SetVariable(Id, MultiInstanceVariableSet, coll[ix]);
+				context.SetVariable(Id, MultiInstanceVariableSet, CreateVariable(ix, coll[ix]));
 				await ExecuteBody(context);
 			}
 		}

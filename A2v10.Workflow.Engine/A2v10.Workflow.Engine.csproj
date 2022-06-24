@@ -8,7 +8,7 @@
 		<PackageId>A2v10.Workflow.Engine</PackageId>
 		<Authors>Oleksandr Kukthin</Authors>
 		<Company>Oleksandr Kukthin</Company>
-		<Description>A2v10 workflow core</Description>
+		<Description>A2v10 workflow engine</Description>
 		<Copyright>Copyright © 2015-2022 Oleksandr Kukthin. All rights reserved.</Copyright>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/alex-kukhtin/A2v10.WorkflowEngine</RepositoryUrl>

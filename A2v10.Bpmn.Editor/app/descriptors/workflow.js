@@ -127,6 +127,19 @@ export default {
 					"type": "String"
 				}
 			]
+		},
+		{
+			name: "wfUserTask",
+			extends: [
+				"bpmn:UserTask"
+			],
+			properties: [
+				{
+					"name": "bookmark",
+					"isAttr": true,
+					"type": "String"
+				}
+			]
 		}
 	]
 };

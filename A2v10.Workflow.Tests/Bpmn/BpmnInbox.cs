@@ -31,6 +31,32 @@ public class BpmnInbox
     }
 
     [TestMethod]
+    public async Task InboxVariableBookmark()
+    {
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\inbox\\inbox_variable.bpmn");
+
+        String wfId = "InboxVariableBookmark";
+
+        var inst = await TestEngine.SimpleRun(wfId, xaml);
+        Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+        var log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(1, log.Length);
+        Assert.AreEqual("start", String.Join('|', log));
+
+        var sp = TestEngine.ServiceProvider();
+        var engine = sp.GetRequiredService<IWorkflowEngine>();
+        inst = await engine.ResumeAsync(inst.Id, "BookmarkName_value");
+        log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(3, log.Length);
+        Assert.AreEqual("start|inbox:BookmarkName|end", String.Join('|', log));
+
+        Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+    }
+
+    [TestMethod]
     public async Task InboxBoundary()
     {
         var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\inbox\\inbox_boundary.bpmn");

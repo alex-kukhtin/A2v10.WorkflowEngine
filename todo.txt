@@ -5,12 +5,12 @@ BPMN
 8. Script - single line comment
 9. x != null && x.T можно как "x is {T: true}" - попробовать.
 10. MultiInstance SubProcess, CallActivity
-11. MultiInstance.Item ({Index:0, Value:5 }) может так сделать?
+13. MultiInstance - Tests with UserTasks
 
 Designer
 ========
 1. Add/Remove buttons css (wrapper & remove position:absolute)
-6. Reserved words : Date, String, Boolean, Number
+6. Variable Name. Reserved words : Date, String, Boolean, Number
 
 
 Engine
@@ -28,3 +28,7 @@ SqlServer.Tests
 
 Nuget
 =====
+readme.md
+license
+release notes
+
