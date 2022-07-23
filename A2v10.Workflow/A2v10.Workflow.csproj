@@ -17,7 +17,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="A2v10.System.Xaml" Version="10.1.8012" />
-		<PackageReference Include="Jint" Version="3.0.0-beta-2037" />
+		<PackageReference Include="Jint" Version="3.0.0-beta-2039" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
 	</ItemGroup>
 

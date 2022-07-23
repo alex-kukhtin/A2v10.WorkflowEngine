@@ -1,14 +1,17 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
-using A2v10.Data.Interfaces;
-using A2v10.Workflow.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using System;
 using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Newtonsoft.Json;
+
+using A2v10.Data.Interfaces;
+using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -59,7 +62,7 @@ public class AutoStart
         var instId = instModel.Eval<Guid>("Instance.Id");
 
         var instRaw = await _workflowEngine.LoadInstanceRaw(instId);
-        Assert.AreEqual("Wed Jun 01 2022 03:00:00 GMT+0300", instRaw?.Result?.Eval<String>("OutDate"));
+        Assert.AreEqual("Wed Jun 01 2022 03:00:00 GMT+0300 (FLE Standard Time)", instRaw?.Result?.Eval<String>("OutDate"));
     }
 
 
