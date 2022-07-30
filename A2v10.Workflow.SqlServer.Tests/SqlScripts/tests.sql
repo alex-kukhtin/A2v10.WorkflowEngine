@@ -1,5 +1,5 @@
-/*
-Copyright � 2020-2022 Alex Kukhtin
+﻿/*
+Copyright © 2020-2022 Alex Kukhtin
 
 Last updated : 09 jun 2021
 module version : 8091

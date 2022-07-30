@@ -12431,7 +12431,7 @@ function LabelEditingProvider(eventBus, bpmnFactory, canvas, directEditing, mode
   });
 
   function activateDirectEdit(element, force) {
-    if (force || (0, _ModelingUtil.isAny)(element, ['bpmn:Task', 'bpmn:TextAnnotation', 'bpmn:Group']) || isCollapsedSubProcess(element)) {
+    if (force || (0, _ModelingUtil.isAny)(element, ['bpmn:Task', 'bpmn:TextAnnotation']) || isCollapsedSubProcess(element)) {
       directEditing.activate(element);
     }
   }
@@ -12929,8 +12929,14 @@ BpmnFactory.prototype._needsId = function (element) {
 };
 
 BpmnFactory.prototype._ensureId = function (element) {
-  // generate semantic ids for elements
+  if (element.id) {
+    this._model.ids.claim(element.id, element);
+
+    return;
+  } // generate semantic ids for elements
   // bpmn:SequenceFlow -> SequenceFlow_ID
+
+
   var prefix;
 
   if ((0, _ModelUtil.is)(element, 'bpmn:Activity')) {
@@ -12990,7 +12996,8 @@ BpmnFactory.prototype.createDiWaypoint = function (point) {
 
 BpmnFactory.prototype.createDiEdge = function (semantic, waypoints, attrs) {
   return this.create('bpmndi:BPMNEdge', (0, _minDash.assign)({
-    bpmnElement: semantic
+    bpmnElement: semantic,
+    waypoint: this.createDiWaypoints(waypoints)
   }, attrs));
 };
 
@@ -14992,105 +14999,90 @@ function CreateParticipantBehavior(canvas, eventBus, modeling) {
         eventBus.off('element.hover', ensureHoveringProcess);
       });
     }
-  });
+  }); // turn process into collaboration when creating first participant
 
-  function ensureCollaboration(context) {
-    var parent = context.parent,
-        collaboration;
+  function getOrCreateCollaboration() {
     var rootElement = canvas.getRootElement();
 
     if ((0, _ModelUtil.is)(rootElement, 'bpmn:Collaboration')) {
-      collaboration = rootElement;
-    } else {
-      // update root element by making collaboration
-      collaboration = modeling.makeCollaboration(); // re-use process when creating first participant
-
-      context.process = parent;
+      return rootElement;
     }
 
-    context.parent = collaboration;
-  } // turn process into collaboration before adding participant
+    return modeling.makeCollaboration();
+  } // when creating mutliple elements through `elements.create` parent must be set to collaboration
+  // and passed to `shape.create` as hint
 
+
+  this.preExecute('elements.create', HIGH_PRIORITY, function (context) {
+    var elements = context.elements,
+        parent = context.parent,
+        participant = findParticipant(elements),
+        hints;
+
+    if (participant && (0, _ModelUtil.is)(parent, 'bpmn:Process')) {
+      context.parent = getOrCreateCollaboration();
+      hints = context.hints = context.hints || {};
+      hints.participant = participant;
+      hints.process = parent;
+      hints.processRef = (0, _ModelUtil.getBusinessObject)(participant).get('processRef');
+    }
+  }, true); // when creating single shape through `shape.create` parent must be set to collaboration
+  // unless it was already set through `elements.create`
 
   this.preExecute('shape.create', function (context) {
     var parent = context.parent,
         shape = context.shape;
 
     if ((0, _ModelUtil.is)(shape, 'bpmn:Participant') && (0, _ModelUtil.is)(parent, 'bpmn:Process')) {
-      ensureCollaboration(context);
+      context.parent = getOrCreateCollaboration();
+      context.process = parent;
+      context.processRef = (0, _ModelUtil.getBusinessObject)(shape).get('processRef');
     }
-  }, true);
+  }, true); // #execute necessary because #preExecute not called on CommandStack#redo
+
   this.execute('shape.create', function (context) {
-    var process = context.process,
-        shape = context.shape;
+    var hints = context.hints || {},
+        process = context.process || hints.process,
+        shape = context.shape,
+        participant = hints.participant; // both shape.create and elements.create must be handled
 
-    if (process) {
-      context.oldProcessRef = shape.businessObject.processRef; // re-use process when creating first participant
-
-      shape.businessObject.processRef = process.businessObject;
+    if (process && (!participant || shape === participant)) {
+      // monkey-patch process ref
+      (0, _ModelUtil.getBusinessObject)(shape).set('processRef', (0, _ModelUtil.getBusinessObject)(process));
     }
   }, true);
   this.revert('shape.create', function (context) {
-    var process = context.process,
-        shape = context.shape;
+    var hints = context.hints || {},
+        process = context.process || hints.process,
+        processRef = context.processRef || hints.processRef,
+        shape = context.shape,
+        participant = hints.participant; // both shape.create and elements.create must be handled
 
-    if (process) {
-      // re-use process when creating first participant
-      shape.businessObject.processRef = context.oldProcessRef;
+    if (process && (!participant || shape === participant)) {
+      // monkey-patch process ref
+      (0, _ModelUtil.getBusinessObject)(shape).set('processRef', processRef);
     }
   }, true);
   this.postExecute('shape.create', function (context) {
-    var process = context.process,
-        shape = context.shape;
+    var hints = context.hints || {},
+        process = context.process || context.hints.process,
+        shape = context.shape,
+        participant = hints.participant;
 
     if (process) {
-      // move children from process to participant
-      var processChildren = process.children.slice();
-      modeling.moveElements(processChildren, {
-        x: 0,
-        y: 0
-      }, shape);
-    }
-  }, true); // turn process into collaboration when creating participants
+      var children = process.children.slice(); // both shape.create and elements.create must be handled
 
-  this.preExecute('elements.create', HIGH_PRIORITY, function (context) {
-    var elements = context.elements,
-        parent = context.parent,
-        participant;
-    var hasParticipants = findParticipant(elements);
-
-    if (hasParticipants && (0, _ModelUtil.is)(parent, 'bpmn:Process')) {
-      ensureCollaboration(context);
-      participant = findParticipant(elements);
-      context.oldProcessRef = participant.businessObject.processRef; // re-use process when creating first participant
-
-      participant.businessObject.processRef = parent.businessObject;
-    }
-  }, true);
-  this.revert('elements.create', function (context) {
-    var elements = context.elements,
-        process = context.process,
-        participant;
-
-    if (process) {
-      participant = findParticipant(elements); // re-use process when creating first participant
-
-      participant.businessObject.processRef = context.oldProcessRef;
-    }
-  }, true);
-  this.postExecute('elements.create', function (context) {
-    var elements = context.elements,
-        process = context.process,
-        participant;
-
-    if (process) {
-      participant = findParticipant(elements); // move children from process to first participant
-
-      var processChildren = process.children.slice();
-      modeling.moveElements(processChildren, {
-        x: 0,
-        y: 0
-      }, participant);
+      if (!participant) {
+        modeling.moveElements(children, {
+          x: 0,
+          y: 0
+        }, shape);
+      } else if (shape === participant) {
+        modeling.moveElements(children, {
+          x: 0,
+          y: 0
+        }, participant);
+      }
     }
   }, true);
 }
@@ -17820,7 +17812,10 @@ function UnclaimIdBehavior(canvas, injector, moddle, modeling) {
   this.preExecute('canvas.updateRoot', function () {
     var rootElement = canvas.getRootElement(),
         rootElementBo = rootElement.businessObject;
-    moddle.ids.unclaim(rootElementBo.id);
+
+    if ((0, _ModelUtil.is)(rootElement, 'bpmn:Collaboration')) {
+      moddle.ids.unclaim(rootElementBo.id);
+    }
   });
 }
 
@@ -19047,12 +19042,24 @@ SetColorHandler.prototype.postExecute = function (context) {
 
     ensureLegacySupport(assignedDi);
 
-    self._commandStack.execute('element.updateProperties', {
-      element: element,
-      properties: {
-        di: assignedDi
-      }
-    });
+    if (element.labelTarget) {
+      // set label colors as bpmndi:BPMNLabel#color
+      self._commandStack.execute('element.updateModdleProperties', {
+        element: element,
+        moddleElement: element.businessObject.di.label,
+        properties: {
+          color: di['background-color']
+        }
+      });
+    } else {
+      // set colors bpmndi:BPMNEdge or bpmndi:BPMNShape
+      self._commandStack.execute('element.updateProperties', {
+        element: element,
+        properties: {
+          di: assignedDi
+        }
+      });
+    }
   });
 };
 /**
@@ -19921,26 +19928,22 @@ function computeLanesResize(shape, newBounds) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.isAny = isAny;
 exports.getParent = getParent;
-
-var _minDash = require("min-dash");
+Object.defineProperty(exports, "is", {
+  enumerable: true,
+  get: function () {
+    return _ModelUtil.is;
+  }
+});
+Object.defineProperty(exports, "isAny", {
+  enumerable: true,
+  get: function () {
+    return _ModelUtil.isAny;
+  }
+});
 
 var _ModelUtil = require("../../../util/ModelUtil");
 
-/**
- * Return true if element has any of the given types.
- *
- * @param {djs.model.Base} element
- * @param {Array<string>} types
- *
- * @return {boolean}
- */
-function isAny(element, types) {
-  return (0, _minDash.some)(types, function (t) {
-    return (0, _ModelUtil.is)(element, t);
-  });
-}
 /**
  * Return the parent of the element with any of the given types.
  *
@@ -19949,15 +19952,13 @@ function isAny(element, types) {
  *
  * @return {djs.model.Base}
  */
-
-
 function getParent(element, anyType) {
   if (typeof anyType === 'string') {
     anyType = [anyType];
   }
 
   while (element = element.parent) {
-    if (isAny(element, anyType)) {
+    if ((0, _ModelUtil.isAny)(element, anyType)) {
       return element;
     }
   }
@@ -19965,7 +19966,7 @@ function getParent(element, anyType) {
   return null;
 }
 
-},{"../../../util/ModelUtil":191,"min-dash":599}],163:[function(require,module,exports){
+},{"../../../util/ModelUtil":191}],163:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20243,7 +20244,7 @@ PaletteProvider.prototype.getPaletteEntries = function (element) {
     });
     create.start(event, [subProcess, startEvent], {
       hints: {
-        autoSelect: [startEvent]
+        autoSelect: [subProcess]
       }
     });
   }
@@ -20431,7 +20432,7 @@ ReplaceMenuProvider.prototype.getEntries = function (element) {
     return this._createEntries(element, replaceOptions.DATA_OBJECT_REFERENCE);
   }
 
-  if ((0, _ModelUtil.is)(businessObject, 'bpmn:DataStoreReference')) {
+  if ((0, _ModelUtil.is)(businessObject, 'bpmn:DataStoreReference') && !(0, _ModelUtil.is)(element.parent, 'bpmn:Collaboration')) {
     return this._createEntries(element, replaceOptions.DATA_STORE_REFERENCE);
   } // start events outside sub processes
 
@@ -24576,7 +24577,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.is = is;
+exports.isAny = isAny;
 exports.getBusinessObject = getBusinessObject;
+exports.getDi = getDi;
+
+var _minDash = require("min-dash");
 
 /**
  * Is an element of the given BPMN type?
@@ -24591,6 +24596,21 @@ function is(element, type) {
   return bo && typeof bo.$instanceOf === 'function' && bo.$instanceOf(type);
 }
 /**
+ * Return true if element has any of the given types.
+ *
+ * @param {djs.model.Base} element
+ * @param {Array<string>} types
+ *
+ * @return {boolean}
+ */
+
+
+function isAny(element, types) {
+  return (0, _minDash.some)(types, function (t) {
+    return is(element, t);
+  });
+}
+/**
  * Return the business object for a given element.
  *
  * @param  {djs.model.Base|ModdleElement} element
@@ -24602,8 +24622,21 @@ function is(element, type) {
 function getBusinessObject(element) {
   return element && element.businessObject || element;
 }
+/**
+ * Return the di object for a given element.
+ *
+ * @param  {djs.model.Base} element
+ *
+ * @return {ModdleElement}
+ */
 
-},{}],192:[function(require,module,exports){
+
+function getDi(element) {
+  var bo = getBusinessObject(element);
+  return bo && bo.di;
+}
+
+},{"min-dash":599}],192:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -48842,10 +48875,17 @@ function TouchInteractionEvents(injector, canvas, eventBus, elementRegistry, int
 
   var recognizer;
 
-  function handler(type) {
+  function handler(type, buttonType) {
     return function (event) {
       log('element', type, event);
-      interactionEvents.fire(type, event);
+      var gfx = getGfx(event.target),
+          element = gfx && elementRegistry.get(gfx); // translate into an actual mouse click event
+
+      if (buttonType) {
+        event.srcEvent.button = buttonType;
+      }
+
+      return interactionEvents.fire(type, event, element);
     };
   }
 
@@ -48857,8 +48897,6 @@ function TouchInteractionEvents(injector, canvas, eventBus, elementRegistry, int
   function initEvents(svg) {
     // touch recognizer
     recognizer = createTouchRecognizer(svg);
-    recognizer.on('doubletap', handler('element.dblclick'));
-    recognizer.on('tap', handler('element.click'));
 
     function startGrabCanvas(event) {
       log('canvas', 'grab start');
@@ -48925,6 +48963,8 @@ function TouchInteractionEvents(injector, canvas, eventBus, elementRegistry, int
       recognizer.on('pinchcancel', end);
     }
 
+    recognizer.on('tap', handler('element.click'));
+    recognizer.on('doubletap', handler('element.dblclick', 1));
     recognizer.on('panstart', startGrab);
     recognizer.on('press', startGrab);
     recognizer.on('pinchstart', startZoom);
@@ -62890,7 +62930,7 @@ function sortBy(collection, extractor) {
  *
  * const matcher = matchPattern({ id: 1 });
  *
- * var element = find(elements, matcher);
+ * let element = find(elements, matcher);
  *
  * @param  {Object} pattern
  *
@@ -62926,8 +62966,11 @@ function toNum(arg) {
   return Number(arg);
 }
 /**
- * Debounce fn, calling it only once if
- * the given time elapsed between calls.
+ * Debounce fn, calling it only once if the given time
+ * elapsed between calls.
+ *
+ * Lodash-style the function exposes methods to `#clear`
+ * and `#flush` to control internal behavior.
  *
  * @param  {Function} fn
  * @param  {Number} timeout
@@ -62942,23 +62985,39 @@ function debounce(fn, timeout) {
   var lastThis;
   var lastNow;
 
-  function fire() {
+  function fire(force) {
     var now = Date.now();
-    var scheduledDiff = lastNow + timeout - now;
+    var scheduledDiff = force ? 0 : lastNow + timeout - now;
 
     if (scheduledDiff > 0) {
       return schedule(scheduledDiff);
     }
 
     fn.apply(lastThis, lastArgs);
-    timer = lastNow = lastArgs = lastThis = undefined;
+    clear();
   }
 
   function schedule(timeout) {
     timer = setTimeout(fire, timeout);
   }
 
-  return function () {
+  function clear() {
+    if (timer) {
+      clearTimeout(timer);
+    }
+
+    timer = lastNow = lastArgs = lastThis = undefined;
+  }
+
+  function flush() {
+    if (timer) {
+      fire(true);
+    }
+
+    clear();
+  }
+
+  function callback() {
     lastNow = Date.now();
 
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -62971,7 +63030,11 @@ function debounce(fn, timeout) {
     if (!timer) {
       schedule(timeout);
     }
-  };
+  }
+
+  callback.flush = flush;
+  callback.cancel = clear;
+  return callback;
 }
 /**
  * Throttle fn, calling at most once
@@ -63010,6 +63073,22 @@ function throttle(fn, interval) {
 
 function bind(fn, target) {
   return fn.bind(target);
+}
+
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
 }
 
 function _extends() {
@@ -63060,6 +63139,14 @@ function assign(target) {
 function set(target, path, value) {
   var currentTarget = target;
   forEach(path, function (key, idx) {
+    if (typeof key !== 'number' && typeof key !== 'string') {
+      throw new Error('illegal key type: ' + _typeof(key) + '. Key should be of type number or string.');
+    }
+
+    if (key === 'constructor') {
+      throw new Error('illegal key: constructor');
+    }
+
     if (key === '__proto__') {
       throw new Error('illegal key: __proto__');
     }

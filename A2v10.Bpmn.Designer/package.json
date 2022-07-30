@@ -7,7 +7,7 @@
 	"author": {
 		"name": "Oleksandr Kukhtin"
 	},
-	"devDependencies": {
-		"electron": "13.2.2"
+	"dependencies": {
+		"electron": "^13.2.2"
 	}
 }
