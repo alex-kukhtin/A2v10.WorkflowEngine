@@ -17,8 +17,12 @@ public class TestExternalNatvieType : IInjectable
         _dbContext = serviceProvider.GetRequiredService<IDbContext>() ?? throw new NullReferenceException("DbContext");
     }
 
+	public void SetDeferred(IDeferredTarget deferredTarget)
+    {
+    }
+
 #pragma warning disable IDE1006 // Naming Styles
-    public ExpandoObject invoke(ExpandoObject arg)
+	public ExpandoObject invoke(ExpandoObject arg)
 #pragma warning restore IDE1006 // Naming Styles
     {
         if (_dbContext == null)

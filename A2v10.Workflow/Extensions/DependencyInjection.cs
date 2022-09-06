@@ -10,8 +10,7 @@ public static class WorkflowDependencyInjection
     public static IServiceCollection AddWorkflow(this IServiceCollection coll)
     {
         coll.AddSingleton<IXamlReaderService, WorkflowXamlReaderService>();
-        coll.AddScoped<IWorkflowEngine, WorkflowEngine>()
-        .AddScoped<IDeferredTarget, WorkflowDeferred>();
+        coll.AddScoped<IWorkflowEngine, WorkflowEngine>();
 
         coll.AddScoped<ITracker, InstanceTracker>();
 

@@ -255,7 +255,14 @@ public partial class ExecutionContext : IExecutionContext
         _endEvent = state.Get<ExpandoObject>("EndEvent");
     }
 
-    public List<Object>? GetTrackRecords()
+	public List<DeferredElement>? GetDeferred()
+    {
+        if (_script == null)
+            return null;
+        return _script.GetDeferred();
+    }
+
+	public List<Object>? GetTrackRecords()
     {
         var records = _tracker.Records;
         if (records == null)

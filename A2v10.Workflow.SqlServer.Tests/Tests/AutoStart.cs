@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
+using System.Collections.Generic;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -119,7 +120,7 @@ public class AutoStart
 
     [TestMethod]
     public async Task AutoStartAt()
-	{
+    {
         var wfId = "AutoStartAt";
         await TestEngine.PrepareDatabase("AutoStartAt");
         var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");
@@ -189,5 +190,31 @@ public class AutoStart
         Assert.AreEqual(wfInst.ExecutionStatus, WorkflowExecutionStatus.Complete);
         Assert.AreEqual(10F, wfInst.Result?.Eval<Double>("X"));
     }
+
+    [TestMethod]
+    public async Task MultiplyAutoStart()
+    {
+        var wfId = "AutoStartMult";
+        await TestEngine.PrepareDatabase("AutoStartMult");
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\autostartmult.bpmn");
+        var ident = await TestEngine.SimplePublish(wfId, xaml);
+        Assert.AreEqual(1, ident.Version);
+
+        var createParams  = new ExpandoObject() {
+				{"WorkflowId", wfId },
+			};
+
+        await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]", createParams);
+		await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]", createParams);
+		await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]", createParams);
+
+		await _workflowEngine.ProcessPending();
+
+		var asModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartAll", createParams);
+
+        var tracks = asModel.Root.Get<List<ExpandoObject>>("Track");
+        Assert.IsNotNull(tracks);
+        Assert.AreEqual(3, tracks.Count);
+	}
 }
 

@@ -1,9 +1,11 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
+
+using System.Dynamic;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using System.Dynamic;
 
 namespace A2v10.Workflow.SqlServer;
 public class ScriptNativeDatabase : IInjectable
@@ -14,9 +16,12 @@ public class ScriptNativeDatabase : IInjectable
     {
         _dbContext = serviceProvider.GetService<IDbContext>() ?? throw new NullReferenceException("DbContext");
     }
+	public void SetDeferred(IDeferredTarget deferredTarget)
+    {
+    }
 
 #pragma warning disable IDE1006 // Naming Styles
-    public ExpandoObject loadModel(String procedure, ExpandoObject? prms = null, ExpandoObject? opts = null)
+	public ExpandoObject loadModel(String procedure, ExpandoObject? prms = null, ExpandoObject? opts = null)
 #pragma warning restore IDE1006 // Naming Styles
     {
         if (_dbContext == null)

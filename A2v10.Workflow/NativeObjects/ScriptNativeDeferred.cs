@@ -1,6 +1,7 @@
 ﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
 
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Dynamic;
 
 namespace A2v10.Workflow
@@ -11,11 +12,15 @@ namespace A2v10.Workflow
 
         public void Inject(IServiceProvider serviceProvider)
         {
-            _deferredTarget = serviceProvider.GetRequiredService<IDeferredTarget>();
         }
 
+		public void SetDeferred(IDeferredTarget deferredTarget)
+        {
+			_deferredTarget = deferredTarget;
+		}
+
 #pragma warning disable IDE1006 // Naming Styles
-        public void executeSql(String procedure, ExpandoObject? prms = null)
+		public void executeSql(String procedure, ExpandoObject? prms = null)
 #pragma warning restore IDE1006 // Naming Styles
         {
             if (_deferredTarget == null)

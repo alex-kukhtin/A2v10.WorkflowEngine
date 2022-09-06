@@ -26,8 +26,7 @@ public class ScriptEngine
         _serviceProvider = serviceProvider;
         _tracker = tracker;
         _engine = new Engine(EngineOptions);
-        _deferredTarget = _serviceProvider.GetRequiredService<IDeferredTarget>();
-
+        _deferredTarget = new WorkflowDeferred();
 
         var nativeObjects = _serviceProvider.GetService<IScriptNativeObjectProvider>();
         if (nativeObjects != null)
@@ -46,7 +45,10 @@ public class ScriptEngine
         opts.SetWrapObjectHandler((e, o) =>
         {
             if (o is IInjectable injectable)
+            {
                 injectable.Inject(_serviceProvider);
+                injectable.SetDeferred(_deferredTarget);
+            }
             return new ObjectWrapper(e, o);
         });
     }
@@ -65,7 +67,12 @@ public class ScriptEngine
         func?.Invoke(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
     }
 
-    public ExpandoObject? GetResult()
+	public List<DeferredElement>? GetDeferred()
+	{
+        return _deferredTarget?.Deferred;
+	}
+
+	public ExpandoObject? GetResult()
     {
         var func = GetFunc(_root.Id, "Result");
         return func?.Invoke(JsValue.Undefined, null).ToObject() as ExpandoObject;

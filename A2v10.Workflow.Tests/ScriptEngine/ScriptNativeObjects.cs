@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Interfaces;
 using System;
@@ -27,9 +27,13 @@ namespace A2v10.Workflow.Tests
         {
             _eo.Set("injected", true);
         }
-    }
 
-    public class ScriptNativeObjects : IScriptNativeObjectProvider
+		public void SetDeferred(IDeferredTarget deferredTarget)
+        {
+        }
+	}
+
+	public class ScriptNativeObjects : IScriptNativeObjectProvider
     {
         public IEnumerable<NativeType> NativeTypes()
         {

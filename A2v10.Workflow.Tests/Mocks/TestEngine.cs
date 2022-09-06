@@ -38,7 +38,6 @@ public class TestEngine
         collection.AddSingleton<ISerializer, WorkflowSerializer>();
         collection.AddScoped<IWorkflowEngine, WorkflowEngine>();
         collection.AddScoped<ITracker, ConsoleTracker>();
-        collection.AddScoped<IDeferredTarget, WorkflowDeferred>();
         collection.AddScoped<IScriptNativeObjectProvider, ScriptNativeObjects>();
 
         _provider = collection.BuildServiceProvider();

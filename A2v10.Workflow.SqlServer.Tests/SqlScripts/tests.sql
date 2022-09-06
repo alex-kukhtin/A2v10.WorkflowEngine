@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2022 Alex Kukhtin
 
-Last updated : 09 jun 2021
-module version : 8091
+Last updated : 06 sep 2021
+module version : 8095
 */
 ------------------------------------------------
 set nocount on;
@@ -139,6 +139,16 @@ begin
 end
 go
 ------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf_test' and TABLE_NAME=N'Deferred')
+create table a2wf_test.[Deferred]
+(
+	InstanceId uniqueidentifier not null,
+	Activity nvarchar(255), 
+	EventTime datetime2 
+		constraint DF_Deferred_EventTime default(getdate())
+);
+go
+------------------------------------------------
 create or alter procedure a2wf_test.[Tests.Prepare]
 @Id nvarchar(255)
 as
@@ -162,6 +172,8 @@ begin
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
 	delete from a2wf.Inbox
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf_test.Deferred 
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
 
 	delete from a2wf.[Instances] where WorkflowId = @Id;
 
@@ -170,3 +182,34 @@ begin
 	delete from a2wf.[AutoStart] where WorkflowId = @Id;
 end
 go
+------------------------------------------------
+create or alter procedure a2wf_test.[ExecDeferred]
+@InstanceId uniqueidentifier,
+@Activity nvarchar(255)
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+
+	insert into a2wf_test.Deferred (InstanceId, Activity) values (@InstanceId, @Activity);
+end
+go
+
+------------------------------------------------
+create or alter procedure a2wf_test.AutoStartAll
+@WorkflowId nvarchar(255) = null
+as
+begin
+	set nocount on;
+	set transaction isolation level read uncommitted;
+	declare @InstanceId uniqueidentifier;
+	select top(1) @InstanceId = InstanceId from a2wf.AutoStart where InstanceId is not null
+		and (@WorkflowId is null or WorkflowId = @WorkflowId)
+	order by DateCreated desc;
+
+	select [Track!TTrack!Array] = null, [Id!!Id] = d.InstanceId, d.Activity
+	from a2wf_test.Deferred d 
+	where InstanceId in (select Id from a2wf.Instances where WorkflowId = @WorkflowId);
+end
+go
+

@@ -12,14 +12,12 @@ public class WorkflowEngine : IWorkflowEngine
     private readonly IWorkflowStorage _workflowStorage;
     private readonly IInstanceStorage _instanceStorage;
     private readonly ITracker _tracker;
-    private readonly IDeferredTarget _deferredTarget;
 
-    public WorkflowEngine(IServiceProvider serviceProvider, ITracker tracker, IDeferredTarget deferredTarget)
+    public WorkflowEngine(IServiceProvider serviceProvider, ITracker tracker)
     {
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _workflowStorage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
         _instanceStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
-        _deferredTarget = deferredTarget ?? throw new NullReferenceException("IDeferredTarget");
         _tracker = tracker;
     }
 
@@ -99,7 +97,7 @@ public class WorkflowEngine : IWorkflowEngine
             ExternalBookmarks = context.GetExternalBookmarks(),
             ExternalEvents = context.GetExternalEvents(),
             TrackRecords = context.GetTrackRecords(),
-            Deferred = _deferredTarget.Deferred,
+            Deferred = context.GetDeferred(),
             Inboxes = context.GetInboxes()
         };
         inst.InstanceData = instData;
