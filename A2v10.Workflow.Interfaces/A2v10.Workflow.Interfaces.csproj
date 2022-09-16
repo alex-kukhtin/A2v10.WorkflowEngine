@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<LangVersion>10</LangVersion>
-		<Version>10.1.8095</Version>
+		<Version>10.1.8096</Version>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
 		<PackageId>A2v10.Workflow.Interfaces</PackageId>
