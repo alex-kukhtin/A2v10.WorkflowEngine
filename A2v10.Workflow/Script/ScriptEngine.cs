@@ -20,7 +20,7 @@ public class ScriptEngine
 
     private IDictionary<String, Object?> ScriptData => _scriptData ?? throw new InvalidProgramException("ScriptData is null");
 
-    public ScriptEngine(IServiceProvider serviceProvider, ITracker tracker, IActivity root, String script, Object? args = null)
+    public ScriptEngine(IServiceProvider serviceProvider, ITracker tracker, IActivity root, String script, IInstance instance, Object? args = null)
     {
         _root = root;
         _serviceProvider = serviceProvider;
@@ -31,7 +31,12 @@ public class ScriptEngine
         var nativeObjects = _serviceProvider.GetService<IScriptNativeObjectProvider>();
         if (nativeObjects != null)
             _engine.AddNativeObjects(nativeObjects);
-
+        _engine.SetValue("Instance", new ExpandoObject()
+        {
+            { "Id", instance.Id },
+            { "CorrelationId", instance.CorrelationId },
+            { "ExecutionStatus", instance.ExecutionStatus.ToString() }
+        });
         //Console.WriteLine(script);
         var func = _engine.Evaluate(script);
         _scriptData = _engine.Invoke(func).ToObject() as ExpandoObject;

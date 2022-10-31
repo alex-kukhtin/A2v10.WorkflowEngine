@@ -29,10 +29,15 @@ end
 go
 ------------------------------------------------
 create or alter procedure a2wf_test.GetTimer
+@InstanceId uniqueidentifier,
+@ExecStatus nvarchar(255)
 as
 begin
 	set nocount on;
 	set transaction isolation level read uncommitted;
+
+	--throw 60000, @ExecStatus, 0;
+
 	select [Model!TModel!Object] = null, [NextDate!!Utc] = dateadd(second, 1, getutcdate());
 end
 go
