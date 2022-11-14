@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<Version>10.1.8098</Version>
+		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+		<Version>10.1.8099</Version>
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
 		<PackageId>A2v10.Workflow.SqlServer</PackageId>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Oleksandr Kukthin</Authors>
 		<Company>Oleksandr Kukthin</Company>
 		<Description>A2v10 workflow core</Description>
@@ -19,7 +20,7 @@
 
 
 	<ItemGroup>
-	  <PackageReference Include="A2v10.Data.Core" Version="10.0.7313" />
+	  <PackageReference Include="A2v10.Data.Core" Version="10.0.7315" />
 	</ItemGroup>
 
 	<ItemGroup>

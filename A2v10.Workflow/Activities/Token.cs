@@ -1,36 +1,35 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.
 
-namespace A2v10.Workflow
+namespace A2v10.Workflow;
+
+public readonly struct Token : IToken
 {
-    public struct Token : IToken
+    public Guid Id { get; init; }
+
+    private Token(Guid guid)
     {
-        public Guid Id { get; init; }
+        Id = guid;
+    }
 
-        private Token(Guid guid)
-        {
-            Id = guid;
-        }
-
-        public static IToken Empty()
+    public static IToken Empty()
 		{
-            return new Token(Guid.Empty);
+        return new Token(Guid.Empty);
 		}
 
-        public static IToken Create()
-        {
-            return new Token(Guid.NewGuid());
-        }
+    public static IToken Create()
+    {
+        return new Token(Guid.NewGuid());
+    }
 
-        public Boolean IsEmpty => Id == Guid.Empty;
+    public Boolean IsEmpty => Id == Guid.Empty;
 
-        public override String ToString()
-        {
-            return Id.ToString();
-        }
+    public override String ToString()
+    {
+        return Id.ToString();
+    }
 
-        public static IToken FromString(String str)
-        {
-            return new Token(Guid.Parse(str));
-        }
+    public static IToken FromString(String str)
+    {
+        return new Token(Guid.Parse(str));
     }
 }

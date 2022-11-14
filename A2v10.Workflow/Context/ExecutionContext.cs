@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Bpmn;
 using A2v10.Workflow.Tracker;
@@ -94,8 +94,7 @@ public partial class ExecutionContext : IExecutionContext
         var res = _script.GetResult();
         if (_endEvent != null)
         {
-            if (res == null)
-                res = new ExpandoObject();
+            res ??= new ExpandoObject();
             res.Set("EndEvent", _endEvent);
         }
         return res;
