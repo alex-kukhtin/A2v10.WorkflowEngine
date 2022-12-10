@@ -48,7 +48,7 @@ namespace A2v10.Workflow.Tests
             {
                 var x = dict["Ref0"] as IDictionary<String, Object>;
                 Assert.IsNotNull(x);
-                var res = eng.Invoke(JsValue.FromObject(eng, x["Script"]));
+                var res = eng.Invoke(JsValue.FromObject(eng, x!["Script"]));
                 Assert.AreEqual("7", res.ToString());
             }
             else
@@ -142,14 +142,14 @@ namespace A2v10.Workflow.Tests
             {
                 var ref0 = dict["Ref0"] as IDictionary<String, Object>;
                 Assert.IsNotNull(ref0);
-                var res = eng.Invoke(JsValue.FromObject(eng, ref0["Script"]));
+                var res = eng.Invoke(JsValue.FromObject(eng, ref0!["Script"]));
                 Assert.IsNotNull(res);
                 Assert.AreEqual((Double)1, res.AsNumber());
 
                 var ref1 = dict["Ref1"] as IDictionary<String, Object>;
                 Assert.IsNotNull(ref1);
-                var res2 = eng.Invoke(JsValue.FromObject(eng, ref1["Script"]));
-                var res3 = eng.Invoke(JsValue.FromObject(eng, ref1["Result"]));
+                var res2 = eng.Invoke(JsValue.FromObject(eng, ref1!["Script"]));
+                var res3 = eng.Invoke(JsValue.FromObject(eng, ref1!["Result"]));
                 Assert.AreEqual("1", res3.AsObject().Get("R"));
             }
         }
@@ -221,24 +221,24 @@ return __fmap__;
 
             refP = dict2["Process_1"] as IDictionary<String, Object>;
             Assert.IsNotNull(refP);
-            var restoreFunc = (Func<JsValue?, JsValue[]?, JsValue>)refP["Restore"];
+            var restoreFunc = (Func<JsValue?, JsValue[]?, JsValue>)refP!["Restore"];
             Assert.IsNotNull(restoreFunc);
             restoreFunc(null, new JsValue[] { resStore });
 
             var refCP = dict2["CountPlus"] as IDictionary<String, Object>;
             Assert.IsNotNull(refCP);
-            var res = eng.Invoke(JsValue.FromObject(eng, refCP["Script"])).ToObject();
+            var res = eng.Invoke(JsValue.FromObject(eng, refCP!["Script"])).ToObject();
 
             resStoreVal = eng.Invoke(JsValue.FromObject(eng, refP["Store"])).ToObject();
 
             var refCalc = dict2["Flow_0v13tb0"] as IDictionary<String, Object>;
             Assert.IsNotNull(refCalc);
-            var res2x = eng.Invoke(JsValue.FromObject(eng, refCalc["ConditionExpression"]));
+            var res2x = eng.Invoke(JsValue.FromObject(eng, refCalc!["ConditionExpression"]));
 
 
             var refA = dict2["Activity_0p7ly0p"] as IDictionary<String, Object>;
             Assert.IsNotNull(refA);
-            eng.Invoke(JsValue.FromObject(eng, refA["Script"])).ToObject();
+            eng.Invoke(JsValue.FromObject(eng, refA!["Script"])).ToObject();
 
             var resFinal = eng.Invoke(JsValue.FromObject(eng, refP["Store"]));
             Assert.AreEqual("1", resFinal.AsObject().Get("R"));

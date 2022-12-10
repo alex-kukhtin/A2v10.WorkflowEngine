@@ -71,9 +71,9 @@ namespace A2v10.Workflow.SqlServer.Tests
                 Assert.AreEqual(execState, instModel.Eval<String>("Instance.ExecutionStatus"));
                 String? state = instModel.Eval<String>("Instance.State");
                 Assert.IsNotNull(state);
-                var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state);
+                var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state!);
                 Assert.IsNotNull(stateObj);
-                String? strVal = stateObj.Eval<String>("Variables.Process_1.res");
+                String? strVal = stateObj!.Eval<String>("Variables.Process_1.res");
                 Assert.AreEqual(resVal, strVal);
             }
 
@@ -131,9 +131,9 @@ namespace A2v10.Workflow.SqlServer.Tests
             Assert.AreEqual("Complete", instModel.Eval<String>("Instance.ExecutionStatus"));
             String? state = instModel.Eval<String>("Instance.State");
             Assert.IsNotNull(state);
-            var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state);
+            var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state!);
             Assert.IsNotNull(stateObj);
-            String? strVal = stateObj.Eval<String>("Variables.Process_1.Result");
+            String? strVal = stateObj!.Eval<String>("Variables.Process_1.Result");
             Assert.AreEqual("StartEnd", strVal);
         }
     }

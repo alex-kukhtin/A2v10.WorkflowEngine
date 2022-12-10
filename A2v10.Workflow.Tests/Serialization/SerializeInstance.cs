@@ -49,7 +49,7 @@ namespace A2v10.Workflow.Tests.Serialization
             var r = s.DeserializeActitity(json, "json").Activity as Process;
             Assert.IsNotNull(r);
 
-            Assert.AreEqual(r.Id, p.Id);
+            Assert.AreEqual(r!.Id, p.Id);
             Assert.AreEqual(r.Children!.Count, p.Children.Count);
 
             var pEvent = p.FindElement<Event>("start");
@@ -84,7 +84,7 @@ namespace A2v10.Workflow.Tests.Serialization
             var r = ser.DeserializeActitity(json, "json").Activity as Sequence;
 
             Assert.IsNotNull(r);
-            Assert.AreEqual(r.Id, s.Id);
+            Assert.AreEqual(r!.Id, s.Id);
             Assert.AreEqual(r.Variables!.Count, s.Variables.Count);
             Assert.AreEqual(r.Activities!.Count, s.Activities.Count);
 

@@ -27,7 +27,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log.Length);
+        Assert.AreEqual(2, log!.Length);
         Assert.AreEqual("startProcess|startSub", String.Join('|', log));
 
         var sp = TestEngine.ServiceProvider();
@@ -37,7 +37,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(4, log.Length);
+        Assert.AreEqual(4, log!.Length);
         Assert.AreEqual("startProcess|startSub|messageBoundary|endBoundary", String.Join('|', log));
 
         inst = await wfe.ResumeAsync(inst.Id, "MainTask");
@@ -45,7 +45,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(6, log.Length);
+        Assert.AreEqual(6, log!.Length);
         Assert.AreEqual("startProcess|startSub|messageBoundary|endBoundary|endSub|endProcess", String.Join('|', log));
     }
 
@@ -62,7 +62,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log.Length);
+        Assert.AreEqual(2, log!.Length);
         Assert.AreEqual("startProcess|startSub", String.Join('|', log));
 
         var sp = TestEngine.ServiceProvider();
@@ -72,7 +72,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(5, log.Length);
+        Assert.AreEqual(5, log!.Length);
         Assert.AreEqual("startProcess|startSub|messageBoundary|endBoundary|endProcess", String.Join('|', log));
     }
 
@@ -90,7 +90,7 @@ public class BpmnEventsMessage
         var inst = await TestEngine.SimpleRun(wfId, xaml);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(1, log.Length);
+        Assert.AreEqual(1, log!.Length);
         Assert.AreEqual("start", String.Join('|', log));
 
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
@@ -100,7 +100,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log.Length);
+        Assert.AreEqual(2, log!.Length);
         Assert.AreEqual("start|timerNI", String.Join('|', log));
 
         await Task.Delay(1000); // 2
@@ -108,7 +108,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(3, log.Length);
+        Assert.AreEqual(3, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI", String.Join('|', log));
 
         await Task.Delay(1000); // 3
@@ -116,7 +116,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(4, log.Length);
+        Assert.AreEqual(4, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI", String.Join('|', log));
 
         inst = await wfe.ResumeAsync(inst.Id, "BookMark2", new ExpandoObject()
@@ -125,7 +125,7 @@ public class BpmnEventsMessage
             });
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(5, log.Length);
+        Assert.AreEqual(5, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE", String.Join('|', log));
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
@@ -134,7 +134,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(6, log.Length);
+        Assert.AreEqual(6, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI", String.Join('|', log));
 
         await Task.Delay(1000); // 2
@@ -142,7 +142,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(7, log.Length);
+        Assert.AreEqual(7, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI", String.Join('|', log));
 
         await Task.Delay(1000); // 3
@@ -150,7 +150,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(8, log.Length);
+        Assert.AreEqual(8, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI|timerI", String.Join('|', log));
 
         inst = await wfe.ResumeAsync(inst.Id, "BookMark2", new ExpandoObject()
@@ -159,7 +159,7 @@ public class BpmnEventsMessage
             });
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(10, log.Length);
+        Assert.AreEqual(10, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI|timerI|Bookmark2:CANCEL|end", String.Join('|', log));
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
     }
@@ -190,7 +190,7 @@ public class BpmnEventsMessage
         var inst = await TestEngine.SimpleRun(wfId, xaml);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(1, log.Length);
+        Assert.AreEqual(1, log!.Length);
         Assert.AreEqual("start", String.Join('|', log));
 
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
@@ -200,7 +200,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log.Length);
+        Assert.AreEqual(2, log!.Length);
         Assert.AreEqual("start|timerNI", String.Join('|', log));
 
         await Task.Delay(1000); // 2
@@ -208,7 +208,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(3, log.Length);
+        Assert.AreEqual(3, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI", String.Join('|', log));
 
         await Task.Delay(1000); // 3
@@ -216,7 +216,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(4, log.Length);
+        Assert.AreEqual(4, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI", String.Join('|', log));
 
         inst = await wfe.ResumeAsync(inst.Id, "BookMark2", new ExpandoObject()
@@ -225,7 +225,7 @@ public class BpmnEventsMessage
             });
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(5, log.Length);
+        Assert.AreEqual(5, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE", String.Join('|', log));
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
@@ -234,7 +234,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(6, log.Length);
+        Assert.AreEqual(6, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI", String.Join('|', log));
 
         await Task.Delay(1000); // 2
@@ -242,7 +242,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(7, log.Length);
+        Assert.AreEqual(7, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI", String.Join('|', log));
 
         await Task.Delay(1000); // 3
@@ -250,7 +250,7 @@ public class BpmnEventsMessage
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(8, log.Length);
+        Assert.AreEqual(8, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI|timerI", String.Join('|', log));
 
         inst = await wfe.ResumeAsync(inst.Id, "BookMark2", new ExpandoObject()
@@ -259,7 +259,7 @@ public class BpmnEventsMessage
             });
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(10, log.Length);
+        Assert.AreEqual(10, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI|timerI|Bookmark2:CANCEL|end", String.Join('|', log));
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
     }

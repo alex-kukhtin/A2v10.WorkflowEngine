@@ -42,7 +42,7 @@ public class BpmnInbox
 
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(1, log.Length);
+        Assert.AreEqual(1, log!.Length);
         Assert.AreEqual("start", String.Join('|', log));
 
         var sp = TestEngine.ServiceProvider();
@@ -50,7 +50,7 @@ public class BpmnInbox
         inst = await engine.ResumeAsync(inst.Id, "BookmarkName_value");
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(3, log.Length);
+        Assert.AreEqual(3, log!.Length);
         Assert.AreEqual("start|inbox:BookmarkName|end", String.Join('|', log));
 
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
@@ -78,7 +78,7 @@ public class BpmnInbox
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log.Length);
+        Assert.AreEqual(2, log!.Length);
         Assert.AreEqual("start|endTimer", String.Join('|', log));
         Assert.IsNull(inst.InstanceData?.Inboxes);
     }

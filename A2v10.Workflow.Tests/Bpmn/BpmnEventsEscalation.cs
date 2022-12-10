@@ -24,8 +24,8 @@ public class BpmnEscalationEvents
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        //Assert.AreEqual(6, log.Length);
-        Assert.AreEqual("start|task1|endEscalation|endBoundary", String.Join('|', log));
+        //Assert.AreEqual(6, log!.Length);
+        Assert.AreEqual("start|task1|endEscalation|endBoundary", String.Join('|', log!));
     }
 
     [TestMethod]
@@ -39,8 +39,8 @@ public class BpmnEscalationEvents
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        //Assert.AreEqual(6, log.Length);
-        Assert.AreEqual("start|startSub|endEscalationSub|endEscalation", String.Join('|', log));
+        //Assert.AreEqual(6, log!.Length);
+        Assert.AreEqual("start|startSub|endEscalationSub|endEscalation", String.Join('|', log!));
     }
 
 
@@ -60,8 +60,8 @@ public class BpmnEscalationEvents
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        //Assert.AreEqual(6, log.Length);
-        Assert.AreEqual("start|endEscalation", String.Join('|', log));
+        //Assert.AreEqual(6, log!.Length);
+        Assert.AreEqual("start|endEscalation", String.Join('|', log!));
     }
 
     [TestMethod]
@@ -80,7 +80,7 @@ public class BpmnEscalationEvents
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(1, log.Length);
+        Assert.AreEqual(1, log!.Length);
         Assert.AreEqual("start", String.Join('|', log));
 
         await Task.Delay(1010);
@@ -91,7 +91,7 @@ public class BpmnEscalationEvents
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst2.ExecutionStatus);
         log = inst2.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log.Length);
+        Assert.AreEqual(2, log!.Length);
         Assert.AreEqual("start|endBoundary", String.Join('|', log));
 
     }

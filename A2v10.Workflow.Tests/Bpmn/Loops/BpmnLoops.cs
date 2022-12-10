@@ -103,7 +103,7 @@ public class BpmnLoops
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(12, log.Length);
+        Assert.AreEqual(12, log!.Length);
         Assert.AreEqual("start|startSub|startSubSub|count:1|endSubSub|endSub|startSub|startSubSub|count:0|endSubSub|endSub|end", String.Join('|', log));
 
     }
@@ -119,7 +119,7 @@ public class BpmnLoops
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(17, log.Length);
+        Assert.AreEqual(17, log!.Length);
         Assert.AreEqual("start|startSub|startSubSub|count:2|endSubSubError|endSubError|startSub|startSubSub|count:1|endSubSub|endSub|startSub|startSubSub|count:0|endSubSub|endSub|end", String.Join('|', log));
     }
 
@@ -134,7 +134,7 @@ public class BpmnLoops
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(12, log.Length);
+        Assert.AreEqual(12, log!.Length);
         Assert.AreEqual("start|startSub|startSubSub|count:1|endSubSub|endSub|startSub|startSubSub|count:0|endSubSub|endSub|end", String.Join('|', log));
     }
 }

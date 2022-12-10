@@ -97,9 +97,9 @@ public class AutoStart
             Assert.AreEqual("Complete", instModel.Eval<String>("Instance.ExecutionStatus"));
             String? state = instModel.Eval<String>("Instance.State");
             Assert.IsNotNull(state);
-            var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state);
+            var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state!);
             Assert.IsNotNull(stateObj);
-            var intVal = stateObj.Eval<Int64>("Variables.Process_1.X");
+            var intVal = stateObj!.Eval<Int64>("Variables.Process_1.X");
             Assert.AreEqual(val, intVal);
         }
 
@@ -214,7 +214,7 @@ public class AutoStart
 
         var tracks = asModel.Root.Get<List<ExpandoObject>>("Track");
         Assert.IsNotNull(tracks);
-        Assert.AreEqual(3, tracks.Count);
+        Assert.AreEqual(3, tracks!.Count);
 	}
 }
 
