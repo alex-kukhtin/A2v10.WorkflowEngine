@@ -37,8 +37,8 @@ namespace A2v10.Workflow.Tests
 
         public Task SaveAsync(IWorkflowDescriptor workflow)
         {
-            if (_storage.ContainsKey(workflow.Id))
-                _storage[workflow.Id].Body = workflow.Body;
+            if (_storage.TryGetValue(workflow.Id, out var catWorkflow))
+                catWorkflow.Body = workflow.Body;
             else
                 _storage.Add(workflow.Id, new CatalogWorkflow(body: workflow.Body, format: workflow.Format));
             return Task.CompletedTask;
