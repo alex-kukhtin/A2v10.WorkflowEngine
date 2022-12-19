@@ -102,6 +102,34 @@ namespace A2v10.Workflow.Tests
             // keys?
         }
 
+        [TestMethod]
+        public void NativeWithArguments()
+        {
+            var sp = TestEngine.ServiceProvider();
+
+            var eng = new Engine(opts =>
+            {
+                opts.Strict(true);
+                opts.SetWrapObjectHandler((e, o) =>
+                {
+                    if (o is IInjectable injectable)
+                        injectable.Inject(sp);
+                    return new ObjectWrapper(e, o);
+                });
+            });
+            eng.AddNativeObjects(new ScriptNativeObjects());
+
+            var val = eng.Evaluate("var x = new Args('String', 5, 2000); return {a1: x.Argument1(), a2: x.Argument2(), a3: x.Argument3 };").ToObject();
+            if (val is ExpandoObject valEo)
+            {
+                Assert.AreEqual("String", valEo.Get<String>("a1"));
+                Assert.AreEqual(5, valEo.Get<Int32>("a2"));
+                Assert.AreEqual(2000, valEo.Get<Int64>("a3"));
+            }
+            else
+                Assert.Fail(val.GetType().ToString());
+        }
+
 
         const String programCount = @"
 () => {

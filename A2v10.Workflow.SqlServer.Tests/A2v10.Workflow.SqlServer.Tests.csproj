@@ -4,7 +4,7 @@
 		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<LangVersion>10.0</LangVersion>
-
+		<IsTestProject>true</IsTestProject>
 		<UserSecretsId>4d3e5faf-b1e2-41fd-90c8-cdbde7661074</UserSecretsId>
 	</PropertyGroup>
 
@@ -22,7 +22,7 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
 		<PackageReference Include="MSTest.TestAdapter" Version="3.0.0" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.0.0" />
 		<PackageReference Include="coverlet.collector" Version="3.2.0">
