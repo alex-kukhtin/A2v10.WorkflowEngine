@@ -19,7 +19,7 @@
   top: 0;
   bottom: 0;
   right: 0;
-  width: 290px;
+  width: 310px;
   z-index: 10;
   border-left: 1px solid #ccc;
   border-top: 1px solid #ccc;
@@ -34,7 +34,15 @@
   padding-bottom: 70px;
   min-height: 100%;
 }
-.properties-panel-parent > .bpp-properties-panel .js-text {
-  font-family: Consolas, "Courier New", Courier, monospace;
-  white-space: pre;
+.properties-panel-parent > .bpp-properties-panel .js-wrap {
+  display: none;
+}
+.properties-panel-parent > .bpp-properties-panel .ace_editor {
+  border: 1px solid #ccc;
+  height: 98px;
+}
+.properties-panel-parent > .bpp-properties-panel .ace_editor.ace_focus {
+  border-color: #1a70ff;
+  border-color: #1a70ff;
+  box-shadow: 0 0 0 2px #a2c5ff, 0 0 0 1px #cdcdcd inset;
 }

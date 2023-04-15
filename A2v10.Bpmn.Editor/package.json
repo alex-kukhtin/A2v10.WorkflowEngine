@@ -1,6 +1,6 @@
 {
 	"name": "a2v10.bpmn.editor",
-	"version": "0.0.0",
+	"version": "10.0.0",
 	"description": "A2v10.Bpmn.Editor",
 	"private": true,
 	"main": "server.js",

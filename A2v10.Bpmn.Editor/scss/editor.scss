@@ -21,7 +21,7 @@ html, body {
 	top: 0;
 	bottom: 0;
 	right: 0;
-	width: 290px;
+	width: 310px;
 	z-index: 10;
 	border-left: 1px solid $border-color;
 	border-top:1px solid $border-color;
@@ -37,8 +37,23 @@ html, body {
 	min-height: 100%;
 
 	.js-text {
-		font-family: Consolas, 'Courier New', Courier, monospace;
-		white-space:pre;
+		//font-family: Consolas, 'Courier New', Courier, monospace;
+		//white-space: pre;
+	}
+
+	.js-wrap {
+		display: none;
+	}
+
+	.ace_editor {
+		border: 1px solid $border-color;
+		height:98px;
+	}
+
+	.ace_editor.ace_focus {
+		border-color: #1a70ff;
+		border-color: #1a70ff;
+		box-shadow: 0 0 0 2px #a2c5ff, 0 0 0 1px #cdcdcd inset;
 	}
 }
 

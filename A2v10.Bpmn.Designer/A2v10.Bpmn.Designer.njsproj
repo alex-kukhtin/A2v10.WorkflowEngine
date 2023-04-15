@@ -6,7 +6,7 @@
     <RootNamespace>A2v10.Bpmn.Designer</RootNamespace>
     <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
     <NodeExePath>.\node_modules\electron\dist\electron.exe</NodeExePath>
-    <ScriptArguments>D:\Git\A2v10.WorkflowEngine\A2v10.Workflow.Tests\TestFiles\user_task_1.bpmn</ScriptArguments>
+    <ScriptArguments>C:\A2v10_Net6\A2v10.WorkflowEngine\A2v10.Workflow.Tests\TestFiles\user_task_1.bpmn</ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -42,6 +42,7 @@
     <Content Include="css\editor.css" />
     <Content Include="css\editor.min.css" />
     <Content Include="favicon.ico" />
+    <Content Include="js\ace.min.js" />
     <Content Include="js\bpmn-editor.js" />
     <Content Include="js\bpmn-editor.min.js" />
     <Content Include="js\bpmn-viewer.js" />
@@ -49,6 +50,8 @@
     <Content Include="index.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="js\mode-javascript.js" />
+    <Content Include="js\theme-sqlserver.js" />
     <Content Include="main.js" />
     <Content Include="designer.js" />
     <Content Include="document.js" />

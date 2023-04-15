@@ -8,11 +8,14 @@ import cmdHelper from 'bpmn-js-properties-panel/lib/helper/CmdHelper';
 
 export default function globalScriptProps(group, element, bpmnFactory, translate) {
 	if (is(element, "bpmn:Collaboration") || is(element, "bpmn:Process")) {
-		let textBox = entryFactory.textBox(translate, {
+		let textBox = entryFactory.scriptBox(translate, {
 			id: 'script',
 			label: translate('Global Script'),
 			modelProperty: 'text',
 			isScript: true,
+			element: element,
+			minLines: 20,
+			maxLines: 20,
 			get(elem, node) {
 				let ee = extensionElementsImpl.getExtensionElement(elem, "wf:GlobalScript");
 				return ee ? { text: ee.text } : {};

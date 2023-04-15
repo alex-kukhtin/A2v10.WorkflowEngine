@@ -1,8 +1,8 @@
-﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Alex Kukhtin. All rights reserved.
 
 'use strict';
 
-const version = '10.1.8092'
+const version = '10.1.8094'
 
 const { dialog } = require('electron')
 const fs = require('fs');
@@ -181,7 +181,7 @@ function showAbout(mi, bw) {
 		message: 'About A2v10 BPMN Designer',
 		type: 'info',
 		detail: 'version: ' + version +
-			'\n\nCopyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.' +
+			'\n\nCopyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.' +
 			'\n\nPowered by https://bpmn.io',
 		title: 'A2v10.Bpmn.Designer',
 		icon: __dirname + '/favicon.ico'

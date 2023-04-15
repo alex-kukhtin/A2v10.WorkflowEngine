@@ -10,11 +10,12 @@ import cmdHelper from 'bpmn-js-properties-panel/lib/helper/CmdHelper';
 export default function inboxProps(group, element, bpmnFactory, translate) {
 	if (!isAny(element, ["bpmn:UserTask"]))
 		return;
-	let inboxText = entryFactory.textBox(translate, {
+	let inboxText = entryFactory.scriptBox(translate, {
 		id: 'inbox',
 		label: translate('Inbox'),
 		isScript: true,
 		modelProperty: 'text',
+		element: element,
 		get(elem, node) {
 			let ee = extensionElementsImpl.getExtensionElement(elem, "wf:Inbox");
 			return ee ? { text: ee.text } : {};

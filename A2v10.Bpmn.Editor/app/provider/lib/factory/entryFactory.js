@@ -7,6 +7,7 @@ import textInputField from './textInputEntryFactory';
 import checkboxField from './CheckboxEntryFactory';
 import selectBoxField from './selectEntryFactory';
 import textBoxField from './textBoxEntryFactory';
+import scriptBoxField from './scriptBoxEntryFactory';
 import validationAwareTextInputField from './validationAwareTextInput';
 import comboBoxField from './comboEntryFactory';
 import autoSuggestTextBoxField from './autoSuggestTextBoxFactory';
@@ -151,6 +152,10 @@ EntryFactory.selectBox = function (translate, options) {
 
 EntryFactory.comboBox = function (translate, options) {
     return comboBoxField(translate, options);
+};
+
+EntryFactory.scriptBox = function (translate, options) {
+    return scriptBoxField(translate, options, setDefaultParameters(options));
 };
 
 /*

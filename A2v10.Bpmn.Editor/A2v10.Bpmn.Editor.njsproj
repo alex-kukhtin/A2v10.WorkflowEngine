@@ -46,6 +46,7 @@
     <Content Include="app\provider\lib\factory\entryFactory.js" />
     <Content Include="app\provider\lib\factory\linkEntryFactory.js" />
     <Content Include="app\provider\lib\factory\selectEntryFactory.js" />
+    <Content Include="app\provider\lib\factory\scriptBoxEntryFactory.js" />
     <Content Include="app\provider\lib\factory\textBoxEntryFactory.js" />
     <Content Include="app\provider\lib\factory\textInputEntryFactory.js" />
     <Content Include="app\provider\lib\factory\validationAwareTextInput.js" />
@@ -98,6 +99,9 @@
     <Content Include="index.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="lib\ace.min.js" />
+    <Content Include="lib\mode-javascript.js" />
+    <Content Include="lib\theme-sqlserver.js" />
     <Content Include="scss\editor.scss" />
     <Content Include="server.js" />
     <Content Include="package.json" />
@@ -119,6 +123,7 @@
     <Folder Include="css\bpmn\bpmn-font\" />
     <Folder Include="css\bpmn\font\" />
     <Folder Include="dist\" />
+    <Folder Include="lib\" />
     <Folder Include="scss\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
