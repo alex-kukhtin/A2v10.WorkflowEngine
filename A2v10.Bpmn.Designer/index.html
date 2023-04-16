@@ -12,6 +12,21 @@
 <body>
 	<div class="editor-canvas" id="canvas"></div>
 	<div class="properties-panel-parent" id="js-properties-panel"></div>
+	<div id="script-editor" class="backdrop">
+		<div class="modal">
+			<div class="modal-header">
+				<span>Script editor</span>
+				<button class="close" id="ace-editor-close">✕</button>
+			</div>
+			<div class="modal-content">
+				<div id="ace-editor-element" class="ace-full-editor"></div>
+			</div>
+			<div class="modal-footer">
+				<button id="ace-editor-ok">OK</button>
+				<button id="ace-editor-cancel">Cancel</button>
+			</div>
+		</div>
+	</div>
 
 	<script type="text/javascript" src="./js/ace.min.js"></script>
 	<script type="text/javascript" src="./js/mode-javascript.js"></script>

@@ -46,3 +46,63 @@
   border-color: #1a70ff;
   box-shadow: 0 0 0 2px #a2c5ff, 0 0 0 1px #cdcdcd inset;
 }
+.properties-panel-parent > .bpp-properties-panel .script-edit-button {
+  position: absolute;
+  right: 0;
+  top: -25px;
+}
+
+.backdrop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.15);
+  z-index: 11;
+  display: none;
+}
+
+.modal {
+  margin: 100px auto;
+  width: 800px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12);
+}
+.modal button {
+  border: none;
+  color: black;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+}
+.modal button:hover, .modal button:active {
+  background-color: #ccc;
+}
+.modal .modal-header {
+  padding: 10px;
+  background-color: #f8f8f8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal .modal-header button.close {
+  padding: 4px;
+  min-width: 27px;
+}
+.modal .modal-footer {
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-top: 1px solid #ccc;
+  display: flex;
+  justify-content: end;
+  gap: 12px;
+}
+.modal .modal-footer button {
+  min-width: 90px;
+  padding: 7px 20px;
+}
+.modal .modal-content .ace-full-editor {
+  height: 500px;
+}

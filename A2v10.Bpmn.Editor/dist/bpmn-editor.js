@@ -1200,7 +1200,7 @@ var scriptBox = function (translate, options, defaultParameters) {
       canBeShown = !!options.show && typeof options.show === 'function',
       description = options.description;
   let resid = 'wf-' + (0, _Utils.escapeHTML)(resource.id);
-  resource.html = (0, _minDom.domify)('<label for="wf-' + (0, _Utils.escapeHTML)(resource.id) + '" ' + (canBeShown ? 'data-show="isShown"' : '') + '>' + label + '</label>' + '<div class="bpp-field-wrapper ace-wrapper" ' + (canBeShown ? 'data-show="isShown"' : '') + '>' + '<div name=text class=js-script id="' + resid + '">' + '</div>'); // add description below text box entry field
+  resource.html = (0, _minDom.domify)('<label for="wf-' + resid + '" ' + (canBeShown ? 'data-show="isShown"' : '') + '>' + label + '</label>' + '<div class="bpp-field-wrapper ace-wrapper" ' + (canBeShown ? 'data-show="isShown"' : '') + '>' + '<div name=text class=js-script id="' + resid + '">' + '</div>' + '<button class="script-edit-button" data-action="editScript"><span>Edit</span></button>'); // add description below text box entry field
 
   if (description) {
     resource.html.appendChild((0, _EntryFieldDescription.default)(translate, description, {
@@ -1218,6 +1218,23 @@ var scriptBox = function (translate, options, defaultParameters) {
   resource.set = options.set;
   resource.get = options.get;
   let wfScript = resource.html.getElementById(resid);
+
+  resource.editScript = function () {
+    let text = this.get(options.element, null);
+    let sc = document.getElementById('script-editor');
+    if (sc._open_) sc._open_(text[options.modelProperty] || '', edited => {
+      let pp = window.PropertiesPanel;
+      let values = {};
+      values[options.modelProperty] = edited;
+      resource.scripteditor.setValue(edited, 1);
+
+      if (typeof resource.set === 'function') {
+        pp.applyChanges(resource, values, resource.html);
+        pp.updateState(resource, resource.html);
+      }
+    });
+  };
+
   resource.scripteditor = ace.edit(wfScript, {
     useWorker: false,
     fontSize: 16,

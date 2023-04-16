@@ -21,6 +21,21 @@
 		<button id="zoomMinusBtn">zoom-</button>
 		<button id="zoomPlusBtn">zoom+</button>
 	</div>
+	<div id="script-editor" class="backdrop">
+		<div class="modal">
+			<div class="modal-header">
+				<span>Script editor</span>
+				<button class="close" id="ace-editor-close">✕</button>
+			</div>
+			<div class="modal-content">
+				<div id="ace-editor-element" class="ace-full-editor"></div>
+			</div>
+			<div class="modal-footer">
+				<button id="ace-editor-ok">OK</button>
+				<button id="ace-editor-cancel">Cancel</button>
+			</div>
+		</div>
+	</div>
 
 	<script type="text/javascript" src="/lib/ace.min.js" charset="utf-8"></script>
 	<script type="text/javascript" src="/lib/mode-javascript.js" charset="utf-8"></script>
@@ -32,6 +47,7 @@
 			let pp = bpmnModeler.get("propertiesPanel");
 			window.PropertiesPanel = pp;
 			let wf = await fetch('/workflows/default.bpmn');
+			let scriptEditor = null;
 			bpmnModeler.importXML(await wf.text());
 			document.getElementById('logBtn').addEventListener('click', async () => {
 				console.dir(bpmnModeler);
@@ -52,6 +68,43 @@
 				let zl = cv.zoom();
 				zl -= .5;
 				cv.zoom(zl, 'fit-viewport');
+			});
+			let sc = document.getElementById('script-editor');
+			sc._open_ = function (text, callback) {
+				sc.style.display = 'block';
+				sc._callback_ = callback;
+				scriptEditor.setValue(text, 1);
+				scriptEditor.focus();
+			};
+			sc._close_ = function () {
+				if (sc._callback_) {
+					let txt = scriptEditor.getValue();
+					sc._callback_(txt);
+					sc._callback_ = null;
+				}
+				sc.style.display = 'none';
+			};
+			document.getElementById('ace-editor-ok').addEventListener('click', () => {
+				sc._close_();
+			});
+
+			function aceClose() {
+				sc._callback_ = null;
+				sc.style.display = 'none';
+			}
+
+			['ace-editor-cancel', 'ace-editor-close'].forEach(x => {
+				document.getElementById(x).addEventListener('click', aceClose);
+			});
+
+			let aee = document.getElementById('ace-editor-element');
+			scriptEditor = ace.edit(aee, {
+				useWorker: false,
+				fontSize: 16,
+				tabSize: 2,
+				highlightActiveLine: false,
+				theme: 'ace/theme/sqlserver',
+				mode: 'ace/mode/javascript'
 			});
 		})();
 	</script>
