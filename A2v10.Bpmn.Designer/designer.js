@@ -102,7 +102,8 @@ scriptEditor = ace.edit(aee, {
 	fontSize: 16,
 	tabSize: 2,
 	highlightActiveLine: false,
-	theme: 'ace/theme/sqlserver',
+	showPrintMargin: false,
+	theme: 'ace/theme/default',
 	mode: 'ace/mode/javascript'
 });
 

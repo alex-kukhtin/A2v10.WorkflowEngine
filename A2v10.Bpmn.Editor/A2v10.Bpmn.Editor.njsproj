@@ -101,7 +101,11 @@
     </Content>
     <Content Include="lib\ace.min.js" />
     <Content Include="lib\mode-javascript.js" />
+    <Content Include="lib\theme-default.js" />
     <Content Include="lib\theme-sqlserver.js" />
+    <Content Include="scss\default_theme.css" />
+    <Content Include="scss\default_theme.min.css" />
+    <Content Include="scss\default_theme.scss" />
     <Content Include="scss\editor.scss" />
     <Content Include="server.js" />
     <Content Include="package.json" />

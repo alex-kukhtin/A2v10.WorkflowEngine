@@ -39,7 +39,7 @@
 
 	<script type="text/javascript" src="/lib/ace.min.js" charset="utf-8"></script>
 	<script type="text/javascript" src="/lib/mode-javascript.js" charset="utf-8"></script>
-	<script type="text/javascript" src="/lib/theme-sqlserver.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/lib/theme-default.js" charset="utf-8"></script>
 	<script type="text/javascript" src="/dist/bpmn-editor.js"></script>
 	<script type="text/javascript">
 		(async function () {
@@ -100,10 +100,10 @@
 			let aee = document.getElementById('ace-editor-element');
 			scriptEditor = ace.edit(aee, {
 				useWorker: false,
-				fontSize: 16,
 				tabSize: 2,
 				highlightActiveLine: false,
-				theme: 'ace/theme/sqlserver',
+				showPrintMargin: false,
+				theme: 'ace/theme/default',
 				mode: 'ace/mode/javascript'
 			});
 		})();

@@ -8,6 +8,6 @@
 		"name": "Oleksandr Kukhtin"
 	},
 	"dependencies": {
-		"electron": "^13.2.2"
+		"electron": "^24.1.2"
 	}
 }

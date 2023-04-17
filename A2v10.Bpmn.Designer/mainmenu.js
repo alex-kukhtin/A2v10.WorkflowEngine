@@ -2,7 +2,7 @@
 
 'use strict';
 
-const version = '10.1.8094'
+const version = '10.1.8097'
 
 const { dialog } = require('electron')
 const fs = require('fs');
@@ -182,7 +182,8 @@ function showAbout(mi, bw) {
 		type: 'info',
 		detail: 'version: ' + version +
 			'\n\nCopyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.' +
-			'\n\nPowered by https://bpmn.io',
+			'\n\nPowered by https://bpmn.io' + 
+			'\nuses ACE script editor (https://ace.c9.io)',
 		title: 'A2v10.Bpmn.Designer',
 		icon: __dirname + '/favicon.ico'
 	});

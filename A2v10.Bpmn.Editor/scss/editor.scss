@@ -32,6 +32,11 @@ html, body {
 	display: none;
 }
 
+.ace_editor.ace-default {
+	font-family: 'Cascadia Code', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'Source Code Pro', 'source-code-pro', monospace;
+	font-size:14px;
+}
+
 .properties-panel-parent > .bpp-properties-panel {
 	padding-bottom: 70px;
 	min-height: 100%;
@@ -111,7 +116,7 @@ html, body {
 		background-color: #f8f8f8;
 		border-top: 1px solid $border-color;
 		display: flex;
-		justify-content: end;
+		justify-content: flex-end;
 		gap: 12px;
 
 		button {

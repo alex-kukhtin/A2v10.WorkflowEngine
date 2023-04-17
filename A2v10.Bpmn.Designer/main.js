@@ -14,7 +14,7 @@ function createWindow() {
 		title: 'A2v10 Bpmn Designer',
 		icon: __dirname + '/favicon.ico',
 		webPreferences: {
-			preload: 'preload.js',
+			//preload: '/preload.js',
 			sandbox: false,
 			nodeIntegration: true,
 			contextIsolation: false,

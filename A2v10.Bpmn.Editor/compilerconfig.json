@@ -1,6 +1,10 @@
 ﻿[
-  {
-    "outputFile": "css/editor.css",
-    "inputFile": "scss/editor.scss"
-  }
+	{
+		"outputFile": "css/editor.css",
+		"inputFile": "scss/editor.scss"
+	},
+	{
+		"outputFile": "scss/default_theme.css",
+		"inputFile": "scss/default_theme.scss"
+	}
 ]

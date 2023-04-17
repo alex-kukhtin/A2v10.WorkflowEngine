@@ -52,12 +52,12 @@ var scriptBox = function (translate, options, defaultParameters) {
 	};
 	resource.scripteditor = ace.edit(wfScript, {
 		useWorker: false,
-		fontSize: 16,
 		tabSize: 2,
 		showGutter: false,
 		highlightActiveLine: false,
-		theme: 'ace/theme/sqlserver',
+		theme: 'ace/theme/default',
 		mode: 'ace/mode/javascript',
+		showPrintMargin:false,
 		minLines: options.minLines || 3,
 		maxLines: options.maxLines || 5
 	});
