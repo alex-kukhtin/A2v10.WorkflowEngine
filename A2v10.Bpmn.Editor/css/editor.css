@@ -34,6 +34,9 @@
   font-family: "Cascadia Code", "Monaco", "Menlo", "Ubuntu Mono", "Consolas", "Source Code Pro", "source-code-pro", monospace;
   font-size: 14px;
 }
+.ace_editor.ace-default .ace_hidden-cursors .ace_cursor {
+  opacity: 0;
+}
 
 .properties-panel-parent > .bpp-properties-panel {
   padding-bottom: 70px;
