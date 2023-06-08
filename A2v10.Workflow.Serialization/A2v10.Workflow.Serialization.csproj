@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-		<Version>10.1.8102</Version>
+		<Version>10.1.8103</Version>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
 		<PackageId>A2v10.Workflow.Serialization</PackageId>
@@ -10,7 +10,7 @@
 		<Company>Oleksandr Kukthin</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>A2v10 workflow serialization</Description>
-		<Copyright>Copyright © 2015-2022 Oleksandr Kukthin. All rights reserved.</Copyright>
+		<Copyright>Copyright © 2015-2023 Oleksandr Kukthin. All rights reserved.</Copyright>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>A2v10 Platform Workflow</PackageTags>
 		<RepositoryUrl>https://github.com/alex-kukhtin/A2v10.WorkflowEngine</RepositoryUrl>

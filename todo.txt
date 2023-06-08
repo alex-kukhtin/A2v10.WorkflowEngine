@@ -11,6 +11,7 @@ Designer
 ========
 1. Add/Remove buttons css (wrapper & remove position:absolute)
 6. Variable Name. Reserved words : Date, String, Boolean, Number
+7. bpmn.io dialog could not close!
 
 
 Engine
