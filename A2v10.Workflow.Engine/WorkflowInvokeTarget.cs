@@ -1,11 +1,12 @@
-﻿// Copyright © 2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2021-2023 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Runtime.Interfaces;
 using A2v10.Workflow.Interfaces;
 using System.Dynamic;
 using System.Threading.Tasks;
 
-namespace A2v10.WorkflowEngine;
+namespace A2v10.Workflow.Engine;
+
 public class WorkflowInvokeTarget : IRuntimeInvokeTarget
 {
     private readonly IWorkflowEngine _engine;
