@@ -57,10 +57,8 @@ public class ExpandoObjectConverterArray : ExpandoObjectConverter
             switch (reader.TokenType)
             {
                 case JsonToken.PropertyName:
-                    String? propertyName = reader.Value!.ToString();
-                    if (propertyName == null)
-                        throw new JsonSerializationException("PropertyName not set");
-
+                    String? propertyName = reader.Value!.ToString() 
+                        ?? throw new JsonSerializationException("PropertyName not set");
                     if (!reader.Read())
                         throw new JsonSerializationException("Unexpected end when reading ExpandoObject.");
 

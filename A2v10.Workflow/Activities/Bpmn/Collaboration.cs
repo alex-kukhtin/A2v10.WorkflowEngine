@@ -56,9 +56,8 @@ public class Collaboration : BpmnActivity, IScoped, IExternalScoped
             return;
         foreach (var participant in Children.OfType<Participant>())
         {
-            var prc = processes.FirstOrDefault(p => p.Id == participant.ProcessRef);
-            if (prc == null)
-                throw new WorkflowException($"Process '{participant.ProcessRef}' not found");
+            var prc = processes.FirstOrDefault(p => p.Id == participant.ProcessRef) 
+                ?? throw new WorkflowException($"Process '{participant.ProcessRef}' not found");
             participant.EnsureChildren();
             if (participant.Children == null)
                 throw new WorkflowException($"Participant '{participant.ProcessRef}' has no children");
@@ -68,9 +67,8 @@ public class Collaboration : BpmnActivity, IScoped, IExternalScoped
 
     public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
     {
-        var parts = Children?.OfType<Participant>();
-        if (parts == null)
-            throw new WorkflowException("No participants in the Collaboration");
+        var parts = (Children?.OfType<Participant>()) 
+            ?? throw new WorkflowException("No participants in the Collaboration");
         if (parts.Count() != 1)
             throw new WorkflowException("Collaboration has multiply participants. Yet not implemented");
         return parts.First().ExecuteAsync(context, token);

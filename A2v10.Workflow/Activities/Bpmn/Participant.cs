@@ -31,9 +31,8 @@ public class Participant : BpmnActivity, IScoped
 
     public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
     {
-        var process = Children?.OfType<Process>().FirstOrDefault(itm => itm.Id == ProcessRef);
-        if (process == null)
-            throw new WorkflowException($"Process '{ProcessRef}' not found");
+        var process = (Children?.OfType<Process>().FirstOrDefault(itm => itm.Id == ProcessRef)) 
+            ?? throw new WorkflowException($"Process '{ProcessRef}' not found");
         return process.ExecuteAsync(context, token);
     }
 }

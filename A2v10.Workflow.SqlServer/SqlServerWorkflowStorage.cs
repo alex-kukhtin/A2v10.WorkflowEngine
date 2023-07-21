@@ -34,9 +34,8 @@ public class SqlServerWorkflowStorage : IWorkflowStorage
 
     public async Task<IWorkflow> LoadAsync(IWorkflowIdentity identity)
     {
-        var eo = await LoadWorkflowAsync(identity);
-        if (eo == null)
-            throw new SqlServerStorageException($"Workflow not found. (Id:'{identity.Id}', Version:{identity.Version})");
+        var eo = await LoadWorkflowAsync(identity) 
+            ?? throw new SqlServerStorageException($"Workflow not found. (Id:'{identity.Id}', Version:{identity.Version})");
         var wf = new WorkflowElement(
             new WorkflowIdentity(
                 eo.GetNotNull<String>("Id"),
@@ -49,9 +48,8 @@ public class SqlServerWorkflowStorage : IWorkflowStorage
 
     public async Task<String> LoadSourceAsync(IWorkflowIdentity identity)
     {
-        var eo = await LoadWorkflowAsync(identity);
-        if (eo == null)
-            throw new SqlServerStorageException($"LoadSource. Workflow not found. (Id:'{identity.Id}', Version:{identity.Version})");
+        var eo = await LoadWorkflowAsync(identity) 
+            ?? throw new SqlServerStorageException($"LoadSource. Workflow not found. (Id:'{identity.Id}', Version:{identity.Version})");
         return eo.Get<String>("Text") ?? throw new SqlServerStorageException("Load source failed");
     }
 
@@ -63,9 +61,8 @@ public class SqlServerWorkflowStorage : IWorkflowStorage
             { "Text", text }
         };
         _dbIdentity.SetIdentityParams(prms);
-        var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Workflow.Publish]", prms);
-        if (res == null)
-            throw new WorkflowException("Publish failed");
+        var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Workflow.Publish]", prms) 
+            ?? throw new WorkflowException("Publish failed");
         return new WorkflowIdentity(
             res.GetNotNull<String>("Id"),
             res.Get<Int32>("Version")
@@ -78,12 +75,8 @@ public class SqlServerWorkflowStorage : IWorkflowStorage
             { "Id", id }
         };
         _dbIdentity.SetIdentityParams(prms);
-        var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Catalog.Publish]", prms);
-
-        if (res == null)
-            throw new SqlServerStorageException($"Publish. Workflow not found. (Id:'{id}')");
-
-
+        var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Catalog.Publish]", prms) 
+            ?? throw new SqlServerStorageException($"Publish. Workflow not found. (Id:'{id}')");
         return new WorkflowIdentity(
             res.GetNotNull<String>("Id"),
             res.Get<Int32>("Version")

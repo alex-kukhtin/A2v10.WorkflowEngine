@@ -36,11 +36,8 @@ public class CallbackItem
         var refer = activityTarget.Id;
 
         var custAttr = (StoreNameAttribute?)callback.Method.GetCustomAttributes(inherit: true)
-            ?.FirstOrDefault(attr => attr is StoreNameAttribute);
-
-        if (custAttr == null)
-            throw new InvalidOperationException("callback.Method has no StoreName attribute");
-
+                ?.FirstOrDefault(attr => attr is StoreNameAttribute) 
+            ?? throw new InvalidOperationException("callback.Method has no StoreName attribute");
         var cb = new CallbackItem
         (
             refer: refer,

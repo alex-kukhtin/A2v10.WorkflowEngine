@@ -16,9 +16,8 @@ public class Process : ProcessBase
         _token = token;
         if (!IsExecutable || Children == null)
             return ValueTask.CompletedTask;
-        var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart);
-        if (start == null)
-            throw new WorkflowException($"Process (Id={Id}). Start event not found");
+        var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart) 
+            ?? throw new WorkflowException($"Process (Id={Id}). Start event not found");
         context.Schedule(start, token);
         return ValueTask.CompletedTask;
     }

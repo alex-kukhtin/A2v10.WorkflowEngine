@@ -71,7 +71,7 @@ public static class TestEngine
         return await wfe.RunAsync(inst.Id, prms);
     }
 
-    public static async ValueTask<IWorkflowIdentity> SimplePublish(String id, String text, ExpandoObject? prms = null, String? correlationId = null)
+    public static async ValueTask<IWorkflowIdentity> SimplePublish(String id, String text, ExpandoObject? _1/*prms*/ = null, String? _2/*correlationId*/ = null)
     {
         var sp = ServiceProvider();
         var wfs = sp.GetRequiredService<IWorkflowStorage>();

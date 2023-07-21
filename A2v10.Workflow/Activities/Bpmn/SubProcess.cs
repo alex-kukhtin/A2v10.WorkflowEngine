@@ -73,9 +73,8 @@ public class SubProcess : ProcessBase, ILoopable
     {
         if (Children == null)
             return ValueTask.CompletedTask;
-        var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart);
-        if (start == null)
-            throw new WorkflowException($"SubProcess (Id={Id}). Start event not found");
+        var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart) 
+            ?? throw new WorkflowException($"SubProcess (Id={Id}). Start event not found");
         context.Schedule(start, _token);
         return ValueTask.CompletedTask;
     }

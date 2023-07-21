@@ -117,8 +117,7 @@ public partial class ExecutionContext : IExecutionContext
 
     public void RemoveBookmark(String bookmark)
     {
-        if (_bookmarks.ContainsKey(bookmark))
-            _bookmarks.Remove(bookmark);
+        _bookmarks.Remove(bookmark);
     }
 
     public void SetInbox(Guid id, ExpandoObject inbox, IActivity activity, String bookmark)
@@ -145,8 +144,7 @@ public partial class ExecutionContext : IExecutionContext
 
     public void RemoveEvent(String eventKey)
     {
-        if (_events.ContainsKey(eventKey))
-            _events.Remove(eventKey);
+       _events.Remove(eventKey);
     }
 
     public T? Evaluate<T>(String refer, String name)

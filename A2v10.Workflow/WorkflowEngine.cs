@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 
 using Microsoft.Extensions.DependencyInjection;
@@ -85,7 +85,7 @@ public class WorkflowEngine : IWorkflowEngine
         });
     }
 
-    void SetInstanceState(IInstance inst, ExecutionContext context)
+    static void SetInstanceState(IInstance inst, ExecutionContext context)
     {
         inst.Result = context.GetResult();
         inst.State = context.GetState();

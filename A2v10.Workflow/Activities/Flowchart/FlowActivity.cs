@@ -42,9 +42,8 @@ namespace A2v10.Workflow
         {
             if (Next != null)
             {
-                var nextNode = ParentFlow.FindNode(Next);
-                if (nextNode == null)
-                    throw new InvalidOperationException($"Node '{Next}' not found");
+                var nextNode = ParentFlow.FindNode(Next) 
+                    ?? throw new InvalidOperationException($"Node '{Next}' not found");
                 context.Schedule(nextNode, _token);
             }
             else

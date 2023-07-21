@@ -38,9 +38,8 @@ public class InMemoryWorkflowStorage : IWorkflowStorage
             // find max version
             v = _storage.FindAll(sw => sw.WorkflowId == identity.Id).Max(x => x.Version);
         }
-        var swf = _storage.Find(x => x.WorkflowId == identity.Id && x.Version == v);
-        if (swf == null)
-            throw new KeyNotFoundException($"Workflow '{identity}' not found");
+        var swf = _storage.Find(x => x.WorkflowId == identity.Id && x.Version == v) 
+            ?? throw new KeyNotFoundException($"Workflow '{identity}' not found");
         var root = _serializer.DeserializeActitity(swf.Text, swf.Format);
         var wf = new WorkflowElement(
             new WorkflowIdentity(identity.Id, v),

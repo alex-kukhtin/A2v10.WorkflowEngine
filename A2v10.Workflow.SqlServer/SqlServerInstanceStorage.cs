@@ -61,10 +61,8 @@ public class SqlServerInstanceStorage : IInstanceStorage
             { "Id", instanceId }
         };
         _dbIdentity.SetIdentityParams(prms);
-        var dbi = await _dbContext.LoadAsync<DatabaseInstance>(null, $"{SqlDefinitions.SqlSchema}.[Instance.{suffix}]", prms);
-        if (dbi == null)
-            throw new SqlServerStorageException($"Instance '{instanceId}' not found");
-
+        var dbi = await _dbContext.LoadAsync<DatabaseInstance>(null, $"{SqlDefinitions.SqlSchema}.[Instance.{suffix}]", prms) 
+            ?? throw new SqlServerStorageException($"Instance '{instanceId}' not found");
         var identity = new WorkflowIdentity(
             dbi.WorkflowId ?? throw new InvalidProgramException("WorkflowId is null"),
             dbi.Version

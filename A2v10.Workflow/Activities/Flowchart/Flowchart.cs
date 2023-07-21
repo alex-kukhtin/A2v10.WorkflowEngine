@@ -28,9 +28,8 @@ public class Flowchart : Activity, IScoped
     {
         if (Nodes == null)
             return ValueTask.CompletedTask;
-        var start = Nodes.Find(n => n.IsStart);
-        if (start == null)
-            throw new WorkflowException($"Flowchart (Ref={Id}. Start node not found");
+        var start = Nodes.Find(n => n.IsStart) 
+            ?? throw new WorkflowException($"Flowchart (Ref={Id}. Start node not found");
         context.Schedule(start, token);
         return ValueTask.CompletedTask;
     }

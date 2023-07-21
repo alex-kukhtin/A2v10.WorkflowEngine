@@ -160,10 +160,9 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 			if (_tokens == null)
 				throw new WorkflowException("BPMNTask. Invalid Complete body status");
 			var ix = _tokens.FindIndex(x => x == _token);
-			var coll = context.Evaluate<Object[]>(Id, MultiInstanceCollectionEval);
-			if (coll == null)
-				throw new WorkflowException("BPMNTask. Collection is null");
-			if (ix < 0 || ix >= coll.Length)
+			var coll = context.Evaluate<Object[]>(Id, MultiInstanceCollectionEval) 
+				?? throw new WorkflowException("BPMNTask. Collection is null");
+            if (ix < 0 || ix >= coll.Length)
 				throw new WorkflowException("BPMNTask. Invalid Complete body index");
 			_tokens[ix] = Token.Empty();
 			ParentContainer.KillToken(_token);

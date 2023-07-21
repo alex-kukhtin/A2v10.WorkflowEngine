@@ -63,9 +63,8 @@ public abstract class ProcessBase : FlowElement, IContainer, IStorable, IScoped,
 
     public T FindElement<T>(String id)
     {
-        var elem = Activities.FirstOrDefault(e => e.Id == id);
-        if (elem == null)
-            throw new WorkflowException($"BPMN. Element (Id = {id}) not found");
+        var elem = Activities.FirstOrDefault(e => e.Id == id) 
+            ?? throw new WorkflowException($"BPMN. Element (Id = {id}) not found");
         if (elem is T elemT)
             return elemT;
         throw new WorkflowException($"BPMN. Invalid type for element (Id = {id}). Expected: '{typeof(T).Name}', Actual: '{elem.GetType().Name}'");

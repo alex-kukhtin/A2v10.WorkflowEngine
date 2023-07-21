@@ -39,9 +39,8 @@ namespace A2v10.Workflow
 
         public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
         {
-            var startNode = States?.Find(s => s.IsStart);
-            if (startNode == null)
-                throw new WorkflowException("Flowchart. Start node not found");
+            var startNode = (States?.Find(s => s.IsStart)) 
+                ?? throw new WorkflowException("Flowchart. Start node not found");
             _currentState = startNode.Id;
             context.Schedule(startNode, token);
             return ValueTask.CompletedTask;
