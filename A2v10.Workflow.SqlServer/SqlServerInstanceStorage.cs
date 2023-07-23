@@ -1,11 +1,12 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
-using A2v10.Data.Interfaces;
-using A2v10.Workflow.Interfaces;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using A2v10.Data.Interfaces;
+using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer;
 
@@ -31,17 +32,20 @@ public record DbDate
 public class SqlServerInstanceStorage : IInstanceStorage
 {
     private readonly IDbContext _dbContext;
-    private readonly IDbIdentity _dbIdentity;
     private readonly IWorkflowStorage _workflowStorage;
     private readonly ISerializer _serializer;
+    private readonly IDataSourceProvider _dataSourceProvider;
 
-    public SqlServerInstanceStorage(IDbContext dbContext, IDbIdentity dbIdentity, IWorkflowStorage workflowStorage, ISerializer serializer)
+    public SqlServerInstanceStorage(IDbContext dbContext, IWorkflowStorage workflowStorage, ISerializer serializer,
+        IDataSourceProvider dataSouceProvider)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _workflowStorage = workflowStorage ?? throw new ArgumentNullException(nameof(workflowStorage));
         _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-        _dbIdentity = dbIdentity;
+        _dataSourceProvider = dataSouceProvider ?? throw new ArgumentNullException(nameof(dataSouceProvider));
     }
+
+    private String? DataSource => _dataSourceProvider.DataSource;
 
     #region IInstanceStorage
     public Task<IInstance> Load(Guid instanceId)
@@ -60,8 +64,8 @@ public class SqlServerInstanceStorage : IInstanceStorage
         {
             { "Id", instanceId }
         };
-        _dbIdentity.SetIdentityParams(prms);
-        var dbi = await _dbContext.LoadAsync<DatabaseInstance>(null, $"{SqlDefinitions.SqlSchema}.[Instance.{suffix}]", prms) 
+        _dataSourceProvider.SetIdentityParams(prms);
+        var dbi = await _dbContext.LoadAsync<DatabaseInstance>(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.{suffix}]", prms) 
             ?? throw new SqlServerStorageException($"Instance '{instanceId}' not found");
         var identity = new WorkflowIdentity(
             dbi.WorkflowId ?? throw new InvalidProgramException("WorkflowId is null"),
@@ -91,8 +95,8 @@ public class SqlServerInstanceStorage : IInstanceStorage
             { "ExecutionStatus", instance.ExecutionStatus.ToString() },
             { "CorrelationId", instance.CorrelationId },
         };
-        _dbIdentity.SetIdentityParams(ieo);
-        await _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Create]", ieo);
+        _dataSourceProvider.SetIdentityParams(ieo);
+        await _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.Create]", ieo);
     }
 
     public async Task Save(IInstance instance)
@@ -127,7 +131,7 @@ public class SqlServerInstanceStorage : IInstanceStorage
                 foreach (var defer in instanceData.Deferred.Where(d => d.Type == DeferredElementType.Sql))
                 {
                     var epxParam = defer.Parameters.Clone();
-                    _dbIdentity.SetIdentityParams(epxParam);
+                    _dataSourceProvider.SetIdentityParams(epxParam);
                     epxParam.Add("InstanceId", instance.Id);
                     epxParam.Add("Activity", defer.Refer);
                     batches.Add(new BatchProcedure(defer.Name, epxParam));
@@ -139,14 +143,14 @@ public class SqlServerInstanceStorage : IInstanceStorage
                 foreach (var inboxCreate in inboxes.InboxCreate)
                 {
                     var eo = inboxCreate.Clone();
-                    _dbIdentity.SetIdentityParams(eo);
+                    _dataSourceProvider.SetIdentityParams(eo);
                     eo.Set("InstanceId", instance.Id);
                     batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Create]", eo));
                 }
                 foreach (var inboxDelete in inboxes.InboxRemove)
                 {
                     var eo = new ExpandoObject();
-                    _dbIdentity.SetIdentityParams(eo);
+                    _dataSourceProvider.SetIdentityParams(eo);
                     eo.Set("Id", inboxDelete);
                     eo.Set("InstanceId", instance.Id);
                     batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Remove]", eo));
@@ -154,7 +158,7 @@ public class SqlServerInstanceStorage : IInstanceStorage
             }
         }
 
-        _ = await _dbContext.SaveModelBatchAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Update]", root, null, batches);
+        _ = await _dbContext.SaveModelBatchAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.Update]", root, null, batches);
     }
 
 
@@ -167,7 +171,7 @@ public class SqlServerInstanceStorage : IInstanceStorage
             InstanceId = id,
             Message = ex.ToString()
         };
-        return _dbContext.ExecuteAsync<SqlTrackRecord>(null, $"{SqlDefinitions.SqlSchema}.[Instance.Exception]", tr);
+        return _dbContext.ExecuteAsync<SqlTrackRecord>(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.Exception]", tr);
     }
 
 
@@ -222,7 +226,7 @@ public class SqlServerInstanceStorage : IInstanceStorage
 
     public async Task<PendingElement?> GetPendingAsync()
     {
-        var dm = await _dbContext.LoadModelAsync(null, $"{SqlDefinitions.SqlSchema}.[Instance.Pending.Load]", null);
+        var dm = await _dbContext.LoadModelAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.Pending.Load]", null);
         if (dm == null || dm.Root == null)
             return null;
 
@@ -236,7 +240,7 @@ public class SqlServerInstanceStorage : IInstanceStorage
             { "Id", Id },
             { "InstanceId", instanceId }
         };
-        return _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[AutoStart.Complete]", prms);
+        return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[AutoStart.Complete]", prms);
     }
 
     public async Task<IInstance?> LoadBookmark(String bookmark)
@@ -245,8 +249,8 @@ public class SqlServerInstanceStorage : IInstanceStorage
         {
             { "Bookmark", bookmark }
         };
-        _dbIdentity.SetIdentityParams(prms);
-        var dbi = await _dbContext.LoadAsync<DatabaseInstance>(null, $"{SqlDefinitions.SqlSchema}.[Instance.LoadBookmark]", prms);
+        _dataSourceProvider.SetIdentityParams(prms);
+        var dbi = await _dbContext.LoadAsync<DatabaseInstance>(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.LoadBookmark]", prms);
         if (dbi == null)
             return null;
 
@@ -268,10 +272,9 @@ public class SqlServerInstanceStorage : IInstanceStorage
 
     public async ValueTask<DateTime> GetNowTime()
 	{
-        var dbDate = await _dbContext.LoadAsync<DbDate>(null, "a2wf.[CurrentDate.Get]");
+        var dbDate = await _dbContext.LoadAsync<DbDate>(DataSource, "a2wf.[CurrentDate.Get]");
         return dbDate?.CurrentDate ?? throw new SqlServerStorageException("CurrentDate is null");
 	}
-
     #endregion
 
 }

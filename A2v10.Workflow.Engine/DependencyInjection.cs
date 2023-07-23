@@ -4,12 +4,14 @@ using System.Collections.Generic;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Engine;
 using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.Serialization;
 using A2v10.WorkflowEngine;
+
 
 namespace Microsoft.Extensions.DependencyInjection;
 public static class WorkflowDependencyInjection
@@ -49,6 +51,26 @@ public static class WorkflowDependencyInjection
     public static IServiceCollection AddWorkflowEngineSingleton(this IServiceCollection services, Action<WorkflowEngineOptions>? options = null)
     {
         return services.AddWorkflowEngine(options, false);
+    }
+
+    public static IServiceCollection ConfigureWorkflow(this IServiceCollection services, Action<WorkflowStorageOptions> action)
+    {
+        return services.Configure<WorkflowStorageOptions>(opts =>
+        {
+            action.Invoke(opts);
+        });
+    }
+
+    public static IServiceCollection ConfigureWorkflow(this IServiceCollection services, IConfiguration configuration)
+    {
+        return services.Configure<WorkflowStorageOptions>(opts =>
+        {
+            var section = configuration.GetSection(WorkflowStoreConfiguration.ConfigurationKey);
+            var config = new WorkflowStoreConfiguration();
+            section.Bind(config);
+            opts.DataSource = config.DataSource;
+            opts.MultiTenant = config.MultiTenant;
+        });
     }
 
     public static void CheckStorageVersion(this IServiceProvider services, IHostApplicationLifetime lifetime)

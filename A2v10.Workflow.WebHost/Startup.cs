@@ -29,6 +29,8 @@ public class Startup
         {
         });
 
+        services.ConfigureWorkflow(Configuration);
+
         services.AddControllers()
         .AddNewtonsoftJson(opts =>
         {

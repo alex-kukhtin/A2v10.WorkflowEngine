@@ -11,7 +11,8 @@ public static class WorkflowSqlDependencyInjection
         coll.AddScoped<IWorkflowStorageVersion, SqlServerStorageVersion>()
         .AddScoped<IWorkflowStorage, SqlServerWorkflowStorage>()
         .AddScoped<IInstanceStorage, SqlServerInstanceStorage>()
-        .AddScoped<IWorkflowCatalog, SqlServerWorkflowCatalog>();
+        .AddScoped<IWorkflowCatalog, SqlServerWorkflowCatalog>()
+        .AddScoped<IDataSourceProvider, DataSourceProviderScoped>();
         return coll;
     }
 
@@ -20,7 +21,8 @@ public static class WorkflowSqlDependencyInjection
         coll.AddSingleton<IWorkflowStorageVersion, SqlServerStorageVersion>()
         .AddSingleton<IWorkflowStorage, SqlServerWorkflowStorage>()
         .AddSingleton<IInstanceStorage, SqlServerInstanceStorage>()
-        .AddSingleton<IWorkflowCatalog, SqlServerWorkflowCatalog>();
+        .AddSingleton<IWorkflowCatalog, SqlServerWorkflowCatalog>()
+        .AddSingleton<IDataSourceProvider, DataSourceProviderSingleton>();
         return coll;
     }
 }

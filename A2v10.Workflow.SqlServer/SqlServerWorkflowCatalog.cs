@@ -1,21 +1,24 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+
+using System.Dynamic;
+using System.Threading.Tasks;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
-using System.Dynamic;
-using System.Threading.Tasks;
 
 namespace A2v10.Workflow.SqlServer;
 public class SqlServerWorkflowCatalog : IWorkflowCatalog
 {
     private readonly IDbContext _dbContext;
-    private readonly IDbIdentity _dbIdentity;
+    private readonly IDataSourceProvider _dataSourceProvider;
 
-    public SqlServerWorkflowCatalog(IDbContext dbContext, IDbIdentity dbIdentity)
+    public SqlServerWorkflowCatalog(IDbContext dbContext, IDataSourceProvider dataSourceProvider)
     {
         _dbContext = dbContext;
-        _dbIdentity = dbIdentity;
+        _dataSourceProvider = dataSourceProvider;
     }
+
+    private String? DataSource => _dataSourceProvider.DataSource;
 
     public async Task<WorkflowElem> LoadBodyAsync(String id)
     {
@@ -23,8 +26,8 @@ public class SqlServerWorkflowCatalog : IWorkflowCatalog
         {
             {"Id", id }
         };
-        _dbIdentity.SetIdentityParams(prms);
-        return await _dbContext.LoadAsync<WorkflowElem>(null, $"{SqlDefinitions.SqlSchema}.[Catalog.Load]", prms)
+        _dataSourceProvider.SetIdentityParams(prms);
+        return await _dbContext.LoadAsync<WorkflowElem>(DataSource, $"{SqlDefinitions.SqlSchema}.[Catalog.Load]", prms)
             ?? throw new WorkflowException("Load body failed");
 
     }
@@ -43,8 +46,8 @@ public class SqlServerWorkflowCatalog : IWorkflowCatalog
             { "Format", workflow.Format},
             { "ThumbFormat", workflow.ThumbFormat }
         };
-        _dbIdentity.SetIdentityParams(prms);
-        return _dbContext.ExecuteExpandoAsync(null, $"{SqlDefinitions.SqlSchema}.[Catalog.Save]", prms);
+        _dataSourceProvider.SetIdentityParams(prms);
+        return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Catalog.Save]", prms);
     }
 }
 

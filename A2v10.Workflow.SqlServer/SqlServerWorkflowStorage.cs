@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
@@ -10,16 +10,16 @@ public class SqlServerWorkflowStorage : IWorkflowStorage
 {
     private readonly IDbContext _dbContext;
     private readonly ISerializer _serializer;
-    private readonly IDbIdentity _dbIdentity;
+    private readonly IDataSourceProvider _dataSourceProvider;
 
-    public SqlServerWorkflowStorage(IDbContext dbContext, ISerializer serializer, IDbIdentity dbIdentity)
+    public SqlServerWorkflowStorage(IDbContext dbContext, ISerializer serializer, IDataSourceProvider dataSourceProvider)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-        _dbIdentity = dbIdentity ?? throw new ArgumentNullException(nameof(dbIdentity));
+        _dataSourceProvider = dataSourceProvider ?? throw new ArgumentNullException(nameof(dataSourceProvider));
     }
 
-    private String? DataSource => String.IsNullOrEmpty(_dbIdentity.Segment) ? null : _dbIdentity.Segment;
+    private String? DataSource => _dataSourceProvider.DataSource;
 
     public Task<ExpandoObject?> LoadWorkflowAsync(IWorkflowIdentity identity)
     {
@@ -28,7 +28,7 @@ public class SqlServerWorkflowStorage : IWorkflowStorage
             { "Id", identity.Id },
             { "Version", identity.Version }
         };
-        _dbIdentity.SetIdentityParams(prms);
+        _dataSourceProvider.SetIdentityParams(prms);
         return _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Workflow.Load]", prms);
     }
 
@@ -60,7 +60,7 @@ public class SqlServerWorkflowStorage : IWorkflowStorage
             { "Format", format },
             { "Text", text }
         };
-        _dbIdentity.SetIdentityParams(prms);
+        _dataSourceProvider.SetIdentityParams(prms);
         var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Workflow.Publish]", prms) 
             ?? throw new WorkflowException("Publish failed");
         return new WorkflowIdentity(
@@ -74,7 +74,7 @@ public class SqlServerWorkflowStorage : IWorkflowStorage
         var prms = new ExpandoObject() {
             { "Id", id }
         };
-        _dbIdentity.SetIdentityParams(prms);
+        _dataSourceProvider.SetIdentityParams(prms);
         var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Catalog.Publish]", prms) 
             ?? throw new SqlServerStorageException($"Publish. Workflow not found. (Id:'{id}')");
         return new WorkflowIdentity(
