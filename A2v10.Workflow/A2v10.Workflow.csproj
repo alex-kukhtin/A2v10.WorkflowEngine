@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-		<Version>10.1.8106</Version>
+		<Version>10.1.8107</Version>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
 		<PackageId>A2v10.Workflow</PackageId>
@@ -15,11 +15,12 @@
 		<RepositoryUrl>https://github.com/alex-kukhtin/A2v10.WorkflowEngine</RepositoryUrl>
 		<PackageTags>A2v10 Platform Workflow</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="A2v10.System.Xaml" Version="10.1.8018" />
-		<PackageReference Include="Jint" Version="3.0.0-beta-2049" />
+		<PackageReference Include="A2v10.System.Xaml" Version="10.1.8020" />
+		<PackageReference Include="Jint" Version="3.0.0-beta-2050" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
 	</ItemGroup>
 
@@ -36,6 +37,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>
