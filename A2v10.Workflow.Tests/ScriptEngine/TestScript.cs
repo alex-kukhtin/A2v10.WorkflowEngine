@@ -66,7 +66,7 @@ namespace A2v10.Workflow.Tests
             var eng = new Engine(opts =>
             {
                 opts.Strict(true);
-                opts.SetWrapObjectHandler((e, o) =>
+                opts.SetWrapObjectHandler((e, o, tp) =>
                 {
                     if (o is IInjectable injectable)
                         injectable.Inject(sp);
@@ -89,7 +89,7 @@ namespace A2v10.Workflow.Tests
             var eng = new Engine(opts =>
             {
                 opts.Strict(true);
-                opts.SetWrapObjectHandler((e, o) =>
+                opts.SetWrapObjectHandler((e, o, tp) =>
                 {
                     if (o is IInjectable injectable)
                         injectable.Inject(sp);
@@ -110,7 +110,7 @@ namespace A2v10.Workflow.Tests
             var eng = new Engine(opts =>
             {
                 opts.Strict(true);
-                opts.SetWrapObjectHandler((e, o) =>
+                opts.SetWrapObjectHandler((e, o, tp) =>
                 {
                     if (o is IInjectable injectable)
                         injectable.Inject(sp);

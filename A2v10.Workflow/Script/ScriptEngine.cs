@@ -47,7 +47,7 @@ public class ScriptEngine
     private void EngineOptions(Options opts)
     {
         opts.Strict(true);
-        opts.SetWrapObjectHandler((e, o) =>
+        opts.SetWrapObjectHandler((e, o, tp) =>
         {
             if (o is IInjectable injectable)
             {
