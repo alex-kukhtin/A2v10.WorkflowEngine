@@ -97,7 +97,7 @@ public class ScriptEngine
             if (obj is T objT)
                 res = objT;
             else
-                res = (T)Convert.ChangeType(obj, typeof(T));
+                res = (T?)Convert.ChangeType(obj, typeof(T));
         }
         //_tracker.Track(new ScriptTrackRecord(ScriptTrackAction.EvaluateResult, refer, name, res));
         return res;
