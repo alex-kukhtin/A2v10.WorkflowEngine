@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Tracker;
 using Jint;
@@ -63,13 +63,13 @@ public class ScriptEngine
         if (args is ExpandoObject eo && eo.IsEmpty())
             return;
         var func = GetFunc(_root.Id, "Arguments");
-        func?.Invoke(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
+        func?.Invoke(JsValue.Undefined, [JsValue.FromObject(_engine, args)]);
     }
 
     public void Restore(String refer, Object args)
     {
         var func = GetFunc(refer, "Restore");
-        func?.Invoke(JsValue.Undefined, new JsValue[] { JsValue.FromObject(_engine, args) });
+        func?.Invoke(JsValue.Undefined, [JsValue.FromObject(_engine, args)]);
     }
 
 	public List<DeferredElement>? GetDeferred()
@@ -135,7 +135,7 @@ public class ScriptEngine
             return;
         // result must be not null
         var arg = JsValue.FromObject(_engine, result ?? new ExpandoObject());
-        func(JsValue.Undefined, new JsValue[] { arg });
+        func(JsValue.Undefined, [arg]);
     }
 
     public void SetVariable(String refer, String name, Object? value)
@@ -147,7 +147,7 @@ public class ScriptEngine
             return;
         // result may be null
         var arg = JsValue.FromObject(_engine, value);
-        func(JsValue.Undefined, new JsValue[] { arg });
+        func(JsValue.Undefined, [arg]);
     }
 }
 

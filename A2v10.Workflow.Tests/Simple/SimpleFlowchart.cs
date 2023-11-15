@@ -18,18 +18,18 @@ namespace A2v10.Workflow.Tests
             var root = new Flowchart()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>
-                {
+                Variables =
+                [
                     new Variable() {Name = "X", Dir = VariableDirection.InOut, Type=VariableType.Number},
-                },
-                Nodes = new List<FlowNode>()
-                {
+                ],
+                Nodes =
+                [
                     new FlowStart() {Id="Ref1", Next="Ref2"},
                     new FlowDecision() {Id="Ref2", Condition="X > 0", Then = "Ref3"},
                     new FlowActivity() {Id = "Ref3", Next="Ref2",
                         Activity = new Code() {Id="Ref4", Script="X -= 1" }
                     }
-                }
+                ]
             };
 
             var wfe = TestEngine.CreateInMemoryEngine();
@@ -50,24 +50,24 @@ namespace A2v10.Workflow.Tests
             var root = new Flowchart()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>
-                {
+                Variables =
+                [
                     new Variable() {Name = "X", Dir = VariableDirection.InOut, Type=VariableType.Number},
-                },
-                Nodes = new List<FlowNode>()
-                {
+                ],
+                Nodes =
+                [
                     new FlowStart() {Id="Ref1", Next="Ref2"},
                     new FlowDecision() {Id="Ref2", Condition="X > 0", Then = "Ref3"},
                     new FlowActivity() {Id = "Ref3", Next="Ref2",
                         Activity = new Sequence() {
                             Id="Ref4",
-                            Activities = new List<IActivity>() {
+                            Activities = [
                                 new Wait() {Id="Ref5", Bookmark="BM1" },
                                 new Code() {Id="Ref6", Script="X -= 1" }
-                            }
+                            ]
                         }
                     }
-                }
+                ]
             };
 
             var wfe = TestEngine.CreateInMemoryEngine();

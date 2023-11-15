@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Bpmn;
 using A2v10.Workflow.Tracker;
@@ -24,11 +24,11 @@ public record EventItem(EventAction Action, IWorkflowEvent Event);
 public partial class ExecutionContext : IExecutionContext
 {
     private readonly Queue<QueueItem> _commandQueue = new();
-    private readonly Dictionary<String, IActivity> _activities = new();
-    private readonly Dictionary<String, ResumeAction> _bookmarks = new();
-    private readonly Dictionary<String, EventItem> _events = new();
-    private readonly List<ExpandoObject> _inboxCreate = new();
-    private readonly List<Guid> _inboxRemove = new();
+    private readonly Dictionary<String, IActivity> _activities = [];
+    private readonly Dictionary<String, ResumeAction> _bookmarks = [];
+    private readonly Dictionary<String, EventItem> _events = [];
+    private readonly List<ExpandoObject> _inboxCreate = [];
+    private readonly List<Guid> _inboxRemove = [];
 
     private readonly IActivity _root;
     private readonly IInstance _instance;
@@ -94,7 +94,7 @@ public partial class ExecutionContext : IExecutionContext
         var res = _script.GetResult();
         if (_endEvent != null)
         {
-            res ??= new ExpandoObject();
+            res ??= [];
             res.Set("EndEvent", _endEvent);
         }
         return res;

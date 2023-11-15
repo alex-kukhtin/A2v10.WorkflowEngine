@@ -18,15 +18,15 @@ namespace A2v10.Workflow.Tests.Simple
             var root = new Sequence()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>{
+                Variables = [
                     new Variable() {Name = "X", Dir = VariableDirection.In, Type=VariableType.Number},
                     new Variable() {Name = "R", Dir = VariableDirection.Out, Type=VariableType.Number}
-                },
-                Activities = new List<IActivity> {
+                ],
+                Activities = [
                     new Code() {Id="Ref1", Script="X = X + 1"},
                     new Code() {Id="Ref2", Script="X = X + 1"},
                     new Code() {Id="Ref3", Script="R = X"},
-                }
+                ]
             };
 
             var wfe = TestEngine.CreateInMemoryEngine();
@@ -51,11 +51,11 @@ namespace A2v10.Workflow.Tests.Simple
             var root = new Parallel()
             {
                 Id = "Ref0",
-                Branches = new List<IActivity> {
+                Branches = [
                     new Code() {Id="Ref1", Script="console.log('ref1')"},
                     new Code() {Id="Ref2", Script="console.log('ref2')"},
                     new Code() {Id="Ref3", Script="console.log('ref3')"},
-                }
+                ]
             };
 
             var wfe = TestEngine.CreateInMemoryEngine();
@@ -69,18 +69,18 @@ namespace A2v10.Workflow.Tests.Simple
             var root = new Sequence()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable> {
+                Variables = [
                     new Variable() {Name = "X", Dir = VariableDirection.In, Type=VariableType.Number},
                     new Variable() {Name = "R", Dir = VariableDirection.Out, Type=VariableType.String}
-                },
-                Activities = new List<IActivity>{
+                ],
+                Activities = [
                     new If() {
                         Id="Ref1",
                         Condition="X > 5",
                         Then = new Code() {Id="Ref2", Script = "R = 'X > 5'"},
                         Else = new Code() {Id="Ref3", Script = "R = 'X <= 5'"}
                     }
-                }
+                ]
             };
 
             var wfe = TestEngine.CreateInMemoryEngine();
@@ -100,21 +100,21 @@ namespace A2v10.Workflow.Tests.Simple
             var root = new Sequence()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>{
+                Variables = [
                     new Variable() {Name = "X", Dir = VariableDirection.In, Type=VariableType.Number},
                     new Variable() {Name = "R", Dir = VariableDirection.Out, Type=VariableType.Number},
-                },
-                Activities = new List<IActivity> {
+                ],
+                Activities = [
                     new Code() {Id="Ref1", Script="X = X + 1"},
                     new Code() {Id="Ref2", Script="X = X + 1"},
                     new Sequence() { Id="Ref3",
-                        Activities = new List<IActivity> {
+                        Activities = [
                             new Code() {Id="Ref4", Script="X = X + 1"},
                             new Code() {Id="Ref5", Script="X = X + 1"},
-                        }
+                        ]
                     },
                     new Code() {Id="Ref7", Script="R = X"},
-                }
+                ]
             };
 
             var wfe = TestEngine.CreateInMemoryEngine();

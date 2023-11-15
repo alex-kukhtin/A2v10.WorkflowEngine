@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Dynamic;
@@ -11,20 +11,14 @@ namespace A2v10.Workflow
         Storing
     }
 
-    public class ActivityStorage : IActivityStorage
+    public class ActivityStorage(StorageState state, ExpandoObject? obj = null) : IActivityStorage
     {
-        private readonly ExpandoObject _expando;
+        private readonly ExpandoObject _expando = obj ?? [];
 
-        public Boolean IsLoading { get; set; }
+        public Boolean IsLoading { get; set; } = state == StorageState.Loading;
         public Boolean IsStoring => !IsLoading;
 
         public ExpandoObject Value => _expando;
-
-        public ActivityStorage(StorageState state, ExpandoObject? obj = null)
-        {
-            IsLoading = state == StorageState.Loading;
-            _expando = obj ?? new ExpandoObject();
-        }
 
         public T? Get<T>(String name)
         {

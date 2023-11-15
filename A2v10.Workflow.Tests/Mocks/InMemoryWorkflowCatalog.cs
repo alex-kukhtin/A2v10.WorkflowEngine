@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Interfaces;
 using System;
@@ -20,7 +20,7 @@ namespace A2v10.Workflow.Tests
 
     public class InMemoryWorkflowCatalog : IWorkflowCatalog
     {
-        private readonly Dictionary<String, CatalogWorkflow> _storage = new();
+        private readonly Dictionary<String, CatalogWorkflow> _storage = [];
 
         public Task<WorkflowElem> LoadBodyAsync(String id)
         {

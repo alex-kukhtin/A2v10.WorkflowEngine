@@ -127,7 +127,7 @@ namespace A2v10.Workflow.Tests
                 Assert.AreEqual(2000, valEo.Get<Int64>("a3"));
             }
             else
-                Assert.Fail(val.GetType().ToString());
+                Assert.Fail(val?.GetType().ToString());
         }
 
 
@@ -251,7 +251,7 @@ return __fmap__;
             Assert.IsNotNull(refP);
             var restoreFunc = (Func<JsValue?, JsValue[]?, JsValue>)refP!["Restore"];
             Assert.IsNotNull(restoreFunc);
-            restoreFunc(null, new JsValue[] { resStore });
+            restoreFunc(null, [resStore]);
 
             var refCP = dict2["CountPlus"] as IDictionary<String, Object>;
             Assert.IsNotNull(refCP);
@@ -292,7 +292,7 @@ return __fmap__;
 
             var obj = eng.Evaluate("return function test(arg) { let r = arg.x; r.push('z'); return JSON.stringify(r); }").ToObject();
             var func = (obj as Func<JsValue?, JsValue[]?, JsValue>)!;
-            var arr = func.Invoke(null, new JsValue[] { JsValue.FromObject(eng, arg) });
+            var arr = func.Invoke(null, [JsValue.FromObject(eng, arg)]);
             Assert.AreEqual("[\"f\",\"2\",\"z\"]", arr.ToString());
         }
 
@@ -316,7 +316,7 @@ return __fmap__;
 
             var obj = eng.Evaluate("return function test(arg) { let d = new Date(arg.date); let x = new Date(arg.ms); let s = new Date(arg.iso); return {d: d, x: x, s: s}; }").ToObject();
             var func = (obj as Func<JsValue?, JsValue[]?, JsValue>)!;
-            var res = func.Invoke(null, new JsValue[] { JsValue.FromObject(eng, arg) }).ToObject() as ExpandoObject;
+            var res = func.Invoke(null, [JsValue.FromObject(eng, arg)]).ToObject() as ExpandoObject;
             var dt = res.Get<DateTime>("d");
             var xt = res.Get<DateTime>("x");
             var xs = res.Get<DateTime>("s");

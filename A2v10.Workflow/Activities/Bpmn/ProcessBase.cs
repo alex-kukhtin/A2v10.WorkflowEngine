@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 
@@ -8,7 +8,7 @@ public abstract class ProcessBase : FlowElement, IContainer, IStorable, IScoped,
 
     protected IToken? _token;
 
-    private readonly List<IToken> _tokens = new();
+    private readonly List<IToken> _tokens = [];
 
     protected IEnumerable<BpmnActivity> Activities => Elems<BpmnActivity>().ToList();
     protected Int32 TokensCount => _tokens.Count;

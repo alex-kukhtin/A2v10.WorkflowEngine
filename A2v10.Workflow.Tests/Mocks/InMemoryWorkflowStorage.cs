@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Interfaces;
 using System;
@@ -15,15 +15,10 @@ public record StoredWorkflow
     public Int32 Version { get; set; }
 }
 
-public class InMemoryWorkflowStorage : IWorkflowStorage
+public class InMemoryWorkflowStorage(ISerializer serializer) : IWorkflowStorage
 {
-    private readonly List<StoredWorkflow> _storage = new();
-    private readonly ISerializer _serializer;
-
-    public InMemoryWorkflowStorage(ISerializer serializer)
-    {
-        _serializer = serializer;
-    }
+    private readonly List<StoredWorkflow> _storage = [];
+    private readonly ISerializer _serializer = serializer;
 
     public Task<String> LoadSourceAsync(IWorkflowIdentity identity)
     {

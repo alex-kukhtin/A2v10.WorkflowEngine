@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using System.Text.RegularExpressions;
 
@@ -118,9 +118,9 @@ public static class ExpandoObjectExtensions
             {
                 var match = Regex.Match(prop, arrayPattern);
                 prop = match.Groups[1].Value;
-                if ((d != null) && d.ContainsKey(prop))
+                if ((d != null) && d.TryGetValue(prop, out Object? value))
                 {
-                    if (d[prop] is IList<ExpandoObject> dList)
+                    if (value is IList<ExpandoObject> dList)
                         currentContext = dList[Int32.Parse(match.Groups[2].Value)];
                 }
                 else
@@ -132,8 +132,8 @@ public static class ExpandoObjectExtensions
             }
             else
             {
-                if ((d != null) && d.ContainsKey(prop))
-                    currentContext = d[prop];
+                if ((d != null) && d.TryGetValue(prop, out Object? value))
+                    currentContext = value;
                 else
                 {
                     if (throwIfError)

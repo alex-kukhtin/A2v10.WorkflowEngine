@@ -21,17 +21,17 @@ namespace A2v10.Workflow.Tests.Serialization
             {
                 Id = "process",
                 IsExecutable = true,
-                Children = new List<BaseElement>()
-                {
+                Children =
+                [
                     new StartEvent()
                     {
                         Id = "start",
-                        Children = new List<BaseElement>() { new Outgoing() {Text = "start->script" } }
+                        Children = [new Outgoing() {Text = "start->script" }]
                     },
                     new EndEvent()
                     {
                         Id = "end",
-                        Children = new List<BaseElement>() {new Incoming() {Text = "script->end"} }
+                        Children = [new Incoming() {Text = "script->end"}]
                     },
                     new SequenceFlow()
                     {
@@ -39,7 +39,7 @@ namespace A2v10.Workflow.Tests.Serialization
                         SourceRef = "start",
                         TargetRef = "end"
                     }
-                }
+                ]
             };
 
             var s = new WorkflowSerializer(new XamlReaderService());
@@ -66,16 +66,16 @@ namespace A2v10.Workflow.Tests.Serialization
             Sequence s = new()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>()
-                {
+                Variables =
+                [
                     new Variable() {Name = "x", Dir= VariableDirection.InOut}
-                },
-                Activities = new List<IActivity>()
-                {
+                ],
+                Activities =
+                [
                     new Code() {Id="Ref1", Script="x += 5"},
                     new Wait() {Id="Ref2", Bookmark="Bookmark1"},
                     new Code() {Id="Ref3", Script="x += 5"},
-                }
+                ]
             };
 
             var ser = new WorkflowSerializer(null);

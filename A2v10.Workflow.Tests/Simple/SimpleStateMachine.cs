@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,18 +18,18 @@ namespace A2v10.Workflow.Tests
             var root = new StateMachine()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>
-                {
+                Variables =
+                [
                     new Variable() {Name = "X", Dir = VariableDirection.InOut, Type=VariableType.Number},
-                },
-                States = new List<StateBase>()
-                {
+                ],
+                States =
+                [
                     new StartState() {Id="Ref1", Next="Ref2"},
                     new State() {Id="Ref2", Next="Ref3",
                         Entry = new Code() {Id="Ref21", Script = "X +=1"},
                     },
                     new FinalState {Id="Ref3"}
-                }
+                ]
             };
 
             var wfe = TestEngine.CreateInMemoryEngine();
@@ -45,21 +45,21 @@ namespace A2v10.Workflow.Tests
             var root = new StateMachine()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>
-                {
+                Variables =
+                [
                     new Variable() {Name = "X", Dir = VariableDirection.InOut, Type=VariableType.Number},
-                },
-                States = new List<StateBase>()
-                {
+                ],
+                States =
+                [
                     new StartState() {Id="Ref1", Next="Ref2"},
                     new State() {Id="Ref2", Next="Ref3",
                         Entry = new Code() {Id="Ref21", Script = "X -=1"},
-                        Transitions = new List<Transition>() {
-                            new Transition() { Id = "Ref211", Condition="X > 0", Destination="Ref2" }
-                        }
+                        Transitions = [
+                            new() { Id = "Ref211", Condition="X > 0", Destination="Ref2" }
+                        ]
                     },
                     new FinalState {Id="Ref3"}
-                }
+                ]
             };
 
             var wfe = TestEngine.CreateInMemoryEngine();

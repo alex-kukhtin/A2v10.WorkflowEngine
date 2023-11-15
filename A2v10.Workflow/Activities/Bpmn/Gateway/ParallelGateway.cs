@@ -1,11 +1,11 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 
 namespace A2v10.Workflow.Bpmn;
 public class ParallelGateway : Gateway, IStorable
 {
-    private readonly List<IToken> _tokens = new();
+    private readonly List<IToken> _tokens = [];
 
     public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
     {

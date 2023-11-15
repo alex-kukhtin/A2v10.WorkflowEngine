@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Text;
@@ -6,36 +6,29 @@ using System.Text;
 
 namespace A2v10.Workflow;
 
-public class ActivityScriptBuilder : IScriptBuilder
+public class ActivityScriptBuilder(IActivity activity) : IScriptBuilder
 {
     public const String FMAP = "__fmap__";
 
     private String? _declaratons;
-    private readonly Dictionary<String, List<String>> _methods = new();
+    private readonly Dictionary<String, List<String>> _methods = [];
 
-    private readonly IActivity _activity;
+    private readonly IActivity _activity = activity;
 
     public String Declarations => _declaratons ?? String.Empty;
 
-    public ActivityScriptBuilder(IActivity activity)
-    {
-        _activity = activity;
-    }
-
     void AddMethods(String refer, List<String> methods)
     {
-        if (!_methods.ContainsKey(refer))
-            _methods.Add(refer, methods);
-        else
+        if (!_methods.TryAdd(refer, methods))
             _methods[refer].AddRange(methods);
     }
 
     void AddMethod(String refer, String method)
     {
-        if (!_methods.ContainsKey(refer))
-            _methods.Add(refer, new List<String>() { method });
+        if (_methods.TryGetValue(refer, out var list))
+            list.Add(method);
         else
-            _methods[refer].Add(method);
+            _methods.Add(refer, [method]);
     }
 
     #region IScriptBuilder
@@ -138,19 +131,12 @@ public class ActivityScriptBuilder : IScriptBuilder
     }
 }
 
-public class ActivityScript
+public class ActivityScript(ScriptBuilder builder, IActivity activity, String? global)
 {
-    private readonly ScriptBuilder _builder;
-    private readonly IActivity _activity;
+    private readonly ScriptBuilder _builder = builder;
+    private readonly IActivity _activity = activity;
 
-    public String? Global { get; }
-
-    public ActivityScript(ScriptBuilder builder, IActivity activity, String? global)
-    {
-        _activity = activity;
-        _builder = builder;
-        Global = global;
-    }
+    public String? Global { get; } = global;
 
     public String Ref => _activity.Id ?? throw new WorkflowException("Invalid activity Id");
 

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-		<Version>10.1.8110</Version>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+		<Version>10.1.8120</Version>
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
@@ -20,7 +20,8 @@
 
 
 	<ItemGroup>
-	  <PackageReference Include="A2v10.Data.Core" Version="10.1.7339" />
+	  <PackageReference Include="A2v10.Data.Core" Version="10.1.7341" />
+	  <PackageReference Include="Azure.Identity" Version="1.10.4" />
 	</ItemGroup>
 
 	<ItemGroup>

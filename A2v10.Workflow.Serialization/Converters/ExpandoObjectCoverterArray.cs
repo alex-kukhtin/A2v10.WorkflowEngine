@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -25,9 +25,9 @@ public class ExpandoObjectConverterArray : ExpandoObjectConverter
         };
     }
 
-    private Object ReadListArray(JsonReader reader)
+    private Object[] ReadListArray(JsonReader reader)
     {
-        IList<Object> list = new List<Object>();
+        List<Object> list = [];
 
         while (reader.Read())
         {
@@ -41,7 +41,7 @@ public class ExpandoObjectConverterArray : ExpandoObjectConverter
                         list.Add(v);
                     break;
                 case JsonToken.EndArray:
-                    return list.ToArray();
+                    return [.. list];
             }
         }
 

@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 
@@ -26,7 +26,7 @@ public class Participant : BpmnActivity, IScoped
 
     internal void EnsureChildren()
     {
-        Children ??= new List<BaseElement>();
+        Children ??= [];
     }
 
     public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)

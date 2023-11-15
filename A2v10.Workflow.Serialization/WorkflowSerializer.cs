@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.System.Xaml;
 using A2v10.Workflow.Interfaces;
@@ -9,21 +9,15 @@ using System;
 using System.Dynamic;
 
 namespace A2v10.Workflow.Serialization;
-public class WorkflowSerializer : ISerializer
+public class WorkflowSerializer(IXamlReaderService? xamlCodeProvider = null) : ISerializer
 {
-    private readonly IXamlReaderService? _xamlCodeProvider;
-
-    public WorkflowSerializer(IXamlReaderService? xamlCodeProvider = null)
-    {
-        _xamlCodeProvider = xamlCodeProvider;
-    }
-
-    private static readonly JsonConverter[] _jsonConverters = new JsonConverter[]
-    {
+    private readonly IXamlReaderService? _xamlCodeProvider = xamlCodeProvider;
+    private static readonly JsonConverter[] _jsonConverters =
+    [
         new DoubleConverter(),
         new StringEnumConverter(),
         new ExpandoObjectConverterArray()
-    };
+    ];
 
     private static readonly JsonSerializerSettings _actititySettings = new()
     {

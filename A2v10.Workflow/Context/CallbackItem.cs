@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using System.Dynamic;
 using System.Reflection;
@@ -8,16 +8,10 @@ namespace A2v10.Workflow;
 using EventAction = Func<IExecutionContext, IWorkflowEvent, Object?, ValueTask>;
 using ResumeAction = Func<IExecutionContext, String, Object?, ValueTask>;
 
-public class CallbackItem
+public class CallbackItem(String refer, String callbacName)
 {
-    public String Ref;
-    public String CallbackName;
-
-    public CallbackItem(String refer, String callbacName)
-    {
-        Ref = refer;
-        CallbackName = callbacName;
-    }
+    public String Ref = refer;
+    public String CallbackName = callbacName;
 
     public static CallbackItem FromExpando(ExpandoObject eobj)
     {

@@ -8,18 +8,11 @@ using System.Dynamic;
 namespace A2v10.Workflow.Tests
 {
 
-    public class ScriptNativeArguments : IInjectable
+    public class ScriptNativeArguments(String arg1, Int32 arg2, Int64 arg3) : IInjectable
     {
-        private readonly String _arg1;
-        private readonly Int32 _arg2;
-        private readonly Int64 _arg3;
-
-        public ScriptNativeArguments(String arg1, Int32 arg2, Int64 arg3)
-        {
-            _arg1 = arg1;
-            _arg2 = arg2;
-            _arg3 = arg3;
-        }
+        private readonly String _arg1 = arg1;
+        private readonly Int32 _arg2 = arg2;
+        private readonly Int64 _arg3 = arg3;
 
         public void Inject(IServiceProvider serviceProvider)
         {
@@ -36,7 +29,7 @@ namespace A2v10.Workflow.Tests
 
     public class ScriptDatabase : IInjectable
     {
-        private readonly ExpandoObject _eo = new();
+        private readonly ExpandoObject _eo = [];
         public ScriptDatabase()
         {
         }

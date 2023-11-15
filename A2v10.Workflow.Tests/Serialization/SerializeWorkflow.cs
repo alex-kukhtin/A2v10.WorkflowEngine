@@ -22,17 +22,17 @@ namespace A2v10.Workflow.Tests.Serialization
             {
                 Id = "process",
                 IsExecutable = true,
-                Children = new List<BaseElement>()
-                {
+                Children =
+                [
                     new StartEvent()
                     {
                         Id = "start",
-                        Children = new List<BaseElement>() { new Outgoing() {Text = "start->end" } }
+                        Children = [new Outgoing() {Text = "start->end" }]
                     },
                     new EndEvent()
                     {
                         Id = "end",
-                        Children = new List<BaseElement>() { new Incoming() { Text = "script->end"} }
+                        Children = [new Incoming() { Text = "script->end"}]
                     },
                     new SequenceFlow()
                     {
@@ -40,7 +40,7 @@ namespace A2v10.Workflow.Tests.Serialization
                         SourceRef = "start",
                         TargetRef = "end"
                     }
-                }
+                ]
             };
 
             var s = new WorkflowSerializer(null);
@@ -64,16 +64,16 @@ namespace A2v10.Workflow.Tests.Serialization
             var s = new Sequence()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>()
-                {
+                Variables =
+                [
                     new Variable() {Name = "x", Dir= VariableDirection.InOut, Type=VariableType.Number}
-                },
-                Activities = new List<IActivity>()
-                {
+                ],
+                Activities =
+                [
                     new Code() {Id="Ref1", Script="x += 5"},
                     new Wait() {Id="Ref2", Bookmark="Bookmark1"},
                     new Code() {Id="Ref3", Script="x += 5"},
-                }
+                ]
             };
 
             var ser = new WorkflowSerializer(null);
@@ -114,18 +114,16 @@ namespace A2v10.Workflow.Tests.Serialization
             var fc = new Flowchart()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>
-                {
+                Variables = [
                     new Variable() {Name = "X", Dir = VariableDirection.InOut, Type=VariableType.Number},
-                },
-                Nodes = new List<FlowNode>()
-                {
+                ],
+                Nodes = [
                     new FlowStart() {Id="Ref1", Next="Ref2"},
                     new FlowDecision() {Id="Ref2", Condition="X > 0", Then = "Ref3"},
                     new FlowActivity() {Id = "Ref3", Next="Ref2",
                         Activity = new Code() {Id="Ref4", Script="X -= 1" }
                     }
-                }
+                ]
             };
 
             var ser = new WorkflowSerializer(null);

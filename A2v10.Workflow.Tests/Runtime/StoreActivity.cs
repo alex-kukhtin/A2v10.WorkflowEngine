@@ -18,16 +18,16 @@ namespace A2v10.Workflow.Tests.Runtime
             IActivity root = new Sequence()
             {
                 Id = "Ref0",
-                Variables = new List<IVariable>()
-                {
+                Variables =
+                [
                     new Variable() {Name = "x", Dir= VariableDirection.InOut, Type=VariableType.Number}
-                },
-                Activities = new List<IActivity>()
-                {
+                ],
+                Activities =
+                [
                     new Code() {Id="Ref1", Script="x += 5"},
                     new Wait() {Id="Ref2", Bookmark="Bookmark1"},
                     new Code() {Id="Ref3", Script="x += 5"},
-                }
+                ]
             };
 
             var wfe = TestEngine.CreateInMemoryEngine();

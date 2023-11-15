@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Interfaces;
 using System;
@@ -17,17 +17,12 @@ internal record SavedInstance(IWorkflowIdentity Identity, IWorkflow Workflow,
 }
 
 
-public class InMemoryInstanceStorage : IInstanceStorage
+public class InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage workflowStorage) : IInstanceStorage
 {
-    private readonly Dictionary<Guid, SavedInstance> _memory = new();
+    private readonly Dictionary<Guid, SavedInstance> _memory = [];
 
-    private readonly ISerializer _serializer;
-    private readonly IWorkflowStorage _workflowStorage;
-    public InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage workflowStorage)
-    {
-        _serializer = serializer;
-        _workflowStorage = workflowStorage;
-    }
+    private readonly ISerializer _serializer = serializer;
+    private readonly IWorkflowStorage _workflowStorage = workflowStorage;
 
     public Task<IInstance> LoadRaw(Guid id)
     {

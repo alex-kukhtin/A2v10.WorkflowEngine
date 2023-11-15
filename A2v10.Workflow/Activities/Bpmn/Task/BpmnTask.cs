@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Dynamic;
@@ -37,7 +37,7 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 			_loopCounter = storage.Get<Int32>(LOOP_COUNTER);
 		else if (IsMultiInstance)
 		{
-			_tokens = new();
+			_tokens = [];
 			storage.GetTokenList(MULTI_INSTANCE_TOKENS, _tokens);
 		}
 	}
@@ -72,7 +72,7 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 				ParentContainer.KillToken(_token);
 				// first run
 				await AddBoundaryEvents(context);
-				_tokens = new();
+				_tokens = [];
 				for (int i = 0; i < coll.Length; i++)
 				{
 					var tok = ParentContainer.NewToken();
