@@ -20,7 +20,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="A2v10.System.Xaml" Version="10.1.8021" />
+		<PackageReference Include="A2v10.System.Xaml" Version="10.1.8022" />
 		<PackageReference Include="Jint" Version="3.0.0-beta-2055" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
 	</ItemGroup>

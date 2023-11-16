@@ -20,7 +20,7 @@
 
 
 	<ItemGroup>
-	  <PackageReference Include="A2v10.Data.Core" Version="10.1.7341" />
+	  <PackageReference Include="A2v10.Data.Core" Version="10.1.7342" />
 	  <PackageReference Include="Azure.Identity" Version="1.10.4" />
 	</ItemGroup>
 
