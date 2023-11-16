@@ -1,11 +1,7 @@
-﻿// Copyright © 2020-2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.SqlServer;
-public sealed class SqlServerStorageException : Exception
+public sealed class SqlServerStorageException(String message) : Exception(message)
 {
-    public SqlServerStorageException(String message)
-        : base(message)
-    {
-    }
 }
 

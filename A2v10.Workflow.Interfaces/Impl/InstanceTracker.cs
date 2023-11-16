@@ -1,14 +1,9 @@
-﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksnadr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
 public class InstanceTracker : ITracker
 {
-    private readonly List<ITrackRecord> _records;
-
-    public InstanceTracker()
-    {
-        _records = new List<ITrackRecord>();
-    }
+    private readonly List<ITrackRecord> _records = [];
 
     public List<ITrackRecord> Records => _records;
 

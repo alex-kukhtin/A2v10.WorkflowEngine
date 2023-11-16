@@ -23,10 +23,10 @@ public static class TestEngine
         return ServiceProvider().GetRequiredService<IWorkflowEngine>();
     }
 
-    private readonly static NativeType[] _nativeTypes = new NativeType[]
-    {
+    private readonly static NativeType[] _nativeTypes =
+    [
         new NativeType(Name: "External", Type:typeof(TestExternalNatvieType))
-    };
+    ];
 
     public static IServiceProvider ServiceProvider()
     {

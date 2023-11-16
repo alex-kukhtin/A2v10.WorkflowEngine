@@ -1,3 +1,3 @@
-﻿// Copyright © 2021 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2021 Oleksandr Kukhtin. All rights reserved.
 
 global using System;

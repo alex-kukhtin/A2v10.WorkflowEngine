@@ -1,23 +1,17 @@
 ﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
-using A2v10.Data.Interfaces;
-using A2v10.Workflow.Interfaces;
 using System.Dynamic;
 using System.Threading.Tasks;
 
-namespace A2v10.Workflow.SqlServer;
-public class SqlServerWorkflowStorage : IWorkflowStorage
-{
-    private readonly IDbContext _dbContext;
-    private readonly ISerializer _serializer;
-    private readonly IDataSourceProvider _dataSourceProvider;
+using A2v10.Data.Interfaces;
+using A2v10.Workflow.Interfaces;
 
-    public SqlServerWorkflowStorage(IDbContext dbContext, ISerializer serializer, IDataSourceProvider dataSourceProvider)
-    {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-        _dataSourceProvider = dataSourceProvider ?? throw new ArgumentNullException(nameof(dataSourceProvider));
-    }
+namespace A2v10.Workflow.SqlServer;
+public class SqlServerWorkflowStorage(IDbContext dbContext, ISerializer serializer, IDataSourceProvider dataSourceProvider) : IWorkflowStorage
+{
+    private readonly IDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    private readonly ISerializer _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+    private readonly IDataSourceProvider _dataSourceProvider = dataSourceProvider ?? throw new ArgumentNullException(nameof(dataSourceProvider));
 
     private String? DataSource => _dataSourceProvider.DataSource;
 

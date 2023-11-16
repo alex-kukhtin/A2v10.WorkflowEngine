@@ -7,16 +7,10 @@ using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer;
-public class SqlServerWorkflowCatalog : IWorkflowCatalog
+public class SqlServerWorkflowCatalog(IDbContext dbContext, IDataSourceProvider dataSourceProvider) : IWorkflowCatalog
 {
-    private readonly IDbContext _dbContext;
-    private readonly IDataSourceProvider _dataSourceProvider;
-
-    public SqlServerWorkflowCatalog(IDbContext dbContext, IDataSourceProvider dataSourceProvider)
-    {
-        _dbContext = dbContext;
-        _dataSourceProvider = dataSourceProvider;
-    }
+    private readonly IDbContext _dbContext = dbContext;
+    private readonly IDataSourceProvider _dataSourceProvider = dataSourceProvider;
 
     private String? DataSource => _dataSourceProvider.DataSource;
 

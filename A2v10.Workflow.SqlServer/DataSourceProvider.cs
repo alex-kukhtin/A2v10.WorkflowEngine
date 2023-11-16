@@ -1,4 +1,5 @@
-﻿
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+
 using System.Dynamic;
 
 using Microsoft.Extensions.Options;
@@ -8,15 +9,11 @@ using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer;
 
-internal class DataSourceProviderScoped : IDataSourceProvider
+internal class DataSourceProviderScoped(IDbIdentity dbIdentity, IOptions<WorkflowStorageOptions> options) : IDataSourceProvider
 {
-    private readonly IDbIdentity _dbIdentity;
-    private readonly WorkflowStorageOptions _options;
-    public DataSourceProviderScoped(IDbIdentity dbIdentity, IOptions<WorkflowStorageOptions> options)
-    {
-        _dbIdentity = dbIdentity;   
-        _options = options.Value; 
-    }
+    private readonly IDbIdentity _dbIdentity = dbIdentity;
+    private readonly WorkflowStorageOptions _options = options.Value;
+
     public String? DataSource => _options.MultiTenant ? _dbIdentity.Segment : _options.DataSource;
 
     public void SetIdentityParams(ExpandoObject prms)
@@ -28,13 +25,10 @@ internal class DataSourceProviderScoped : IDataSourceProvider
     }
 }
 
-internal class DataSourceProviderSingleton : IDataSourceProvider
+internal class DataSourceProviderSingleton(IOptions<WorkflowStorageOptions> options) : IDataSourceProvider
 {
-    private readonly WorkflowStorageOptions _options;
-    public DataSourceProviderSingleton(IOptions<WorkflowStorageOptions> options)
-    {
-        _options = options.Value;
-    }
+    private readonly WorkflowStorageOptions _options = options.Value;
+
     public String? DataSource => _options.DataSource;
 
     public void SetIdentityParams(ExpandoObject prms)

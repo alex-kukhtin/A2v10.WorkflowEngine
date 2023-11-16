@@ -1,10 +1,6 @@
-﻿// Copyright © 2020-2022 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
-public sealed class WorkflowException : Exception
+public sealed class WorkflowException(String message) : Exception(message)
 {
-    public WorkflowException(String message)
-        : base(message)
-    {
-    }
 }

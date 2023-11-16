@@ -1,18 +1,15 @@
 ﻿// Copyright © 2021-2023 Oleksandr Kukhtin. All rights reserved.
 
-using A2v10.Runtime.Interfaces;
-using A2v10.Workflow.Interfaces;
 using System.Dynamic;
 using System.Threading.Tasks;
 
+using A2v10.Runtime.Interfaces;
+using A2v10.Workflow.Interfaces;
+
 namespace A2v10.Workflow.Engine;
 
-public class WorkflowInvokeTarget : IRuntimeInvokeTarget
+public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _storage, IWorkflowCatalog _catalog) : IRuntimeInvokeTarget
 {
-    private readonly IWorkflowEngine _engine;
-    private readonly IWorkflowStorage _storage;
-    private readonly IWorkflowCatalog _catalog;
-
     public static class Properties
     {
         public const String WorkflowId = nameof(WorkflowId);
@@ -24,13 +21,6 @@ public class WorkflowInvokeTarget : IRuntimeInvokeTarget
         public const String Body = nameof(Body);
         public const String Format = nameof(Format);
         public const String Version = nameof(Version);
-    }
-
-    public WorkflowInvokeTarget(IWorkflowEngine engine, IWorkflowStorage storage, IWorkflowCatalog catalog)
-    {
-        _engine = engine;
-        _storage = storage;
-        _catalog = catalog;
     }
 
     public async Task<ExpandoObject> CreateAsync(String workflowId, Int32 version = 0)
@@ -81,7 +71,7 @@ public class WorkflowInvokeTarget : IRuntimeInvokeTarget
     public async Task<ExpandoObject> SaveAsync(String workflowId, String format, String body)
     {
         await _catalog.SaveAsync(new WorkflowDescriptor(Id: workflowId, Body: body, Format: format));
-        return new ExpandoObject();
+        return [];
     }
 
     public async Task<ExpandoObject> PublishAsync(String workflowId)
@@ -101,30 +91,30 @@ public class WorkflowInvokeTarget : IRuntimeInvokeTarget
         return method switch
         {
             "Create" => await CreateAsync(
-                parameters.GetNotNull<String>(Properties.WorkflowId)
-            ),
+                    parameters.GetNotNull<String>(Properties.WorkflowId)
+                ),
             "Run" => await RunAsync(
-                parameters.Get<Guid>(Properties.InstanceId),
-                parameters.Get<ExpandoObject>(Properties.Args)
-            ),
+                    parameters.Get<Guid>(Properties.InstanceId),
+                    parameters.Get<ExpandoObject>(Properties.Args)
+                ),
             "Resume" => await ResumeAsync(
-                parameters.Get<Guid>(Properties.InstanceId),
-                parameters.GetNotNull<String>(Properties.Bookmark),
-                parameters.Get<ExpandoObject>(Properties.Reply)
-            ),
+                    parameters.Get<Guid>(Properties.InstanceId),
+                    parameters.GetNotNull<String>(Properties.Bookmark),
+                    parameters.Get<ExpandoObject>(Properties.Reply)
+                ),
             "Start" => await StartAsync(
-                parameters.GetNotNull<String>(Properties.WorkflowId),
-                parameters.Get<Int32>(Properties.Version),
-                parameters.Get<ExpandoObject>(Properties.Args)
-            ),
+                    parameters.GetNotNull<String>(Properties.WorkflowId),
+                    parameters.Get<Int32>(Properties.Version),
+                    parameters.Get<ExpandoObject>(Properties.Args)
+                ),
             "Save" => await SaveAsync(
-                parameters.GetNotNull<String>(Properties.WorkflowId),
-                parameters.GetNotNull<String>(Properties.Format),
-                parameters.GetNotNull<String>(Properties.Body)
-            ),
+                    parameters.GetNotNull<String>(Properties.WorkflowId),
+                    parameters.GetNotNull<String>(Properties.Format),
+                    parameters.GetNotNull<String>(Properties.Body)
+                ),
             "Publish" => await PublishAsync(
-                parameters.GetNotNull<String>(Properties.WorkflowId)
-            ),
+                    parameters.GetNotNull<String>(Properties.WorkflowId)
+                ),
             _ => throw new WorkflowException($"Invalid target method '{method}'. Expected: Save, Publish, Create, Run, Start, Resume")
         };
     }

@@ -1,4 +1,4 @@
-﻿// Copyright © 2021-2022 Alex Kukhtin. All rights reserved.
+﻿// Copyright © 2021-2022 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.WebHost.Models;
