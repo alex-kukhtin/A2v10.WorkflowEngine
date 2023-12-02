@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
-		<Version>10.1.8120</Version>
+		<Version>10.1.8122</Version>
 		<LangVersion>Latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
@@ -16,6 +16,7 @@
 		<RepositoryUrl>https://github.com/alex-kukhtin/A2v10.WorkflowEngine</RepositoryUrl>
 		<PackageTags>A2v10 Platform Workflow SqlServer</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 
@@ -43,4 +44,7 @@
 	  <Folder Include="Helpers\" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 </Project>
