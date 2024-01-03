@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
-		<Version>10.1.8124</Version>
+		<Version>10.1.8125</Version>
 		<LangVersion>Latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
@@ -11,7 +11,7 @@
 		<Authors>Oleksandr Kukthin</Authors>
 		<Company>Oleksandr Kukthin</Company>
 		<Description>A2v10 workflow engine</Description>
-		<Copyright>Copyright © 2015-2023 Oleksandr Kukthin. All rights reserved.</Copyright>
+		<Copyright>Copyright © 2015-2024 Oleksandr Kukthin. All rights reserved.</Copyright>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/alex-kukhtin/A2v10.WorkflowEngine</RepositoryUrl>
 		<PackageTags>A2v10 Platform Workflow SqlServer</PackageTags>
