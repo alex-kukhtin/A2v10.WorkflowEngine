@@ -70,7 +70,7 @@ public class BpmnInbox
         var sp = TestEngine.ServiceProvider();
         var engine = sp.GetRequiredService<IWorkflowEngine>();
 
-        await Task.Delay(1001);
+        await Task.Delay(1020);
         await engine.ProcessPending();
 
         inst = await engine.LoadInstanceRaw(inst.Id);
