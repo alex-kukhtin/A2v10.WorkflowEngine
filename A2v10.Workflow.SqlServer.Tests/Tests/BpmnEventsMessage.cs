@@ -195,7 +195,7 @@ public class BpmnEventsMessage
 
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
-        await Task.Delay(1020); // 1
+        await Task.Delay(1040); // 1
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
@@ -203,7 +203,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(2, log!.Length);
         Assert.AreEqual("start|timerNI", String.Join('|', log));
 
-        await Task.Delay(1000); // 2
+        await Task.Delay(1020); // 2
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
@@ -211,7 +211,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(3, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI", String.Join('|', log));
 
-        await Task.Delay(1000); // 3
+        await Task.Delay(1020); // 3
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
@@ -229,7 +229,7 @@ public class BpmnEventsMessage
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE", String.Join('|', log));
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
-        await Task.Delay(1000); // 1
+        await Task.Delay(1020); // 1
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
@@ -237,7 +237,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(6, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI", String.Join('|', log));
 
-        await Task.Delay(1000); // 2
+        await Task.Delay(1020); // 2
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
@@ -245,7 +245,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(7, log!.Length);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI", String.Join('|', log));
 
-        await Task.Delay(1000); // 3
+        await Task.Delay(1020); // 3
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
