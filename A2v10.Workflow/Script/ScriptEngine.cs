@@ -54,7 +54,7 @@ public class ScriptEngine
                 injectable.Inject(_serviceProvider);
                 injectable.SetDeferred(_deferredTarget);
             }
-            return new ObjectWrapper(e, o);
+            return ObjectWrapper.Create(e, o);
         });
     }
 

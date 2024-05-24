@@ -70,7 +70,7 @@ namespace A2v10.Workflow.Tests
                 {
                     if (o is IInjectable injectable)
                         injectable.Inject(sp);
-                    return new ObjectWrapper(e, o);
+                    return ObjectWrapper.Create(e, o);
                 });
             });
             eng.AddNativeObjects(new ScriptNativeObjects());
@@ -93,7 +93,7 @@ namespace A2v10.Workflow.Tests
                 {
                     if (o is IInjectable injectable)
                         injectable.Inject(sp);
-                    return new ObjectWrapper(e, o);
+                    return ObjectWrapper.Create(e, o);
                 });
             });
             eng.AddNativeObjects(new ScriptNativeObjects());
@@ -114,7 +114,7 @@ namespace A2v10.Workflow.Tests
                 {
                     if (o is IInjectable injectable)
                         injectable.Inject(sp);
-                    return new ObjectWrapper(e, o);
+                    return ObjectWrapper.Create(e, o);
                 });
             });
             eng.AddNativeObjects(new ScriptNativeObjects());
