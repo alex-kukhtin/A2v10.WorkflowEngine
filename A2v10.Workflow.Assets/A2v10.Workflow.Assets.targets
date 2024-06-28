@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+	<ItemGroup>
+		<SourceAssetsJs Include="$(MSBuildThisFileDirectory)..\content\assets\wwwroot\scripts\bpmn\*" />
+		<SourceAssetsCss Include="$(MSBuildThisFileDirectory)..\content\assets\wwwroot\css\bpmn\*" />
+	</ItemGroup>
+	<Target Name="CopyAssetsToProject" BeforeTargets="Build">
+		<Copy SourceFiles="@(SourceAssetsJs)" DestinationFolder="$(ProjectDir)\wwwroot\scripts\bpmn" SkipUnchangedFiles="true"/>
+	</Target>
+</Project>

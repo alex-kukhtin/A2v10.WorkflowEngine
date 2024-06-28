@@ -40,6 +40,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation.RU", "Documen
 		Documentation.RU\index.md = Documentation.RU\index.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "A2v10.Workflow.Assets", "A2v10.Workflow.Assets", "{AB7D09A4-FB03-4822-AD17-9F2D36A64F23}"
+	ProjectSection(SolutionItems) = preProject
+		A2v10.Workflow.Assets\A2v10.Workflow.Assets.nuspec = A2v10.Workflow.Assets\A2v10.Workflow.Assets.nuspec
+		A2v10.Workflow.Assets\A2v10.Workflow.Assets.targets = A2v10.Workflow.Assets\A2v10.Workflow.Assets.targets
+		A2v10.Workflow.Assets\README.md = A2v10.Workflow.Assets\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

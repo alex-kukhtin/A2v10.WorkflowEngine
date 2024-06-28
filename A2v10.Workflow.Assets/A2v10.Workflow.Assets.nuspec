@@ -1,0 +1,27 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata>
+		<id>A2v10.Workflow.Assets</id>
+		<version>10.1.8153</version>
+		<title>A2v10.Workflow Client WebFiles</title>
+		<authors>Oleksandr Kukthin</authors>
+		<owners>Oleksandr Kukthin</owners>
+		<projectUrl>https://a2v10.com</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>A2v10 workflow (Client Web Files)</description>
+		<releaseNotes>Current NUGET release</releaseNotes>
+		<copyright>Copyright © 2020-2024 Oleksandr Kukthin. All rights reserved.</copyright>
+		<tags>A2v10 Workflow</tags>
+		<repository type="git" url="https://github.com/alex-kukhtin/A2v10.Workflow" branch="master"/>
+		<license type="expression">MIT</license>
+		<contentFiles>
+			<files include="**/*" buildAction="Content"/>
+		</contentFiles>
+		<readme>docs\README.md</readme>
+	</metadata>
+	<files>
+		<file src="A2v10.Workflow.Assets.targets" target="build/A2v10.Workflow.Assets.targets" />
+		<file src="wwwroot/**/*" target="content/assets"/>
+		<file src="README.md" target="docs\" />
+	</files>
+</package>
