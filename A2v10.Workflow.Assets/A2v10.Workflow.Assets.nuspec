@@ -2,10 +2,10 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 	<metadata>
 		<id>A2v10.Workflow.Assets</id>
-		<version>10.1.8153</version>
+		<version>10.1.8155</version>
 		<title>A2v10.Workflow Client WebFiles</title>
 		<authors>Oleksandr Kukthin</authors>
-		<owners>Oleksandr Kukthin</owners>
+		<owners>AlexKukhtin,A2v10Platform</owners>
 		<projectUrl>https://a2v10.com</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A2v10 workflow (Client Web Files)</description>
