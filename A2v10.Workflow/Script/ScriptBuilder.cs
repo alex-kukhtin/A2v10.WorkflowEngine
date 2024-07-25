@@ -136,10 +136,11 @@ public class ActivityScript(ScriptBuilder builder, IActivity activity, String? g
     private readonly ScriptBuilder _builder = builder;
     private readonly IActivity _activity = activity;
 
-    public String? Global { get; } = global;
+    public String? Global { get; private set; } = global;
 
     public String Ref => _activity.Id ?? throw new WorkflowException("Invalid activity Id");
 
+    public void ClearGlobal() => Global = null; 
     public void Build(IActivity activity)
     {
         if (activity is IScriptable scriptable)
@@ -191,6 +192,7 @@ public class ScriptBuilder
         if (String.IsNullOrEmpty(ascript.Global))
             return;
         _textBuilder.AppendLine(ascript.Global);
+        ascript.ClearGlobal();
     }
 
     public void Append(String text)

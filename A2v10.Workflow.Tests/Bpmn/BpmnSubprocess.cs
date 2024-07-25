@@ -130,8 +130,8 @@ namespace A2v10.Workflow.Tests
             Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
             Assert.IsNotNull(res0);
             var log = res0!.GetNotNull<Object[]>("Log");
-            Assert.AreEqual(8, log!.Length);
-            Assert.AreEqual("start|startSub|task|startNestedSub|nestedTask|endNestedSub|endSub|end", String.Join('|', log));
+            Assert.AreEqual(9, log!.Length);
+            Assert.AreEqual("start|startSub|task|startNestedSub|nestedTask|endNestedSub|endSub|end|20", String.Join('|', log));
         }
 
     }
