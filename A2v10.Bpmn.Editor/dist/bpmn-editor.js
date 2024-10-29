@@ -79,6 +79,18 @@ window.BpmnModeler = {
       }
     });
   },
+  createSimple: function (canvas) {
+    if (typeof canvas === 'string') canvas = document.getElementById(canvas);
+    return new _Modeler.default({
+      container: canvas,
+      keyboard: {
+        bindTo: document.getRootNode()
+      },
+      moddleExtensions: {
+        workflow: _workflow2.default
+      }
+    });
+  },
   defaultXml: xml
 };
 

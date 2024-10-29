@@ -78,10 +78,16 @@
     <Content Include="app\provider\workflow\parts\variablesDetailProps.js" />
     <Content Include="app\provider\workflow\parts\variablesProps.js" />
     <Content Include="app\provider\workflow\WorkflowPropertiesProvider.js" />
+    <None Include="bundleconfig.json" />
     <Content Include="compilerconfig.json" />
     <Content Include="css\bpmn\bpmn-font\bpmn.css" />
+    <Content Include="css\bpmn\bpmn-font\bpmn.min.css">
+      <SubType>Content</SubType>
+      <DependentUpon>css\bpmn\bpmn-font\bpmn.css</DependentUpon>
+    </Content>
     <Content Include="css\bpmn\bpmn-js-properties-panel.css" />
     <Content Include="css\bpmn\diagram-js.css" />
+    <Content Include="css\bpmn\diagram-js.min.css" />
     <Content Include="css\bpmn\font\bpmn.eot" />
     <Content Include="css\bpmn\font\bpmn.svg" />
     <Content Include="css\bpmn\font\bpmn.ttf" />

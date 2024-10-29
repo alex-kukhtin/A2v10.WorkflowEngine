@@ -1,0 +1,14 @@
+[
+  {
+    "outputFileName": "css/bpmn/diagram-js.min.css",
+    "inputFiles": [
+      "css/bpmn/diagram-js.css"
+    ]
+  },
+  {
+    "outputFileName": "css/bpmn/bpmn-font/bpmn.min.css",
+    "inputFiles": [
+      "css/bpmn/bpmn-font/bpmn.css"
+    ]
+  }
+]
