@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-		<Version>10.1.8200</Version>
+		<Version>10.1.8203</Version>
 		<LangVersion>Latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
@@ -11,7 +11,7 @@
 		<Authors>Oleksandr Kukthin</Authors>
 		<Company>Oleksandr Kukthin</Company>
 		<Description>A2v10 workflow core</Description>
-		<Copyright>Copyright © 2015-2024 Oleksandr Kukthin. All rights reserved.</Copyright>
+		<Copyright>Copyright © 2015-2025 Oleksandr Kukthin. All rights reserved.</Copyright>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/alex-kukhtin/A2v10.WorkflowEngine</RepositoryUrl>
 		<PackageTags>A2v10 Platform Workflow</PackageTags>
@@ -20,9 +20,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="A2v10.System.Xaml" Version="10.1.8024" />
+		<PackageReference Include="A2v10.System.Xaml" Version="10.1.8025" />
 		<PackageReference Include="Jint" Version="4.1.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
