@@ -76,7 +76,9 @@ window.BpmnModeler = {
 				propertiesProviderModule
 			],
 			moddleExtensions: {
-				workflow: workflowModdleDescriptor
+				Workflow: workflowModdleDescriptor,
+				workflow: workflowModdleDescriptor,
+				wf: workflowModdleDescriptor
 			}
 		});
 

@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 
 namespace A2v10.Workflow.Interfaces;
@@ -9,6 +9,7 @@ public enum VariableType
     Number,
     Boolean,
     Object,
+    PersistentObject,
     Date,
     BigInt,
     Guid
