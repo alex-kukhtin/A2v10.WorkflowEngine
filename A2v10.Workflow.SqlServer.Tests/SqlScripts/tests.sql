@@ -182,8 +182,9 @@ begin
 
 	delete from a2wf.[Instances] where WorkflowId = @Id;
 
-	delete from a2wf.[Workflows] where Id=@Id;
-	delete from a2wf.[Catalog] where Id=@Id;
+	delete from a2wf.WorkflowArguments where WorkflowId = @Id;
+	delete from a2wf.[Workflows] where Id = @Id;
+	delete from a2wf.[Catalog] where Id = @Id;
 	delete from a2wf.[AutoStart] where WorkflowId = @Id;
 end
 go

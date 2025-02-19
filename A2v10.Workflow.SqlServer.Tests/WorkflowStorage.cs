@@ -29,10 +29,18 @@ namespace A2v10.Workflow.SqlServer.Tests
         public async Task Publish()
         {
             var id = "Publish_Workflow1";
+
+            var text1 = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
+                <process id="p1" />
+            </definitions>
+            """;
+
             await TestEngine.PrepareDatabase(id);
             var storage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
             var catalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
-            await catalog.SaveAsync(new WorkflowDescriptor(id, "<test></test>", "text/xml"));
+            await catalog.SaveAsync(new WorkflowDescriptor(id, text1, "xaml"));
             var inst = await storage.PublishAsync(catalog, id);
             Assert.AreEqual(1, inst.Version);
             Assert.AreEqual(id, inst.Id);
@@ -45,9 +53,20 @@ namespace A2v10.Workflow.SqlServer.Tests
             await TestEngine.PrepareDatabase(id);
             var storage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
             var catalog = _serviceProvider.GetRequiredService<IWorkflowCatalog>();
-            var text1 = "<test></test>";
             var format = "text/xml";
-            var text2 = "<test><inner/></test>";
+            var text1 = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
+                <process id="p1" />
+            </definitions>
+            """;
+
+            var text2 = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
+                <process id="p2" />
+            </definitions>
+            """;
 
             await catalog.SaveAsync(new WorkflowDescriptor(Id: id, Body: text1, Format: format));
             {

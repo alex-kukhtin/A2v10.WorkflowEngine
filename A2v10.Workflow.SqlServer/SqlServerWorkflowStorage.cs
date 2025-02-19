@@ -1,12 +1,20 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Dynamic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer;
+
+public class InputVariable(IVariable var)
+{
+    public String Name { get; } = var.Name;
+    public String Type { get; } = var.Type.ToString().ToLowerInvariant();
+    public String? Value { get; } = var.Value;
+}
 public class SqlServerWorkflowStorage(IDbContext dbContext, ISerializer serializer, IDataSourceProvider dataSourceProvider) : IWorkflowStorage
 {
     private readonly IDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
@@ -71,9 +79,29 @@ public class SqlServerWorkflowStorage(IDbContext dbContext, ISerializer serializ
         _dataSourceProvider.SetIdentityParams(prms);
         var res = await _dbContext.ReadExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Catalog.Publish]", prms) 
             ?? throw new SqlServerStorageException($"Publish. Workflow not found. (Id:'{id}')");
-        return new WorkflowIdentity(
+        var wfIdentity = new WorkflowIdentity(
             res.GetNotNull<String>("Id"),
             res.Get<Int32>("Version")
         );
+        // Save input variables For Workflow
+        var wf = await LoadAsync(wfIdentity);
+
+        if (wf.Root is IScoped rootScoped)
+        {
+            if (rootScoped.Variables != null) {
+                var inputVariables = rootScoped.Variables.Where(v => v.IsArgument);
+                if (inputVariables.Any())
+                {
+                    var savePrms = new ExpandoObject()
+                    {
+                        { "Id", wf.Identity.Id },
+                        { "Version", wfIdentity.Version}
+                    };
+                    await _dbContext.SaveListAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Workflow.SetArguments]", savePrms, inputVariables.Select(v => new InputVariable(v)));
+                }
+            }
+        }
+
+        return wfIdentity;
     }
 }

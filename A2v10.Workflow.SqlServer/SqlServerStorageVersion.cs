@@ -1,4 +1,4 @@
-﻿// Copyright © 2022-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2022-2025 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
@@ -12,7 +12,7 @@ internal record VersionInfo
 
 public class SqlServerStorageVersion(IDbContext dbContext) : IWorkflowStorageVersion
 {
-	private const Int32 REQUIRED_VERSION = 8091;
+	private const Int32 REQUIRED_VERSION = 8207;
 
 	private readonly IDbContext _dbContext = dbContext;
 

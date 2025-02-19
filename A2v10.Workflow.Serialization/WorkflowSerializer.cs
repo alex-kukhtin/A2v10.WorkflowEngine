@@ -46,7 +46,7 @@ public class WorkflowSerializer(IXamlReaderService? xamlCodeProvider = null) : I
 
     public ExpandoObject? Deserialize(String? text)
     {
-        if (text == null)
+        if (String.IsNullOrEmpty(text))
             return null;
         return JsonConvert.DeserializeObject<ExpandoObject>(text, _jsonSettings);
     }
