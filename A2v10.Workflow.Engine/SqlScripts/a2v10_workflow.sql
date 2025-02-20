@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2025 Oleksandr Kukhtin
 
-Last updated : 19 feb 2025
-module version : 8207
+Last updated : 20 feb 2025
+module version : 8208
 */
 ------------------------------------------------
 set nocount on;
@@ -25,7 +25,7 @@ go
 begin
 	set nocount on;
 	declare @version int;
-	set @version = 8207;
+	set @version = 8208;
 	if exists(select * from a2wf.Versions where Module = N'main')
 		update a2wf.Versions set [Version] = @version where Module = N'main';
 	else
@@ -79,6 +79,7 @@ create table a2wf.Workflows
 	[Format] nvarchar(32) not null,
 	[Text] nvarchar(max) null,
 	[Hash] varbinary(64) null,
+	[Svg] nvarchar(max) null,
 	DateCreated datetime not null constraint DF_Workflows_DateCreated default(getutcdate()),
 	constraint PK_Workflows primary key clustered (Id, [Version]) with (fillfactor = 70)
 );
@@ -86,6 +87,10 @@ go
 ------------------------------------------------
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = N'a2wf' and TABLE_NAME = N'Workflows' and COLUMN_NAME = N'Name')
 	alter table a2wf.Workflows add [Name] nvarchar(255);
+go
+------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = N'a2wf' and TABLE_NAME = N'Workflows' and COLUMN_NAME = N'Svg')
+	alter table a2wf.Workflows add [Svg] nvarchar(max) null;
 go
 ------------------------------------------------
 if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'WorkflowArguments')
@@ -292,9 +297,9 @@ begin
 		else
 		begin
 			declare @retval table(Id nvarchar(255), [Version] int);
-			insert into a2wf.Workflows (Id, [Format], [Text], [Hash], [Name], [Version])
+			insert into a2wf.Workflows (Id, [Format], [Text], [Hash], [Name], Svg, [Version])
 			output inserted.Id, inserted.[Version] into @retval(Id, [Version])
-			select Id, [Format], [Body], [Hash], [Name], [Version] = 
+			select Id, [Format], [Body], [Hash], [Name], Svg, [Version] = 
 				(select isnull(max([Version]) + 1, 1) from a2wf.Workflows where Id=@Id)
 			from a2wf.[Catalog] where Id=@Id;
 			select Id, [Version] from @retval;
