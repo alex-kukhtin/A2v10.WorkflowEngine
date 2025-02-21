@@ -842,6 +842,31 @@ begin
 	update a2wf.CurrentDate set [Date] = @Date;
 end
 go
+
+-- service procedures
+------------------------------------------------
+create or alter procedure a2wf.[Instance.Delete]
+@TenantId int = 1,
+@UserId bigint,
+@Id uniqueidentifier = null
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+	set xact_abort on;
+
+	begin tran;
+	delete from a2wf.InstanceEvents where InstanceId = @Id;
+	delete from a2wf.InstanceTrack where InstanceId = @Id;
+	delete from a2wf.InstanceBookmarks where InstanceId = @Id;
+	delete from a2wf.InstanceVariablesGuid where InstanceId = @Id;
+	delete from a2wf.InstanceVariablesString where InstanceId = @Id;
+	delete from a2wf.InstanceVariablesInt where InstanceId = @Id;
+	delete from a2wf.Instances where Id = @Id;
+	commit tran;
+end
+go
+
 /*
 ------------------------------------------------
 if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'Inbox')
@@ -849,7 +874,8 @@ begin
 	create table a2wf.[Inbox]
 	(
 		Id uniqueidentifier not null,
-		InstanceId uniqueidentifier not null,
+		InstanceId uniqueidentifier not null
+			constraint FK_Inbox_InstanceId_Instances foreign key references a2wf.Instances(Id),
 		Bookmark nvarchar(255) not null,
 		DateCreated datetime not null
 			constraint DF_Inbox_DateCreated default(getutcdate()),

@@ -39,7 +39,19 @@ Targets in model.json:
     }
 }
 ```
-{Command} is one of the commands: <b>Save, Publish, Start, Create, Run, Resume</b>.
+Available commands:
+
+|Command| Description     |Arguments                  |Returns            |
+|-------|-----------------|------------------------   |-------------------|
+|Save   | Save workflow   |WorkflowId, Format, Body   |                   |
+|Publish| Publish workflow|WorkflowId                 |WorkflowId, Version|
+|Start  | Start workflow  |WorkflowId, Version, Args  |InstanceId, Result |
+|Create | Create workflow |WorkflowId                 |InstanceId         |
+|Run    | Run workflow    |InstanceId, Args           |InstanceId, Result |
+|Resume | Resume workflow |InstanceId, Bookmark, Reply|InstanceId, Result |
+
+The *Start* command is equivalent to *Create* + *Run*.
+The *Version* is optional. If not specified - the max version will be used.
 
 
 # appsettings.json section

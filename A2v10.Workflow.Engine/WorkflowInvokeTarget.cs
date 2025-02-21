@@ -47,11 +47,19 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         };
     }
 
-    public async Task<ExpandoObject> ResumeAsync(Guid instanceId, String bookmark, Object? reply)
+    public async Task<ExpandoObject> ResumeAsync(Object? instanceId, String bookmark, Object? reply)
     {
-        if (instanceId == Guid.Empty)
+        if (instanceId == null)
+            throw new WorkflowException($"Resume. InstanceId is required"); 
+        Guid instanceGuid = instanceId switch
+        {
+            Guid guidVal => guidVal,
+            String strVal => Guid.Parse(strVal),
+            _ => throw new WorkflowException($"Resume.InstanceId invalid type")
+        };
+        if (instanceGuid == Guid.Empty)
             throw new WorkflowException($"Resume. InstanceId is required");
-        var res = await _engine.ResumeAsync(instanceId, bookmark, reply);
+        var res = await _engine.ResumeAsync(instanceGuid, bookmark, reply);
         return new ExpandoObject()
         {
             { Properties.InstanceId, res.Id },
@@ -98,7 +106,7 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
                     parameters.Get<ExpandoObject>(Properties.Args)
                 ),
             "Resume" => await ResumeAsync(
-                    parameters.Get<Guid>(Properties.InstanceId),
+                    parameters.Get<Object>(Properties.InstanceId),
                     parameters.GetNotNull<String>(Properties.Bookmark),
                     parameters.Get<ExpandoObject>(Properties.Reply)
                 ),
