@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.IO;
 
@@ -19,7 +19,19 @@ public record WorkflowDescriptor(String Id, String Body, String Format = "xaml")
     public Stream? Thumb { get; init; }
 }
 
-public record WorkflowElem(String Body, String Format);
+public record WorkflowElem
+{
+    public WorkflowElem()
+    {
+    }
+    public WorkflowElem(String body, String format = "xaml")
+    {
+        Body = body;
+        Format = format;
+    }
+    public String Body { get; set; } = String.Empty;
+    public String Format { get; set; } = "xaml";
+}
 
 public record WorkflowThumbElem(Stream Thumb, String Format);
 

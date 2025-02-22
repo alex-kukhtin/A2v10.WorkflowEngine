@@ -1,11 +1,10 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Text;
 
 
 namespace A2v10.Workflow;
-
 public class ActivityScriptBuilder(IActivity activity) : IScriptBuilder
 {
     public const String FMAP = "__fmap__";
@@ -16,6 +15,8 @@ public class ActivityScriptBuilder(IActivity activity) : IScriptBuilder
     private readonly IActivity _activity = activity;
 
     public String Declarations => _declaratons ?? String.Empty;
+
+    public Boolean IsEmpty => _declaratons == null && _methods.Count == 0;
 
     void AddMethods(String refer, List<String> methods)
     {
@@ -69,7 +70,7 @@ public class ActivityScriptBuilder(IActivity activity) : IScriptBuilder
             if (strest.Count != 0)
             {
                 mtds.Add($"Store: () => {{return {{ {String.Join(", ", strest.Select(x => $"{x.Name} : {x.Name}"))} }}; }}");
-                mtds.Add($"Restore: (_arg_) => {{ {String.Join("; ", strest.Select(x => $"{x.Name} = _arg_.{x.Name} "))}; }}");
+                mtds.Add($"Restore: (_arg_) => {{ {String.Join("; ", strest.Select(x => $"{x.Name} = {x.RestoreArgument()} "))}; }}");
             }
         }
 
@@ -129,6 +130,14 @@ public class ActivityScriptBuilder(IActivity activity) : IScriptBuilder
             return sb.ToString();
         }
     }
+
+    public IEnumerable<SyntaxError?> CheckSyntax()
+    {
+        yield return SyntaxChecker.CheckSyntax(Declarations);
+        foreach (var (_, methods) in _methods)
+            foreach (var m in methods)
+                yield return SyntaxChecker.CheckSyntax(m);    
+    }
 }
 
 public class ActivityScript(ScriptBuilder builder, IActivity activity, String? global)
@@ -160,8 +169,10 @@ public class ScriptBuilder
     private readonly Stack<ActivityScript> _stack = new();
     private readonly StringBuilder _textBuilder = new();
 
-    public ScriptBuilder()
+    public ScriptBuilder(Boolean emptyBuilder = false)
     {
+        if (emptyBuilder)
+            return;
         _textBuilder.AppendLine("\"use strict\";");
         _textBuilder.AppendLine("() => {");
         _textBuilder.AppendLine($"let {ActivityScriptBuilder.FMAP} = {{}};");
@@ -183,6 +194,29 @@ public class ScriptBuilder
             var ascript = new ActivityScript(this, activity, globalScript);
             _stack.Push(ascript);
             _textBuilder.AppendLine("(function() {");
+        }
+    }
+
+    public IEnumerable<SyntaxError?> CheckSyntax(IActivity activity)
+    {
+        if (activity is IScoped scopedActivity)
+        {
+            var globalScript = scopedActivity.GlobalScript;
+            if (!String.IsNullOrEmpty(globalScript))
+            {
+                var cs = SyntaxChecker.CheckSyntax(globalScript);
+                if (cs != null)
+                    yield return cs;
+            }
+        }
+
+        if (activity is IScriptable scriptable)
+        {
+            var scriptBuilder = new ActivityScriptBuilder(activity);
+            scriptable.BuildScript(scriptBuilder);
+            foreach (var err in scriptBuilder.CheckSyntax())
+                if (err != null)
+                    yield return err;
         }
     }
 

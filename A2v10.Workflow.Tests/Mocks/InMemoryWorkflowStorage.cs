@@ -3,6 +3,7 @@
 using A2v10.Workflow.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,6 +44,13 @@ public class InMemoryWorkflowStorage(ISerializer serializer) : IWorkflowStorage
         return Task.FromResult<IWorkflow>(wf);
     }
 
+    public IActivity LoadFromBody(String body, String format)
+    {
+        var result = _serializer.DeserializeActitity(body, format)
+            ?? throw new InvalidOperationException("LoadFromBody failed");
+        return result.Activity;
+    }
+
     public async Task<IWorkflowIdentity> PublishAsync(IWorkflowCatalog catalog, String id)
     {
         var elem = await catalog.LoadBodyAsync(id);
@@ -73,6 +81,11 @@ public class InMemoryWorkflowStorage(ISerializer serializer) : IWorkflowStorage
         _storage.Add(swf);
         var ident = new WorkflowIdentity(id, v);
         return Task.FromResult<IWorkflowIdentity>(ident);
+    }
+
+    public ExpandoObject LoadPersistentValue(string procedure, object id)
+    {
+        throw new NotImplementedException();
     }
 }
 

@@ -1,5 +1,6 @@
-﻿// Copyright © 2021-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2021-2025 Oleksandr Kukhtin. All rights reserved.
 
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Threading.Tasks;
 
@@ -92,6 +93,32 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         };
     }
 
+    public async Task<ExpandoObject> CheckSyntaxAsync(String workflowId)
+    {
+        var wfBody = await _catalog.LoadBodyAsync(workflowId);
+        if (wfBody.Format != "xaml" && wfBody.Format != "text/xml")
+            throw new InvalidOperationException("Invalid format");
+
+        var root = _storage.LoadFromBody(wfBody.Body, wfBody.Format)
+            ?? throw new InvalidOperationException("Activity is null");
+
+        var errors = SyntaxChecker.CheckSyntax(root);
+
+        var list = new List<ExpandoObject>();
+        foreach (var err in errors)
+        {
+            list.Add(new ExpandoObject()
+            {
+                { "Message", err.Message },
+                { "Activity", err.ActivityId },
+                { "Script", err.Script }
+            });
+        }
+        return new ExpandoObject() {
+            { "Errors", list }
+        };
+    }
+
     public async Task<ExpandoObject> InvokeAsync(String method, ExpandoObject? parameters)
     {
         if (parameters == null)
@@ -123,7 +150,10 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
             "Publish" => await PublishAsync(
                     parameters.GetNotNull<String>(Properties.WorkflowId)
                 ),
-            _ => throw new WorkflowException($"Invalid target method '{method}'. Expected: Save, Publish, Create, Run, Start, Resume")
+            "CheckSyntax" => await CheckSyntaxAsync(
+                    parameters.GetNotNull<String>(Properties.WorkflowId)
+                ),
+            _ => throw new WorkflowException($"Invalid target method '{method}'. Expected: Save, Publish, Create, Run, Start, Resume, CheckSyntax")
         };
     }
 }

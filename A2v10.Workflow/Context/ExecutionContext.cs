@@ -62,6 +62,7 @@ public partial class ExecutionContext : IExecutionContext
         SetCorrelationId(); // before script
 
         _script = BuildScript(args);
+
         _tracker.Start();
     }
     void SetCorrelationId()

@@ -26,7 +26,7 @@ namespace A2v10.Workflow.Tests
         {
             if (!_storage.TryGetValue(id, out CatalogWorkflow? wf))
                 throw new KeyNotFoundException(id);
-            var wfe = new WorkflowElem(Body: wf.Body, Format: wf.Format);
+            var wfe = new WorkflowElem(body: wf.Body, format: wf.Format);
             return Task.FromResult(wfe);
         }
 

@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using A2v10.Runtime.Interfaces;
 using A2v10.Workflow.Interfaces;
+using System.Collections.Generic;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -154,5 +155,34 @@ public class InvokeTarget
         String? resInstanceId = resResume.Get<Object>("InstanceId")?.ToString();
 
         Assert.AreEqual(instanceId, resInstanceId);
+    }
+
+    [TestMethod]
+    public async Task CheckSyntax_Error()
+    {
+        var id = "ScriptError";
+        await TestEngine.PrepareDatabase(id);
+
+        var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
+
+        var format = "xaml";
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\ScriptError.bpmn");
+
+        await target.InvokeAsync("Save", new ExpandoObject()
+        {
+            { "WorkflowId", id },
+            { "Format", format },
+            { "Body", xaml }
+        });
+
+        var res = await target.InvokeAsync("CheckSyntax", new ExpandoObject()
+        {
+            {"WorkflowId", id }
+        }) ?? throw new InvalidOperationException("result is null");
+
+        var errors = res.Get<List<ExpandoObject>>("Errors")
+            ?? throw new InvalidOperationException("errors is null");    
+
+        Assert.AreEqual(2, errors.Count);
     }
 }

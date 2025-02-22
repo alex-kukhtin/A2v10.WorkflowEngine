@@ -218,4 +218,13 @@ begin
 	where InstanceId in (select Id from a2wf.Instances where WorkflowId = @WorkflowId);
 end
 go
-
+------------------------------------------------
+create or alter procedure a2wf.[Persist.Order.LoadPersistent]
+@Id bigint
+as
+begin
+	set nocount on;
+	set transaction isolation level read uncommitted;
+	select [Order!TOrder!Object] = null, [Id!!Id] = @Id, [Name] = N'Data from SQL', [Date] = cast(getdate() as date);
+end
+go

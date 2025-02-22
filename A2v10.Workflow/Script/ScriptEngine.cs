@@ -1,14 +1,18 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
-using A2v10.Workflow.Tracker;
-using Jint;
-using Jint.Native;
-using Jint.Runtime.Interop;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Dynamic;
 
+using Microsoft.Extensions.DependencyInjection;
+
+using Jint;
+using Jint.Native;
+using Jint.Runtime.Interop;
+
+using A2v10.Workflow.Tracker;
+
 namespace A2v10.Workflow;
+
 public class ScriptEngine
 {
     private readonly Engine _engine;
@@ -37,9 +41,12 @@ public class ScriptEngine
             { "CorrelationId", instance.CorrelationId },
             { "ExecutionStatus", instance.ExecutionStatus.ToString() }
         });
+        _engine.SetValue("_loadPersistent", LoadPersistentValue);
         //Console.WriteLine(script);
+
         var func = _engine.Evaluate(script);
-        _scriptData = _engine.Invoke(func).ToObject() as ExpandoObject;
+        if (!func.IsUndefined())
+            _scriptData = _engine.Invoke(func).ToObject() as ExpandoObject;
         if (args != null)
             SetArguments(args);
     }
@@ -134,6 +141,8 @@ public class ScriptEngine
         if (func == null)
             return;
         // result must be not null
+        if (result != null)
+            _engine.SetValue("LastResult", result);
         var arg = JsValue.FromObject(_engine, result ?? new ExpandoObject());
         func(JsValue.Undefined, [arg]);
     }
@@ -148,6 +157,15 @@ public class ScriptEngine
         // result may be null
         var arg = JsValue.FromObject(_engine, value);
         func(JsValue.Undefined, [arg]);
+    }
+
+    public ExpandoObject LoadPersistentValue(ExpandoObject variable, String key)
+    {
+        var wfStorage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
+        var id = variable.Eval<Object>($"{key}.Id")
+            ?? throw new WorkflowException($"LoadPersistentValue. Id is required. Name: '{key}'");
+        var loadProcedure = $"{_root.Id}.{key}.LoadPersistent";
+        return wfStorage.LoadPersistentValue(loadProcedure, id);
     }
 }
 

@@ -4,6 +4,7 @@ using A2v10.Workflow.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -25,9 +26,17 @@ public class BpmnInbox
 
         var sp = TestEngine.ServiceProvider();
         var engine = sp.GetRequiredService<IWorkflowEngine>();
-        inst = await engine.ResumeAsync(inst.Id, "Inbox");
+        inst = await engine.ResumeAsync(inst.Id, "Inbox", new ExpandoObject()
+        {
+            { "X",  5 },
+            { "S",  "String" }
+        });
 
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+        var log = inst.Result?.GetNotNull<Object[]>("log");
+        Assert.IsNotNull(log);
+        Assert.AreEqual(4, log!.Length);
+        Assert.AreEqual("""start|inbox|{"X":5,"S":"String"}|end""", String.Join('|', log));
     }
 
     [TestMethod]

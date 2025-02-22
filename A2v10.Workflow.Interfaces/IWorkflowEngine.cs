@@ -1,7 +1,15 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 
 namespace A2v10.Workflow.Interfaces;
+
+public interface ISyntaxError
+{
+    String Script { get; }
+    String Message { get; }
+    String? ActivityId { get; }
+}
+
 public interface IWorkflowEngine
 {
     ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, String? correlationId = null, Guid? parent = null);

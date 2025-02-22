@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace A2v10.Workflow.Tests;
@@ -113,6 +114,33 @@ public class FullFlow
         inst = await wfe.ResumeAsync(inst.Id, "CheckSaldo", new { Answer = 0 });
         res = inst.Result;
         Assert.AreEqual("1", res.Get<String>("R"));
+    }
+
+    [TestMethod]
+    public async Task ScriptError()
+    {
+        var xaml = await File.ReadAllTextAsync("..\\..\\..\\TestFiles\\ScriptError.bpmn");
+
+        var sp = TestEngine.ServiceProvider();
+
+        var wfs = sp.GetRequiredService<IWorkflowStorage>();
+        //var wfc = sp.GetRequiredService<IWorkflowCatalog>();
+
+        //String wfId = "CheckError";
+
+        //await wfc.SaveAsync(new WorkflowDescriptor(wfId, xaml));
+
+        var root = wfs.LoadFromBody(xaml, "xaml");
+        var errors = SyntaxChecker.CheckSyntax(root);
+
+        Assert.AreEqual(2, errors.Count());
+        var errlist = errors.ToList();  
+        Assert.AreEqual("Unexpected token '}' (3:1)", errlist[0].Message);
+        Assert.AreEqual("Unexpected token '=' (2:10)", errlist[1].Message);
+        Assert.AreEqual("Process_1", errlist[0].ActivityId);
+        Assert.AreEqual("CheckSaldo", errlist[1].ActivityId);
+        Assert.IsNotNull(errlist[0].ActivityId);
+        Assert.IsNotNull(errlist[1].ActivityId);
     }
 }
 

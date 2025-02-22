@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Globalization;
 
@@ -89,4 +89,15 @@ public class ExternalVariable : Variable, IExternalVariable
         ActivityId = activityId;
     }
     public String ActivityId { get; }
+}
+
+
+public static class IVariableExtensions
+{
+    public static String RestoreArgument(this IVariable var)
+    {
+        if (var.Type == VariableType.PersistentObject)
+            return $"_loadPersistent(_arg_, '{var.Name}')";
+        return $"_arg_.{var.Name}";
+    }
 }
