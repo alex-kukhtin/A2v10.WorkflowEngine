@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-		<Version>10.1.8211</Version>
+		<Version>10.1.8214</Version>
 		<LangVersion>Latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<Product>A2v10</Product>
@@ -11,11 +11,12 @@
 		<Authors>Oleksandr Kukthin</Authors>
 		<Company>Oleksandr Kukthin</Company>
 		<Description>A2v10 workflow abstractions</Description>
-		<Copyright>Copyright © 2015-2023 Oleksandr Kukthin. All rights reserved.</Copyright>
+		<Copyright>Copyright © 2015-2025 Oleksandr Kukthin. All rights reserved.</Copyright>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/alex-kukhtin/A2v10.WorkflowEngine</RepositoryUrl>
 		<PackageTags>A2v10 Platform Workflow</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -29,4 +30,7 @@
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 </Project>
