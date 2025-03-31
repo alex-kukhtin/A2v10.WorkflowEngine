@@ -82,10 +82,5 @@ public class InMemoryWorkflowStorage(ISerializer serializer) : IWorkflowStorage
         var ident = new WorkflowIdentity(id, v);
         return Task.FromResult<IWorkflowIdentity>(ident);
     }
-
-    public ExpandoObject LoadPersistentValue(string procedure, object id)
-    {
-        throw new NotImplementedException();
-    }
 }
 

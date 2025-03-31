@@ -7,6 +7,5 @@ public interface IWorkflowStorage
     Task<String> LoadSourceAsync(IWorkflowIdentity identity);
     Task<IWorkflowIdentity> PublishAsync(IWorkflowCatalog catalog, String id);
     IActivity LoadFromBody(String body, String format);
-    ExpandoObject LoadPersistentValue(String procedure, Object id);
 }
 

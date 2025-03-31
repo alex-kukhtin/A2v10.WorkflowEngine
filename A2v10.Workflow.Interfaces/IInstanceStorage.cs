@@ -18,5 +18,6 @@ public interface IInstanceStorage
     Task AutoStartComplete(Int64 Id, Guid instanceId);
     Task<IInstance?> LoadBookmark(String bookmark);
     ValueTask<DateTime> GetNowTime();
+    ExpandoObject LoadPersistentValue(String procedure, Object id);
 }
 

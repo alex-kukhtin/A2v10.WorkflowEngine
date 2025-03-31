@@ -161,11 +161,11 @@ public class ScriptEngine
 
     public ExpandoObject LoadPersistentValue(ExpandoObject variable, String key)
     {
-        var wfStorage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
+        var insStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
         var id = variable.Eval<Object>($"{key}.Id")
             ?? throw new WorkflowException($"LoadPersistentValue. Id is required. Name: '{key}'");
         var loadProcedure = $"{_root.Id}.{key}.LoadPersistent";
-        return wfStorage.LoadPersistentValue(loadProcedure, id);
+        return insStorage.LoadPersistentValue(loadProcedure, id);
     }
 }
 

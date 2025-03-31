@@ -272,7 +272,7 @@ public class AutoStart
     [TestMethod]
     public async Task AutoStartCorrelationIdObject()
     {
-        String TestId = "CorrelationId";
+        String TestId = "CorrelationIdObject";
         await TestEngine.PrepareDatabase(TestId);
         var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\ObjectCorrelationId.bpmn");
         var format = "text/xml";

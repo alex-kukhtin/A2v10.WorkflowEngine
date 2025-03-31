@@ -14,6 +14,14 @@ public class WorkflowPendingJobHandler(IWorkflowEngine _engine, ILogger<Workflow
     public async Task ExecuteAsync(ScheduledJobInfo info)
     {
         _logger.LogInformation("Execute WorkflowPending at {Time}", DateTime.Now);
-        await _engine.ProcessPending();
+        try
+        {
+            await _engine.ProcessPending();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error in WorkflowPending: {Exception}", ex);
+            //_engine.WriteCommonException(ex);
+        }
     }
 }

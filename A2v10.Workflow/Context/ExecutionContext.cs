@@ -73,7 +73,16 @@ public partial class ExecutionContext : IExecutionContext
             return;
         var corrVariable = rootScoped.Variables?.FirstOrDefault(v => v.CorrelationId);
         if (corrVariable != null)
-            corrVariable.Value = _instance.CorrelationId;
+        {
+            if (corrVariable.Type == VariableType.PersistentObject)
+            {
+                var loadProcedure = $"{_instance.Workflow.Root.Id}.{corrVariable.Name}.LoadPersistent";
+                var result = _instanceStorage.LoadPersistentValue(loadProcedure, _instance.CorrelationId);
+                corrVariable.Value = JsonSerializer.Serialize(result);
+            }
+            else
+                corrVariable.Value = _instance.CorrelationId;
+        }
     }
 
     ScriptEngine BuildScript(Object? args)

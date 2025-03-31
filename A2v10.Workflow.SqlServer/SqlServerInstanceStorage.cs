@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Dynamic;
@@ -278,5 +278,23 @@ public class SqlServerInstanceStorage : IInstanceStorage
 	}
     #endregion
 
+
+    public ExpandoObject LoadPersistentValue(String procedure, Object id)
+    {
+        var prms = new ExpandoObject()
+        {
+            {"Id", id }
+        };
+        var model = _dbContext.LoadModel(DataSource, $"{SqlDefinitions.SqlSchema}.[{procedure}]", prms)
+            ?? throw new SqlServerStorageException($"Model is null. (Proc:'{procedure}', Id:{id})");
+        foreach (var (k, v) in model.Root)
+        {
+            // first element
+            if (v != null && v is ExpandoObject eo)
+                return eo;
+            throw new SqlServerStorageException($"Invalid Persistent model. (Proc:'{procedure}', Id:{id})");
+        }
+        throw new SqlServerStorageException($"Invalid Persistent model. (Proc:'{procedure}', Id:{id})");
+    }
 }
 

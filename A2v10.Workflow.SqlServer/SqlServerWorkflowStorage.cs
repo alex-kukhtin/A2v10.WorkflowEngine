@@ -2,12 +2,10 @@
 
 using System.Dynamic;
 using System.Linq;
-using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
-using Microsoft.IdentityModel.Protocols;
 
 namespace A2v10.Workflow.SqlServer;
 
@@ -110,25 +108,6 @@ public class SqlServerWorkflowStorage(IDbContext dbContext, ISerializer serializ
                 }
             }
         }
-
         return wfIdentity;
-    }
-
-    public ExpandoObject LoadPersistentValue(String procedure, Object id)
-    {
-        var prms = new ExpandoObject()
-        {
-            {"Id", id }
-        };
-        var model = _dbContext.LoadModel(DataSource, $"{SqlDefinitions.SqlSchema}.[{procedure}]", prms)
-            ?? throw new SqlServerStorageException($"Model is null. (Proc:'{procedure}', Id:{id})");
-        foreach (var (k, v) in model.Root)
-        {
-            // first element
-            if (v != null && v is ExpandoObject eo)
-                return eo;
-            throw new SqlServerStorageException($"Invalid Persistent model. (Proc:'{procedure}', Id:{id})");
-        }
-        throw new SqlServerStorageException($"Invalid Persistent model. (Proc:'{procedure}', Id:{id})");
     }
 }

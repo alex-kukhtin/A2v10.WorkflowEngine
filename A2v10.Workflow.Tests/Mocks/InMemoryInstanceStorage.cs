@@ -1,11 +1,12 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
-using A2v10.Workflow.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Threading.Tasks;
+
+using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.Tests;
 
@@ -154,5 +155,10 @@ public class InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage wo
     public ValueTask<DateTime> GetNowTime()
     {
         return ValueTask.FromResult<DateTime>(DateTime.UtcNow);
+    }
+
+    public ExpandoObject LoadPersistentValue(string procedure, object id)
+    {
+        throw new NotImplementedException();
     }
 }
