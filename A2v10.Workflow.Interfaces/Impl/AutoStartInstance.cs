@@ -7,6 +7,6 @@ public class AutoStartInstance : IAutoStartInstance
     public String? WorkflowId { get; init; }
 
     public Int32 Version { get; init; }
-
+    public String? CorrelationId { get; init; }
     public ExpandoObject? Params { get; init; }
 }

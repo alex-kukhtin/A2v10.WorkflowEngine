@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2025 Oleksandr Kukhtin
 
-Last updated : 22 feb 2025
-module version : 8209
+Last updated : 30 mar 2025
+module version : 8210
 */
 ------------------------------------------------
 set nocount on;
@@ -25,7 +25,7 @@ go
 begin
 	set nocount on;
 	declare @version int;
-	set @version = 8209;
+	set @version = 8210;
 	if exists(select * from a2wf.Versions where Module = N'main')
 		update a2wf.Versions set [Version] = @version where Module = N'main';
 	else
@@ -242,12 +242,17 @@ create table a2wf.[AutoStart]
 	Lock uniqueidentifier null,
 	DateCreated datetime not null constraint DF_AutoStart_DateCreated default(getutcdate()),
 	InstanceId uniqueidentifier null,
-	DateStarted datetime null
+	DateStarted datetime null,
+	CorrelationId nvarchar(255) null,
 );
 go
 ------------------------------------------------
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'AutoStart' and COLUMN_NAME=N'StartAt')
 	alter table a2wf.AutoStart add StartAt datetime null;
+go
+------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'AutoStart' and COLUMN_NAME=N'CorrelationId')
+	alter table a2wf.AutoStart add CorrelationId nvarchar(255) null;
 go
 ------------------------------------------------
 create or alter procedure a2wf.[Catalog.Save]
@@ -793,7 +798,7 @@ begin
 		(StartAt is null or StartAt <= @now);
 
 	select [AutoStart!TAutoStart!Array] = null, [Id!!Id]= a.Id,  
-		WorkflowId, [Version], [Params!!Json] = Params
+		WorkflowId, [Version], [Params!!Json] = Params, CorrelationId
 	from @AutoStartTable t inner join a2wf.AutoStart a on t.Id = a.Id
 	order by a.DateCreated;
 end
@@ -803,14 +808,15 @@ create or alter procedure a2wf.[AutoStart.Create]
 @WorkflowId nvarchar(255),
 @Version int = 0,
 @Params nvarchar(max) = null,
-@StartAt datetime = null
+@StartAt datetime = null,
+@CorrelationId nvarchar(255) = null
 as
 begin
 	set nocount on;
 	set transaction isolation level read committed;
 
-	insert into a2wf.AutoStart(WorkflowId, [Version], [Params], StartAt) 
-	values (@WorkflowId, @Version, @Params, @StartAt);
+	insert into a2wf.AutoStart(WorkflowId, [Version], [Params], StartAt, CorrelationId) 
+	values (@WorkflowId, @Version, @Params, @StartAt, @CorrelationId);
 end
 go
 ------------------------------------------------

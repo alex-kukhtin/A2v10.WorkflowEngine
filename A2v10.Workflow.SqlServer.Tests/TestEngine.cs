@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using A2v10.Data.Interfaces;
 using A2v10.Runtime.Interfaces;
@@ -43,6 +44,8 @@ public static class TestEngine
         collection.UseSimpleDbContext();
         collection.AddSingleton<IRuntimeInvokeTarget, WorkflowInvokeTarget>();
 
+        collection.AddSingleton<ILoggerFactory, LoggerFactory>();
+        collection.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
         _provider = collection.BuildServiceProvider();
 
         return _provider;

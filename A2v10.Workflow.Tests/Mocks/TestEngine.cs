@@ -1,12 +1,15 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
+
+using System;
+using System.Dynamic;
+using System.Threading.Tasks;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using A2v10.System.Xaml;
 using A2v10.Workflow.Interfaces;
 using A2v10.Workflow.Serialization;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Dynamic;
-using System.Threading.Tasks;
 
 namespace A2v10.Workflow.Tests;
 public class TestEngine
@@ -39,6 +42,9 @@ public class TestEngine
         collection.AddScoped<IWorkflowEngine, WorkflowEngine>();
         collection.AddScoped<ITracker, ConsoleTracker>();
         collection.AddScoped<IScriptNativeObjectProvider, ScriptNativeObjects>();
+
+        collection.AddSingleton<ILoggerFactory, LoggerFactory>();
+        collection.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 
         _provider = collection.BuildServiceProvider();
 

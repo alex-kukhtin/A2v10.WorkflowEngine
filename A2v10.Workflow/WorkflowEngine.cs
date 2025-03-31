@@ -2,8 +2,11 @@
 
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Text.Json;
 
 namespace A2v10.Workflow;
 public class WorkflowEngine : IWorkflowEngine
@@ -12,13 +15,15 @@ public class WorkflowEngine : IWorkflowEngine
     private readonly IWorkflowStorage _workflowStorage;
     private readonly IInstanceStorage _instanceStorage;
     private readonly ITracker _tracker;
+    private readonly ILogger<WorkflowEngine> _logger;
 
-    public WorkflowEngine(IServiceProvider serviceProvider, ITracker tracker)
+    public WorkflowEngine(IServiceProvider serviceProvider, ITracker tracker, ILogger<WorkflowEngine> logger)
     {
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _workflowStorage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
         _instanceStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
         _tracker = tracker;
+        _logger = logger;
     }
 
     public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, String? correlationId = null, Guid? parent = null)
@@ -48,6 +53,7 @@ public class WorkflowEngine : IWorkflowEngine
     {
         if (instance.ExecutionStatus != WorkflowExecutionStatus.Init)
             throw new WorkflowException($"Instance (id={instance.Id}) is already running");
+        instance.CorrelationId = LoadCorrelationId(instance);
         var context = new ExecutionContext(_serviceProvider, _tracker, instance, args);
         context.Schedule(instance.Workflow.Root, null);
         await context.RunAsync();
@@ -55,6 +61,23 @@ public class WorkflowEngine : IWorkflowEngine
         await _instanceStorage.Save(instance);
         await CheckParent(instance);
         return instance;
+    }
+
+    private String? LoadCorrelationId(IInstance instance)
+    {
+        if (instance.CorrelationId == null)
+            return instance.CorrelationId;
+        var correlationId = instance.CorrelationId;
+        if (instance.Workflow.Root is not IScoped rootScoped)
+            return instance.CorrelationId;
+        var corrVariable = rootScoped.Variables?.FirstOrDefault(v => v.CorrelationId);
+        if (corrVariable != null && corrVariable.Type == VariableType.PersistentObject) {
+            var loadProcedure = $"{instance.Workflow.Root.Id}.{corrVariable.Name}.LoadPersistent";
+            var result = _workflowStorage.LoadPersistentValue(loadProcedure, correlationId);
+            if (result != null)
+                return JsonSerializer.Serialize(result);
+        }
+        return correlationId;
     }
 
     public async ValueTask<IInstance> RunAsync(Guid id, Object? args = null)
@@ -115,15 +138,18 @@ public class WorkflowEngine : IWorkflowEngine
         }
         foreach (var pi in pend.Pending)
         {
+            _logger.LogInformation("Process pending at {Time}, InstanceId {instanceId}", DateTime.Now, pi.InstanceId);
             await HandleEventsAsync(pi.InstanceId, pi.EventKeys);
         }
     }
 
     private async ValueTask<IInstance> AutoStartAsync(IAutoStartInstance autoStart)
     {
+        _logger.LogInformation("Auto start process at {Time}, WorkflowId {WorkflowId}", DateTime.Now, autoStart.WorkflowId);
         if (String.IsNullOrEmpty(autoStart.WorkflowId))
             throw new InvalidProgramException("WorkflowId is null");
         var inst = await CreateAsync(new WorkflowIdentity(id: autoStart.WorkflowId, ver: autoStart.Version));
+        inst.CorrelationId = autoStart.CorrelationId;
         return await RunAsync(inst, autoStart.Params);
     }
 

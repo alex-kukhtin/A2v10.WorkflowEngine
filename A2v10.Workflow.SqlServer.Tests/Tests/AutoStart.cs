@@ -216,5 +216,92 @@ public class AutoStart
         Assert.IsNotNull(tracks);
         Assert.AreEqual(3, tracks!.Count);
 	}
+
+    [TestMethod]
+    public async Task AutoStartWithCorrelationId()
+    {
+        String TestId = "CorrelationId";
+        await TestEngine.PrepareDatabase(TestId);
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simpleCorrelationId.bpmn");
+        var format = "text/xml";
+
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(TestId, xaml, format));
+        var ident = await _workflowStorage.PublishAsync(_workflowCatalog, TestId);
+
+        Assert.AreEqual(1, ident.Version);
+
+        await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]",
+            new ExpandoObject()
+            {
+                {"WorkflowId", TestId },
+                {"CorrelationId", "23452" }
+            });
+
+        await _workflowEngine.ProcessPending();
+
+        async Task AssertModel(Int64 val)
+        {
+            var instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast",
+                new ExpandoObject() {
+                    {"WorkflowId", TestId }
+             });
+            Assert.AreEqual("Complete", instModel.Eval<String>("Instance.ExecutionStatus"));
+            String? state = instModel.Eval<String>("Instance.State");
+            Assert.IsNotNull(state);
+            var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state!);
+            Assert.IsNotNull(stateObj);
+            var intVal = stateObj!.Eval<Int64>("Variables.Process_1.Order");
+            Assert.AreEqual(val, intVal);
+        }
+
+        await AssertModel(23457);
+
+        // with params and concrete version
+        await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]",
+            new ExpandoObject()
+            {
+                {"WorkflowId", TestId},
+                {"Version", 1},
+                {"CorrelationId", "500"},
+            });
+
+        await _workflowEngine.ProcessPending();
+        await AssertModel(505);
+    }
+
+    [TestMethod]
+    public async Task AutoStartCorrelationIdObject()
+    {
+        String TestId = "CorrelationId";
+        await TestEngine.PrepareDatabase(TestId);
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\ObjectCorrelationId.bpmn");
+        var format = "text/xml";
+
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(TestId, xaml, format));
+        var ident = await _workflowStorage.PublishAsync(_workflowCatalog, TestId);
+
+        Assert.AreEqual(1, ident.Version);
+
+        await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]",
+            new ExpandoObject()
+            {
+                {"WorkflowId", TestId },
+                {"CorrelationId", "77" }
+            });
+
+        await _workflowEngine.ProcessPending();
+
+        var instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast",
+            new ExpandoObject() {
+                    {"WorkflowId", TestId }
+         });
+        Assert.AreEqual("Complete", instModel.Eval<String>("Instance.ExecutionStatus"));
+        String? state = instModel.Eval<String>("Instance.State");
+        Assert.IsNotNull(state);
+        var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state!);
+        Assert.IsNotNull(stateObj);
+        var decVal = stateObj!.Eval<Object>("Variables.AutoStartCorrelationIdObject.Result");
+        Assert.AreEqual(82L, decVal);
+    }
 }
 

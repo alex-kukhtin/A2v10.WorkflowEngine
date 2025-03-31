@@ -16,7 +16,6 @@ public class Variable : IVariable
     public VariableType Type { get; set; }
 
     public Boolean External { get; set; }
-
     public Boolean CorrelationId { get; set; }
     public String? Value { get; set; }
 
@@ -70,6 +69,7 @@ public class Variable : IVariable
                     return Value;
                 throw new WorkflowException($"Unable to convert '{Value}' to Boolean");
             case VariableType.Object:
+            case VariableType.PersistentObject:
                 return Value ?? String.Empty; // TODO: Is the value an JS object?
         }
         throw new NotImplementedException($"Converting value for '{Type}'");

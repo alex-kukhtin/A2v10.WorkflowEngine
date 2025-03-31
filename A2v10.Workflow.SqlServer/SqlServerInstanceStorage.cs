@@ -214,10 +214,11 @@ public class SqlServerInstanceStorage : IInstanceStorage
                 continue;
             result.Add(new AutoStartInstance()
             {
-                Id = asie.GetNotNull<Int64>("Id"),
-                WorkflowId = asie.GetNotNull<String>("WorkflowId"),
-                Version = asie.Get<Int32>("Version"),
-                Params = asie.Get<ExpandoObject>("Params")
+                Id = asie.GetNotNull<Int64>(nameof(AutoStartInstance.Id)),
+                WorkflowId = asie.GetNotNull<String>(nameof(AutoStartInstance.WorkflowId)),
+                Version = asie.Get<Int32>(nameof(AutoStartInstance.Version)),
+                Params = asie.Get<ExpandoObject>(nameof(AutoStartInstance.Params)),
+                CorrelationId = asie.Get<String>(nameof(AutoStartInstance.CorrelationId))
             });
         }
         return result;

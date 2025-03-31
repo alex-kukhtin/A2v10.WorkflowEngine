@@ -33,9 +33,9 @@ public interface IVariable
     String Name { get; }
     String? Value { get; set; }
 
-    public Boolean IsArgument { get; }
-    public Boolean IsResult { get; }
-    public String ToType(String name);
+    Boolean IsArgument { get; }
+    Boolean IsResult { get; }
+    String ToType(String name);
 
     String Assignment();
 }
