@@ -218,7 +218,8 @@ public class SqlServerInstanceStorage : IInstanceStorage
                 WorkflowId = asie.GetNotNull<String>(nameof(AutoStartInstance.WorkflowId)),
                 Version = asie.Get<Int32>(nameof(AutoStartInstance.Version)),
                 Params = asie.Get<ExpandoObject>(nameof(AutoStartInstance.Params)),
-                CorrelationId = asie.Get<String>(nameof(AutoStartInstance.CorrelationId))
+                CorrelationId = asie.Get<String>(nameof(AutoStartInstance.CorrelationId)),
+                InstanceId = asie.Get<Guid?>(nameof(AutoStartInstance.InstanceId))
             });
         }
         return result;

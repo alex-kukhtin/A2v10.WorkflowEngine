@@ -8,5 +8,6 @@ public interface IAutoStartInstance
     Int32 Version { get; }
     String? CorrelationId { get; }
     ExpandoObject? Params { get; }
+    Guid? InstanceId { get; }
 }
 

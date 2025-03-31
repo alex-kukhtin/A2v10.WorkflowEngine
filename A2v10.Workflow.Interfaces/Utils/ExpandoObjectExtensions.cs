@@ -26,6 +26,8 @@ public static class ExpandoObjectExtensions
         var d = expobj as IDictionary<String, Object?>;
         if (d.TryGetValue(name, out Object? res))
         {
+            if (res == null)
+                return default;
             if (res is T t)
                 return t;
             return (T?)Convert.ChangeType(res, typeof(T));

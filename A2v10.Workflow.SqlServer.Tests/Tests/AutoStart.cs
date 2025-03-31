@@ -4,6 +4,7 @@ using System;
 using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +13,6 @@ using Newtonsoft.Json;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
-using System.Collections.Generic;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -282,11 +282,13 @@ public class AutoStart
 
         Assert.AreEqual(1, ident.Version);
 
+        Guid instanceGuid = Guid.Parse("a5a8d898-9ef7-49de-a8cb-8e70a6b07776");
         await _dbContext.ExecuteExpandoAsync(null, "a2wf.[AutoStart.Create]",
             new ExpandoObject()
             {
                 {"WorkflowId", TestId },
-                {"CorrelationId", "77" }
+                {"CorrelationId", "77" },
+                {"InstanceId", instanceGuid},
             });
 
         await _workflowEngine.ProcessPending();
@@ -298,6 +300,9 @@ public class AutoStart
         Assert.AreEqual("Complete", instModel.Eval<String>("Instance.ExecutionStatus"));
         String? state = instModel.Eval<String>("Instance.State");
         Assert.IsNotNull(state);
+
+        Assert.AreEqual(instanceGuid, instModel.Eval<Guid>("Instance.Id"));
+
         var stateObj = JsonConvert.DeserializeObject<ExpandoObject>(state!);
         Assert.IsNotNull(stateObj);
         var decVal = stateObj!.Eval<Object>("Variables.AutoStartCorrelationIdObject.Result");

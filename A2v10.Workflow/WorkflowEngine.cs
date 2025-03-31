@@ -24,27 +24,29 @@ public class WorkflowEngine : IWorkflowEngine
         _logger = logger;
     }
 
-    public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, String? correlationId = null, Guid? parent = null)
+    public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, String? correlationId = null, Guid? parent = null, Guid? instanceId = null)
     {
+        Guid instId = instanceId != null ? instanceId.Value : Guid.NewGuid();
         var wf = new WorkflowElement(identity ?? new WorkflowIdentity(String.Empty), root, new DymmyActivityWrapper());
-        var inst = new Instance(wf, Guid.NewGuid(), correlationId, parent);
+        var inst = new Instance(wf, instId, correlationId, parent);
         root.OnEndInit(null);
         await _instanceStorage.Create(inst);
         return inst;
     }
 
-    public async ValueTask<IInstance> CreateAsync(IWorkflow workflow, String? correlationId = null, Guid? parent = null)
+    public async ValueTask<IInstance> CreateAsync(IWorkflow workflow, String? correlationId = null, Guid? parent = null, Guid? instanceId = null)
     {
-        var inst = new Instance(workflow, Guid.NewGuid(), correlationId, parent);
+        Guid instId = instanceId != null ? instanceId.Value : Guid.NewGuid();
+        var inst = new Instance(workflow, instId, correlationId, parent);
         workflow.Root.OnEndInit(null);
         await _instanceStorage.Create(inst);
         return inst;
     }
 
-    public async ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, String? correlationId = null, Guid? parent = null)
+    public async ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, String? correlationId = null, Guid? parent = null, Guid? instanceId = null)
     {
         var wf = await _workflowStorage.LoadAsync(identity);
-        return await CreateAsync(wf, correlationId, parent);
+        return await CreateAsync(wf, correlationId, parent, instanceId);
     }
 
     public async ValueTask<IInstance> RunAsync(IInstance instance, Object? args = null)
@@ -128,7 +130,7 @@ public class WorkflowEngine : IWorkflowEngine
         _logger.LogInformation("Auto start process at {Time}, WorkflowId {WorkflowId}", DateTime.Now, autoStart.WorkflowId);
         if (String.IsNullOrEmpty(autoStart.WorkflowId))
             throw new InvalidProgramException("WorkflowId is null");
-        var inst = await CreateAsync(new WorkflowIdentity(id: autoStart.WorkflowId, ver: autoStart.Version), autoStart.CorrelationId);
+        var inst = await CreateAsync(new WorkflowIdentity(id: autoStart.WorkflowId, ver: autoStart.Version), autoStart.CorrelationId, null, autoStart.InstanceId);
         return await RunAsync(inst, autoStart.Params);
     }
 

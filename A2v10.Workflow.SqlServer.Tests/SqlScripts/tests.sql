@@ -1,7 +1,7 @@
 ﻿/*
-Copyright © 2020-2022 Alex Kukhtin
+Copyright © 2020-2025 Alex Kukhtin
 
-Last updated : 06 sep 2021
+Last updated : 31 mar 2025
 module version : 8095
 */
 ------------------------------------------------
@@ -239,3 +239,4 @@ begin
 	select [Order!TOrder!Object] = null, [Id!!Id] = @Id, [Name] = N'Data from SQL', [Sum] = cast(@Id as money);
 end
 go
+
