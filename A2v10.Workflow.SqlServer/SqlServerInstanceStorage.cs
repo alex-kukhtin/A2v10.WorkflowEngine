@@ -297,5 +297,11 @@ public class SqlServerInstanceStorage : IInstanceStorage
         }
         throw new SqlServerStorageException($"Invalid Persistent model. (Proc:'{procedure}', Id:{id})");
     }
+
+    public ExpandoObject SavePersistentValue(String procedure, ExpandoObject obj)
+    {
+        _dbContext.ExecuteExpando(DataSource, $"{SqlDefinitions.SqlSchema}.[{procedure}]", obj);
+        return obj;
+    }
 }
 

@@ -104,7 +104,7 @@ public static class IVariableExtensions
     public static String StoreArgument(this IVariable var)
     {
         if (var.Type == VariableType.PersistentObject)
-            return $"_savePersistent({var})";
+            return $"_savePersistent({var.Name}, '{var.Name}')";
         return var.Name;
     }
 }

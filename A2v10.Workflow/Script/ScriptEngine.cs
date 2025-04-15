@@ -169,17 +169,15 @@ public class ScriptEngine
         return insStorage.LoadPersistentValue(loadProcedure, id);
     }
 
-    public ExpandoObject SavePersistentValue(IVariable variable)
+    public ExpandoObject SavePersistentValue(ExpandoObject variable, String key)
     {
         var insStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
 
-        /*
-        var id = variable.Eval<Object>($"{key}.Id")
+        var id = variable.Eval<Object>("Id")
             ?? throw new WorkflowException($"SavePersistentValue. Id is required. Name: '{key}'");
         var saveProcedure = $"{_root.Id}.{key}.SavePersistent";
-        return insStorage.SavePersistentValue(saveProcedure, id);
-        */
-        return new ExpandoObject();
+        insStorage.SavePersistentValue(saveProcedure, variable);
+        return variable;
 
     }
 }

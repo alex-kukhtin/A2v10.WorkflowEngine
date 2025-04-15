@@ -161,4 +161,9 @@ public class InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage wo
     {
         throw new NotImplementedException();
     }
+
+    public ExpandoObject SavePersistentValue(String procedure, ExpandoObject obj)
+    {
+        throw new NotImplementedException();
+    }
 }

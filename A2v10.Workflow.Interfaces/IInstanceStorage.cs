@@ -19,5 +19,6 @@ public interface IInstanceStorage
     Task<IInstance?> LoadBookmark(String bookmark);
     ValueTask<DateTime> GetNowTime();
     ExpandoObject LoadPersistentValue(String procedure, Object id);
+    ExpandoObject SavePersistentValue(String procedure, ExpandoObject obj);
 }
 
