@@ -42,6 +42,7 @@ public class ScriptEngine
             { "ExecutionStatus", instance.ExecutionStatus.ToString() }
         });
         _engine.SetValue("_loadPersistent", LoadPersistentValue);
+        _engine.SetValue("_savePersistent", SavePersistentValue);
         //Console.WriteLine(script);
 
         var func = _engine.Evaluate(script);
@@ -166,6 +167,20 @@ public class ScriptEngine
             ?? throw new WorkflowException($"LoadPersistentValue. Id is required. Name: '{key}'");
         var loadProcedure = $"{_root.Id}.{key}.LoadPersistent";
         return insStorage.LoadPersistentValue(loadProcedure, id);
+    }
+
+    public ExpandoObject SavePersistentValue(IVariable variable)
+    {
+        var insStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
+
+        /*
+        var id = variable.Eval<Object>($"{key}.Id")
+            ?? throw new WorkflowException($"SavePersistentValue. Id is required. Name: '{key}'");
+        var saveProcedure = $"{_root.Id}.{key}.SavePersistent";
+        return insStorage.SavePersistentValue(saveProcedure, id);
+        */
+        return new ExpandoObject();
+
     }
 }
 

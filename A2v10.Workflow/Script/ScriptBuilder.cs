@@ -69,7 +69,7 @@ public class ActivityScriptBuilder(IActivity activity) : IScriptBuilder
             var strest = variables.Where(v => v.Dir != VariableDirection.Const).ToList();
             if (strest.Count != 0)
             {
-                mtds.Add($"Store: () => {{return {{ {String.Join(", ", strest.Select(x => $"{x.Name} : {x.Name}"))} }}; }}");
+                mtds.Add($"Store: () => {{return {{ {String.Join(", ", strest.Select(x => $"{x.Name} : {x.StoreArgument()}"))} }}; }}");
                 mtds.Add($"Restore: (_arg_) => {{ {String.Join("; ", strest.Select(x => $"{x.Name} = {x.RestoreArgument()} "))}; }}");
             }
         }

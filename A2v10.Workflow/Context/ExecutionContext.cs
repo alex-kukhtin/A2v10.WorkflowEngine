@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Dynamic;
@@ -92,9 +92,9 @@ public partial class ExecutionContext : IExecutionContext
         var sb = new ScriptBuilder();
         var sbTraverseArg = new TraverseArg()
         {
-            Start = (activity) => sb.Start(activity),
-            Action = (activity) => sb.Build(activity),
-            End = (activity) => sb.End(activity)
+            Start = sb.Start,
+            Action = sb.Build,
+            End = sb.End
         };
         _root.Traverse(sbTraverseArg);
         sb.EndScript();
