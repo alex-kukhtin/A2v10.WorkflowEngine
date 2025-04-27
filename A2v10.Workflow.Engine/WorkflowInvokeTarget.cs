@@ -36,11 +36,19 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         };
     }
 
-    public async Task<ExpandoObject> RunAsync(Guid instanceId, ExpandoObject? args)
+    public async Task<ExpandoObject> RunAsync(Object? instanceId, ExpandoObject? args)
     {
-        if (instanceId == Guid.Empty)
+        if (instanceId == null)
             throw new WorkflowException($"Run. InstanceId is required");
-        var res = await _engine.RunAsync(instanceId, args);
+        Guid instanceGuid = instanceId switch
+        {
+            Guid guidVal => guidVal,
+            String strVal => Guid.Parse(strVal),
+            _ => throw new WorkflowException($"Run.InstanceId invalid type")
+        };
+        if (instanceGuid == Guid.Empty)
+            throw new WorkflowException($"Run. InstanceId is required");
+        var res = await _engine.RunAsync(instanceGuid, args);
         return new ExpandoObject()
         {
             { Properties.InstanceId, res.Id },
@@ -67,6 +75,23 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
             { Properties.Result, res.Result}
         };
     }
+
+    public async Task<ExpandoObject> Variables(Object? instanceId)
+    {
+        if (instanceId == null)
+            throw new WorkflowException($"Variables. InstanceId is required");
+        Guid instanceGuid = instanceId switch
+        {
+            Guid guidVal => guidVal,
+            String strVal => Guid.Parse(strVal),
+            _ => throw new WorkflowException($"Variables.InstanceId invalid type")
+        };
+        if (instanceGuid == Guid.Empty)
+            throw new WorkflowException($"Variables. InstanceId is required");
+        var instance = await _engine.LoadInstanceRaw(instanceGuid);
+        return instance.State?.Get<ExpandoObject>("Variables") ?? new ExpandoObject();
+    }
+
 
     public async Task<ExpandoObject> StartAsync(String workflowId, Int32 version, ExpandoObject? args)
     {
@@ -129,7 +154,7 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
                     parameters.GetNotNull<String>(Properties.WorkflowId)
                 ),
             "Run" => await RunAsync(
-                    parameters.Get<Guid>(Properties.InstanceId),
+                    parameters.Get<Object>(Properties.InstanceId),
                     parameters.Get<ExpandoObject>(Properties.Args)
                 ),
             "Resume" => await ResumeAsync(
@@ -152,6 +177,9 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
                 ),
             "CheckSyntax" => await CheckSyntaxAsync(
                     parameters.GetNotNull<String>(Properties.WorkflowId)
+                ),
+            "Variables" => await Variables(
+                    parameters.GetNotNull<Object>(Properties.InstanceId)
                 ),
             _ => throw new WorkflowException($"Invalid target method '{method}'. Expected: Save, Publish, Create, Run, Start, Resume, CheckSyntax")
         };

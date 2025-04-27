@@ -252,3 +252,14 @@ begin
 end
 go
 
+------------------------------------------------
+create or alter procedure a2wf.[AutoStartCorrelationIdObject.Order.SavePersistent]
+@Id bigint,
+@Name nvarchar(255),
+@Sum money
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+end
+go

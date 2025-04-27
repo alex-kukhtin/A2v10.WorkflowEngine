@@ -49,6 +49,7 @@ Available commands:
 |Create | Create workflow |WorkflowId                 |InstanceId         |
 |Run    | Run workflow    |InstanceId, Args           |InstanceId, Result |
 |Resume | Resume workflow |InstanceId, Bookmark, Reply|InstanceId, Result |
+|Variables  | Get instance Variables   |InstanceId    |Result             |
 |CheckSyntax| Check script syntax|WorkflowId          |Errors: []         |
 
 The *Start* command is equivalent to *Create* + *Run*.
@@ -61,7 +62,7 @@ The *Version* is optional. If not specified - the max version will be used.
 "Workflow": {
   "Store": {
     "DataSource": "Connection_String_Name",
-    "MultiTenant": true
+    "MultiTenant": false
   }
 }
 ```

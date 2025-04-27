@@ -157,6 +157,7 @@ public class InvokeTarget
         Assert.AreEqual(instanceId, resInstanceId);
     }
 
+
     [TestMethod]
     public async Task CheckSyntax_Error()
     {
@@ -184,5 +185,47 @@ public class InvokeTarget
             ?? throw new InvalidOperationException("errors is null");    
 
         Assert.AreEqual(2, errors.Count);
+    }
+
+    [TestMethod]
+    public async Task Target_GetVariables()
+    {
+        var id = "SimpleTarget";
+        await TestEngine.PrepareDatabase(id);
+
+        var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
+
+        var format = "xaml";
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\simple.bpmn");
+
+        await target.InvokeAsync("Save", new ExpandoObject()
+        {
+            { "WorkflowId", id },
+            { "Format", format },
+            { "Body", xaml }
+        });
+
+        await target.InvokeAsync("Publish", new ExpandoObject()
+        {
+            {"WorkflowId", id }
+        });
+
+        var res = await target.InvokeAsync("Start", new ExpandoObject()
+        {
+            {"WorkflowId", id },
+            {"Args", new ExpandoObject()
+                {
+                    {"X", 5 }
+                }
+            }
+        });
+
+        var variables = await target.InvokeAsync("Variables", new ExpandoObject()
+        {
+            {"InstanceId", res.Get<Object>("InstanceId") }
+        });
+
+        Assert.AreEqual(10.0, res.Eval<Double>("Result.X"));
+        Assert.AreEqual(10.0, variables.Eval<Double>("Process_1.X"));
     }
 }
