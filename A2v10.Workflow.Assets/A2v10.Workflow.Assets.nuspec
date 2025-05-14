@@ -4,13 +4,13 @@
 		<id>A2v10.Workflow.Assets</id>
 		<version>10.1.8155</version>
 		<title>A2v10.Workflow Client WebFiles</title>
-		<authors>Oleksandr Kukthin</authors>
+		<authors>Oleksandr Kukhtin</authors>
 		<owners>AlexKukhtin,A2v10Platform</owners>
 		<projectUrl>https://a2v10.com</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A2v10 workflow (Client Web Files)</description>
 		<releaseNotes>Current NUGET release</releaseNotes>
-		<copyright>Copyright © 2020-2024 Oleksandr Kukthin. All rights reserved.</copyright>
+		<copyright>Copyright © 2020-2024 Oleksandr Kukhtin. All rights reserved.</copyright>
 		<tags>A2v10 Workflow</tags>
 		<repository type="git" url="https://github.com/alex-kukhtin/A2v10.Workflow" branch="master"/>
 		<license type="expression">MIT</license>
