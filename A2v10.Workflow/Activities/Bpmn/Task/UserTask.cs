@@ -1,6 +1,5 @@
-﻿// Copyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
-using Jint;
 using System.Dynamic;
 
 namespace A2v10.Workflow.Bpmn;
@@ -18,13 +17,13 @@ public class UserTask : BpmnTask
 
     public override ValueTask ExecuteBody(IExecutionContext context)
     {
-        var bkmark = GetRealBookmark(context);
-        context.SetBookmark(bkmark, this, OnUserTaskComplete);
+        var bookmark = GetRealBookmark(context);
+        context.SetBookmark(bookmark, this, OnUserTaskComplete);
         var inbox = context.Evaluate<ExpandoObject>(Id, nameof(Inbox));
         if (inbox != null)
         {
             _inboxId = Guid.NewGuid();
-            context.SetInbox(_inboxId.Value, inbox, this, bkmark);
+            context.SetInbox(_inboxId.Value, inbox, this, bookmark);
         }
         return ValueTask.CompletedTask;
     }

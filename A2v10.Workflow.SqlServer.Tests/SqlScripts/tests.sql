@@ -61,20 +61,23 @@ end
 go
 ------------------------------------------------
 if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'Inbox')
-begin
-	create table a2wf.[Inbox]
-	(
-		Id uniqueidentifier not null,
-		InstanceId uniqueidentifier not null,
-		Void bit,
-		Bookmark nvarchar(255),
-		[For] nvarchar(255),
-		ForUser bigint,
-		Model nvarchar(255),
-		ModelId bigint,
-		constraint PK_Inbox primary key clustered(Id, InstanceId)
-	);
-end
+create table a2wf.[Inbox]
+(
+	Id uniqueidentifier not null,
+	InstanceId uniqueidentifier not null,
+	Void bit,
+	Bookmark nvarchar(255),
+	Activity nvarchar(255),
+	[For] nvarchar(255),
+	ForUser bigint,
+	Model nvarchar(255),
+	ModelId bigint,
+	constraint PK_Inbox primary key clustered(Id, InstanceId)
+);
+go
+------------------------------------------------
+if not exists (select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = N'a2wf' and TABLE_NAME=N'Inbox' and COLUMN_NAME=N'Activity')
+	alter table a2wf.Inbox add [Activity] nvarchar(255) null;
 go
 ------------------------------------------------
 create or alter procedure a2wf.[Instance.Inbox.Create]
@@ -82,6 +85,7 @@ create or alter procedure a2wf.[Instance.Inbox.Create]
 @Id uniqueidentifier,
 @InstanceId uniqueidentifier,
 @Bookmark nvarchar(255),
+@Activity nvarchar(255),
 @For nvarchar(255) = null,
 @ForUser bigint = null,
 @Model nvarchar(255) = null,
@@ -91,8 +95,8 @@ begin
 	set nocount on;
 	set transaction isolation level read committed;
 	set xact_abort on;
-	insert into a2wf.[Inbox] (Id, InstanceId, Bookmark, [For], ForUser, Model, ModelId)
-	values (@Id, @InstanceId, @Bookmark, @For, @ForUser, @Model, @ModelId);
+	insert into a2wf.[Inbox] (Id, InstanceId, Bookmark, [For], ForUser, Model, ModelId, Activity)
+	values (@Id, @InstanceId, @Bookmark, @For, @ForUser, @Model, @ModelId, @Activity);
 end
 go
 

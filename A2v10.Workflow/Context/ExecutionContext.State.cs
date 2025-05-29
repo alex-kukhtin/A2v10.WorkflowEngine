@@ -99,7 +99,7 @@ public partial class ExecutionContext : IExecutionContext
             return null;
         var res = new ExpandoObject();
         foreach (var b in _bookmarks)
-            res.Set(b.Key, CallbackItem.CreateFrom(b.Value));
+            res.Set(b.Key, CallbackItem.CreateFrom(b.Value.Action));
         return res;
     }
 
@@ -112,7 +112,7 @@ public partial class ExecutionContext : IExecutionContext
             var ebm = marks.Get<ExpandoObject>(k) ?? throw new InvalidProgramException("Bookmark is null");
             var cb = CallbackItem.FromExpando(ebm);
             if (_activities.TryGetValue(cb.Ref, out IActivity? activity))
-                _bookmarks.Add(k, cb.ToBookmark(activity));
+                _bookmarks.Add(k, new BookmarkItem(activity.Id, cb.ToBookmark(activity)));
             else
                 throw new WorkflowException($"Activity {cb.Ref} for bookmark callback not found");
         }
@@ -236,7 +236,8 @@ public partial class ExecutionContext : IExecutionContext
         foreach (var b in _bookmarks)
             list.Add(
                 new ExpandoObject() {
-                    { "Bookmark", b.Key }
+                    { "Bookmark", b.Key },
+                    { "Activity", b.Value.Activity }
                 }
             );
         return list;

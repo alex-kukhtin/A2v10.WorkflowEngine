@@ -199,7 +199,7 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 		{
 			// simple outgouning - same token
 			var targetFlow = ParentContainer.FindElement<SequenceFlow>(Outgoing.First().Text);
-			context.Schedule(targetFlow, _token);
+			context.Schedule(targetFlow, _token  ?? ParentContainer.NewToken());
 			_token = null;
 		}
 		else

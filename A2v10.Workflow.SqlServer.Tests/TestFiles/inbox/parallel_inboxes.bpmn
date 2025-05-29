@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wf="clr-namespace:A2v10.Workflow;assembly=A2v10.Workflow">
+	<process id="Process_1" isExecutable="true">
+		<extensionElements>
+			<wf:Variables>
+				<wf:Variable Name="Index" Value="5" Type="Number" Dir="Local" />
+			</wf:Variables>
+		</extensionElements>
+		<startEvent id="StartEvent_1" name="Start">
+			<outgoing>SequenceFlow_1</outgoing>
+		</startEvent>
+		<endEvent id="EndEvent_1" name="End">
+			<incoming>Flow_1xd6xoa</incoming>
+		</endEvent>
+		<sequenceFlow id="SequenceFlow_1" sourceRef="StartEvent_1" targetRef="First_Gateway" />
+		<UserTask id="Task_1" name="First Task">
+			<extensionElements>
+				<wf:Inbox>
+					{
+					"Text": "First Task"
+					}
+				</wf:Inbox>
+			</extensionElements>
+			<incoming>Flow_16pa333</incoming>
+			<outgoing>Flow_1ibc3e7</outgoing>
+		</UserTask>
+		<exclusiveGateway id="Second_Gateway" default="Flow_03ihofu">
+			<incoming>Flow_1ibc3e7</incoming>
+			<outgoing>Flow_1xd6xoa</outgoing>
+			<outgoing>Flow_03ihofu</outgoing>
+		</exclusiveGateway>
+		<sequenceFlow id="Flow_1xd6xoa" sourceRef="Second_Gateway" targetRef="EndEvent_1">
+			<conditionExpression xsi:type="tFormalExpression">LastResult.Answer == "OK"</conditionExpression>
+		</sequenceFlow>
+		<sequenceFlow id="Flow_03ihofu" sourceRef="Second_Gateway" targetRef="Task_2" />
+		<UserTask id="Task_2" name="Second Task">
+			<extensionElements>
+				<wf:Inbox>
+					{
+					"Text": `
+					Second Task
+					Multi Line Text
+					`
+					}
+				</wf:Inbox>
+			</extensionElements>
+			<incoming>Flow_03ihofu</incoming>
+			<outgoing>Flow_0pqmi11</outgoing>
+		</UserTask>
+		<exclusiveGateway id="First_Gateway">
+			<incoming>SequenceFlow_1</incoming>
+			<incoming>Flow_063fvl3</incoming>
+			<outgoing>Flow_0ufrk9h</outgoing>
+		</exclusiveGateway>
+		<sequenceFlow id="Flow_0ufrk9h" sourceRef="First_Gateway" targetRef="Parallel_Gateway" />
+		<sequenceFlow id="Flow_0pqmi11" sourceRef="Task_2" targetRef="Timer_1" />
+		<sequenceFlow id="Flow_063fvl3" sourceRef="Timer_1" targetRef="First_Gateway" />
+		<intermediateCatchEvent id="Timer_1">
+			<incoming>Flow_0pqmi11</incoming>
+			<outgoing>Flow_063fvl3</outgoing>
+			<timerEventDefinition id="TimerEventDefinition_0ou3nki">
+				<timeDuration xsi:type="tFormalExpression">00:00:01</timeDuration>
+			</timerEventDefinition>
+		</intermediateCatchEvent>
+		<sequenceFlow id="Flow_16pa333" sourceRef="Parallel_Gateway" targetRef="Task_1" />
+		<UserTask id="Task_3" name="Third Task" wf:bookmark="${'Bookmark' + Index}">
+			<extensionElements>
+				<wf:Inbox>
+					{
+					"Text": 'Third Task'
+					}
+				</wf:Inbox>
+			</extensionElements>
+			<incoming>Flow_1pzntib</incoming>
+			<outgoing>Flow_1fxhmbg</outgoing>
+		</UserTask>
+		<intermediateCatchEvent id="Timer_2">
+			<incoming>Flow_1fxhmbg</incoming>
+			<outgoing>Flow_1hnmr45</outgoing>
+			<timerEventDefinition id="TimerEventDefinition_19o4ht8">
+				<timeDuration xsi:type="tFormalExpression">00:00:01</timeDuration>
+			</timerEventDefinition>
+		</intermediateCatchEvent>
+		<sequenceFlow id="Flow_1ibc3e7" sourceRef="Task_1" targetRef="Second_Gateway" />
+		<sequenceFlow id="Flow_1fxhmbg" sourceRef="Task_3" targetRef="Timer_2" />
+		<sequenceFlow id="Flow_1sdpgea" sourceRef="Parallel_Gateway" targetRef="Activity_1mvl4m3" />
+		<endEvent id="EndEvent_2">
+			<incoming>Flow_1hnmr45</incoming>
+		</endEvent>
+		<sequenceFlow id="Flow_1hnmr45" sourceRef="Timer_2" targetRef="EndEvent_2" />
+		<parallelGateway id="Parallel_Gateway">
+			<incoming>Flow_0ufrk9h</incoming>
+			<outgoing>Flow_16pa333</outgoing>
+			<outgoing>Flow_1sdpgea</outgoing>
+		</parallelGateway>
+		<sequenceFlow id="Flow_1pzntib" sourceRef="Activity_1mvl4m3" targetRef="Task_3" />
+		<scriptTask id="Activity_1mvl4m3" name="Inc Index">
+			<incoming>Flow_1sdpgea</incoming>
+			<outgoing>Flow_1pzntib</outgoing>
+			<script>Index += 1</script>
+		</scriptTask>
+	</process>
+	<bpmndi:BPMNDiagram id="BpmnDiagram_1">
+		<bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="Process_1">
+			<bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+				<omgdc:Bounds x="152" y="192" width="36" height="36" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds x="159" y="235" width="23" height="14" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_1_di" bpmnElement="EndEvent_1">
+				<omgdc:Bounds x="742" y="192" width="36" height="36" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds x="751" y="235" width="20" height="14" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Activity_1tpaba3_di" bpmnElement="Task_1">
+				<omgdc:Bounds x="470" y="170" width="100" height="80" />
+				<bpmndi:BPMNLabel />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Gateway_0asmwjq_di" bpmnElement="Second_Gateway" isMarkerVisible="true">
+				<omgdc:Bounds x="635" y="185" width="50" height="50" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Activity_0hzlv5s_di" bpmnElement="Task_2">
+				<omgdc:Bounds x="610" y="300" width="100" height="80" />
+				<bpmndi:BPMNLabel />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Gateway_0rim4z2_di" bpmnElement="First_Gateway" isMarkerVisible="true">
+				<omgdc:Bounds x="235" y="185" width="50" height="50" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_1ld6tzm_di" bpmnElement="Timer_1">
+				<omgdc:Bounds x="412" y="322" width="36" height="36" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Gateway_1865k8l_di" bpmnElement="Parallel_Gateway">
+				<omgdc:Bounds x="365" y="185" width="50" height="50" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_1weodyn_di" bpmnElement="EndEvent_2">
+				<omgdc:Bounds x="872" y="72" width="36" height="36" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_1rim20r_di" bpmnElement="Timer_2">
+				<omgdc:Bounds x="752" y="72" width="36" height="36" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds x="377" y="95" width="6" height="14" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Activity_171d4j5_di" bpmnElement="Task_3">
+				<omgdc:Bounds x="500" y="50" width="100" height="80" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Activity_0zsgl4g_di" bpmnElement="Activity_1mvl4m3">
+				<omgdc:Bounds x="340" y="50" width="100" height="80" />
+				<bpmndi:BPMNLabel />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNEdge id="SequenceFlow_1_di" bpmnElement="SequenceFlow_1">
+				<omgdi:waypoint x="188" y="210" />
+				<omgdi:waypoint x="235" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_1xd6xoa_di" bpmnElement="Flow_1xd6xoa">
+				<omgdi:waypoint x="685" y="210" />
+				<omgdi:waypoint x="742" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_03ihofu_di" bpmnElement="Flow_03ihofu">
+				<omgdi:waypoint x="660" y="235" />
+				<omgdi:waypoint x="660" y="300" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_0ufrk9h_di" bpmnElement="Flow_0ufrk9h">
+				<omgdi:waypoint x="285" y="210" />
+				<omgdi:waypoint x="365" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_0pqmi11_di" bpmnElement="Flow_0pqmi11">
+				<omgdi:waypoint x="610" y="340" />
+				<omgdi:waypoint x="448" y="340" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_063fvl3_di" bpmnElement="Flow_063fvl3">
+				<omgdi:waypoint x="412" y="340" />
+				<omgdi:waypoint x="260" y="340" />
+				<omgdi:waypoint x="260" y="235" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_16pa333_di" bpmnElement="Flow_16pa333">
+				<omgdi:waypoint x="415" y="210" />
+				<omgdi:waypoint x="470" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_1ibc3e7_di" bpmnElement="Flow_1ibc3e7">
+				<omgdi:waypoint x="570" y="210" />
+				<omgdi:waypoint x="635" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_1fxhmbg_di" bpmnElement="Flow_1fxhmbg">
+				<omgdi:waypoint x="600" y="90" />
+				<omgdi:waypoint x="752" y="90" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_1sdpgea_di" bpmnElement="Flow_1sdpgea">
+				<omgdi:waypoint x="390" y="185" />
+				<omgdi:waypoint x="390" y="130" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_1hnmr45_di" bpmnElement="Flow_1hnmr45">
+				<omgdi:waypoint x="788" y="90" />
+				<omgdi:waypoint x="872" y="90" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_1pzntib_di" bpmnElement="Flow_1pzntib">
+				<omgdi:waypoint x="440" y="90" />
+				<omgdi:waypoint x="500" y="90" />
+			</bpmndi:BPMNEdge>
+		</bpmndi:BPMNPlane>
+	</bpmndi:BPMNDiagram>
+</definitions>

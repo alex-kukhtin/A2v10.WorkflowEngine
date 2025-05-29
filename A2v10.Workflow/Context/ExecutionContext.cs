@@ -23,11 +23,13 @@ public record QueueItem
 
 public record EventItem(EventAction Action, IWorkflowEvent Event);
 
+public record BookmarkItem(String Activity, ResumeAction Action);
+
 public partial class ExecutionContext : IExecutionContext
 {
     private readonly Queue<QueueItem> _commandQueue = new();
     private readonly Dictionary<String, IActivity> _activities = [];
-    private readonly Dictionary<String, ResumeAction> _bookmarks = [];
+    private readonly Dictionary<String, BookmarkItem> _bookmarks = [];
     private readonly Dictionary<String, EventItem> _events = [];
     private readonly List<ExpandoObject> _inboxCreate = [];
     private readonly List<Guid> _inboxRemove = [];
@@ -124,7 +126,7 @@ public partial class ExecutionContext : IExecutionContext
     public void SetBookmark(String bookmark, IActivity activity, ResumeAction onComplete)
     {
         _tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Bookmark, activity, $"{{bookmark:'{bookmark}'}}"));
-        _bookmarks.Add(bookmark, onComplete);
+        _bookmarks.Add(bookmark, new BookmarkItem(activity.Id, onComplete));
     }
 
     public void RemoveBookmark(String bookmark)
@@ -138,6 +140,7 @@ public partial class ExecutionContext : IExecutionContext
         var eo = inbox.Clone();
         eo.SetOrReplace("Id", id);
         eo.SetOrReplace("Bookmark", bookmark);
+        eo.SetOrReplace("Activity", activity.Id);
         _inboxCreate.Add(eo);
     }
 
@@ -197,11 +200,11 @@ public partial class ExecutionContext : IExecutionContext
 
     public ValueTask ResumeAsync(String bookmark, Object? result)
     {
-        if (_bookmarks.TryGetValue(bookmark, out ResumeAction? action))
+        if (_bookmarks.TryGetValue(bookmark, out BookmarkItem? item))
         {
             String strResult = result != null ? $", result:{JsonSerializer.Serialize(result)}" : String.Empty;
             _tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Resume, null, $"{{bookmark:'{bookmark}'{strResult}}}"));
-            return action(this, bookmark, result);
+            return item.Action(this, bookmark, result);
         }
         else
             throw new WorkflowException($"Bookmark '{bookmark}' not found");

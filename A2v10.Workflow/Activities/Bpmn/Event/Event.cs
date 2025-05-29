@@ -33,7 +33,7 @@ public abstract class Event : BpmnActivity, IScriptable
         if (Outgoing.Count() == 1)
         {
             var targetFlow = ParentContainer.FindElement<SequenceFlow>(Outgoing.First().Text);
-            context.Schedule(targetFlow, token);
+            context.Schedule(targetFlow, token ?? ParentContainer.NewToken());
         }
         else
         {
