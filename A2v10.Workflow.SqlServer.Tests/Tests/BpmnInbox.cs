@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using A2v10.Workflow.Interfaces;
+using System.Dynamic;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -29,9 +30,16 @@ public class BpmnInbox
 
         var sp = TestEngine.ServiceProvider();
         var engine = sp.GetRequiredService<IWorkflowEngine>();
-        inst = await engine.ResumeAsync(inst.Id, "Inbox");
+        inst = await engine.ResumeAsync(inst.Id, "Inbox", new ExpandoObject()
+        {
+            { "Answer", "OK" }
+        });
+
 
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+
+        var lr = inst.State.Get<ExpandoObject>("LastResult");
+        Assert.AreEqual("OK", lr?.Get<String>("Answer"));
     }
 }
 

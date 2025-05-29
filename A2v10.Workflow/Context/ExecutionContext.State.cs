@@ -43,6 +43,11 @@ public partial class ExecutionContext : IExecutionContext
         }
     }
 
+    Object? GetLastResult()
+    {
+        return _script.GetLastResult();
+    }
+
     ExpandoObject? GetScriptVariables()
     {
         var vars = new ExpandoObject();
@@ -137,6 +142,7 @@ public partial class ExecutionContext : IExecutionContext
         res.SetNotNull("Bookmarks", GetBookmarks());
         res.SetNotNull("Events", GetEvents());
         res.SetNotNull("EndEvent", GetEndEvent());
+        res.SetNotNull("LastResult", GetLastResult());
         return res;
     }
 
