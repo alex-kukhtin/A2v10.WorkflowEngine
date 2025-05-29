@@ -173,6 +173,10 @@ public partial class ExecutionContext : IExecutionContext
     {
         _script.ExecuteResult(refer, name, result);
     }
+    public void SetLastResult(Object? result)
+    {
+        _script.SetLastResult(result);
+    }
 
     public void SetVariable(String refer, String name, Object? value)
     {

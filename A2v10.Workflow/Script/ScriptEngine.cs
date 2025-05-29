@@ -138,6 +138,10 @@ public class ScriptEngine
             return;
         func(JsValue.Undefined, null);
     }
+    public void SetLastResult(Object? result)
+    {
+        _engine.SetValue("LastResult", result ?? new ExpandoObject());
+    }
 
     public void ExecuteResult(String refer, String name, Object? result)
     {
@@ -147,8 +151,6 @@ public class ScriptEngine
         if (func == null)
             return;
         // result must be not null
-        if (result != null)
-            _engine.SetValue("LastResult", result);
         var arg = JsValue.FromObject(_engine, result ?? new ExpandoObject());
         func(JsValue.Undefined, [arg]);
     }

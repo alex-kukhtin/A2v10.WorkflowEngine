@@ -24,6 +24,7 @@ public class CallActivity : BpmnTask
             await context.HandleEndEvent(result.State?.Get<ExpandoObject>("EndEvent"));
             if (IsComplete)
                 return;
+            context.SetLastResult(result.Result);
             context.ExecuteResult(Id, nameof(Script), result.Result);
             await CompleteBody(context);
         }
@@ -44,6 +45,7 @@ public class CallActivity : BpmnTask
         if (IsComplete)
             return;
         CompleteTask(context);
+        context.SetLastResult(result);
         if (!String.IsNullOrEmpty(Script))
             context.ExecuteResult(Id, nameof(Script), result);
         await CompleteBody(context);

@@ -1,5 +1,6 @@
 ﻿// Copyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.
 
+using Jint;
 using System.Dynamic;
 
 namespace A2v10.Workflow.Bpmn;
@@ -43,6 +44,7 @@ public class UserTask : BpmnTask
         CompleteTask(context);
         context.RemoveBookmark(bookmark);
         context.RemoveInbox(_inboxId);
+        context.SetLastResult(result);
         if (!String.IsNullOrEmpty(Script))
             context.ExecuteResult(Id, nameof(Script), result);
         return CompleteBody(context);

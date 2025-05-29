@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2025 Alex Kukhtin
 
-Last updated : 31 mar 2025
-module version : 8095
+Last updated : 29 may 2025
+module version : 8226
 */
 ------------------------------------------------
 set nocount on;
@@ -82,10 +82,10 @@ create or alter procedure a2wf.[Instance.Inbox.Create]
 @Id uniqueidentifier,
 @InstanceId uniqueidentifier,
 @Bookmark nvarchar(255),
-@For nvarchar(255),
-@ForUser bigint,
-@Model nvarchar(255),
-@ModelId bigint
+@For nvarchar(255) = null,
+@ForUser bigint = null,
+@Model nvarchar(255) = null,
+@ModelId bigint = null
 as
 begin
 	set nocount on;

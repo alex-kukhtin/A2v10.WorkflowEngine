@@ -41,5 +41,45 @@ public class BpmnInbox
         var lr = inst.State.Get<ExpandoObject>("LastResult");
         Assert.AreEqual("OK", lr?.Get<String>("Answer"));
     }
+
+    [TestMethod]
+    public async Task TwoInboxes()
+    {
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\inbox\\two_Inboxes.bpmn");
+
+        String wfId = "TwoInboxes";
+
+        await TestEngine.PrepareDatabase(wfId);
+
+        var inst = await TestEngine.SimpleRun(wfId, xaml);
+        Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+        var sp = TestEngine.ServiceProvider();
+        var engine = sp.GetRequiredService<IWorkflowEngine>();
+
+        inst = await engine.ResumeAsync(inst.Id, "Task_1", new ExpandoObject()
+        {
+            { "Answer", "Cancel" }
+        });
+        Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+        var lr = inst.State.Get<ExpandoObject>("LastResult");
+        Assert.AreEqual("Cancel", lr?.Get<String>("Answer"));
+
+        inst = await engine.ResumeAsync(inst.Id, "Task_2", new ExpandoObject()
+        {
+            { "Answer", "OK" }
+        });
+        Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+        inst = await engine.ResumeAsync(inst.Id, "Task_1", new ExpandoObject()
+        {
+            { "Answer", "OK" }
+        });
+
+        Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+
+        lr = inst.State.Get<ExpandoObject>("LastResult");
+        Assert.AreEqual("OK", lr?.Get<String>("Answer"));
+    }
 }
 

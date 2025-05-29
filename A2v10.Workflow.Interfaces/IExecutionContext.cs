@@ -22,6 +22,7 @@ public interface IExecutionContext
     T? Evaluate<T>(String refer, String name);
     void Execute(String refer, String name);
     void ExecuteResult(String refer, String name, Object? result);
+    void SetLastResult(Object? result); 
     void SetVariable(String refer, String name, Object? value);
 
     ValueTask<IInstance> Call(String activity, ExpandoObject? prms);
