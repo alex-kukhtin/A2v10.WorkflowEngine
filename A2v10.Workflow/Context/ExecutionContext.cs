@@ -202,8 +202,9 @@ public partial class ExecutionContext : IExecutionContext
     {
         if (_bookmarks.TryGetValue(bookmark, out BookmarkItem? item))
         {
+            _activities.TryGetValue(item.Activity, out IActivity? activity);
             String strResult = result != null ? $", result:{JsonSerializer.Serialize(result)}" : String.Empty;
-            _tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Resume, null, $"{{bookmark:'{bookmark}'{strResult}}}"));
+            _tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Resume, activity, $"{{bookmark:'{bookmark}'{strResult}}}"));
             return item.Action(this, bookmark, result);
         }
         else
