@@ -12,7 +12,7 @@ internal record VersionInfo
 
 public class SqlServerStorageVersion(IDbContext dbContext) : IWorkflowStorageVersion
 {
-	private const Int32 REQUIRED_VERSION = 8227;
+	private const Int32 REQUIRED_VERSION = 8229;
 
 	private readonly IDbContext _dbContext = dbContext;
 
