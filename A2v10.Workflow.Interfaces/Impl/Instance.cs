@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
 
@@ -16,4 +16,5 @@ public class Instance(IWorkflow workflow, Guid id, String? correlationId = null,
 
     public String? CorrelationId { get; set; } = correlationId;
     public IInstanceData? InstanceData { get; set; }
+    public List<ExpandoObject>? Signal { get; set; }
 }

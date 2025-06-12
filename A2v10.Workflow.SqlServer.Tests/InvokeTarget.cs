@@ -139,6 +139,10 @@ public class InvokeTarget
         }) ?? throw new InvalidOperationException("result is null");
 
         String? instanceId = res.Get<Object>("InstanceId")?.ToString();
+        List<ExpandoObject>? signal = res.Get<List<ExpandoObject>>("Signal");
+
+        Assert.IsNotNull(signal);
+        Assert.AreEqual(2, signal.Count);
 
         var resResume = await target.InvokeAsync("Resume", new ExpandoObject()
         {

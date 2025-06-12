@@ -158,7 +158,8 @@ public class SqlServerInstanceStorage : IInstanceStorage
             }
         }
 
-        _ = await _dbContext.SaveModelBatchAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.Update]", root, null, batches);
+        var dm = await _dbContext.SaveModelBatchAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.Update]", root, null, batches);
+        instance.Signal = dm.Eval<List<ExpandoObject>>("Signal");
     }
 
 

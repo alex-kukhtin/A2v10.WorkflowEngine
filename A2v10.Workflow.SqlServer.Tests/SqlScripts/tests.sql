@@ -97,6 +97,10 @@ begin
 	set xact_abort on;
 	insert into a2wf.[Inbox] (Id, InstanceId, Bookmark, [For], ForUser, Model, ModelId, Activity)
 	values (@Id, @InstanceId, @Bookmark, @For, @ForUser, @Model, @ModelId, @Activity);
+
+	select [Signal!TSignal!Array] = null, [User] = @ForUser, [Text] = @Bookmark;
+
+	select [Signal!TSignal!Array] = null, [User] = @ForUser + 1, [Text] = @Bookmark;
 end
 go
 

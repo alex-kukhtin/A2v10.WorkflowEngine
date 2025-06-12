@@ -19,6 +19,7 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         public const String Bookmark = nameof(Bookmark);
         public const String Reply = nameof(Reply);
         public const String Result = nameof(Result);
+        public const String Signal = nameof(Signal);
         public const String Body = nameof(Body);
         public const String Format = nameof(Format);
         public const String Version = nameof(Version);
@@ -53,7 +54,8 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         return new ExpandoObject()
         {
             { Properties.InstanceId, res.Id },
-            { Properties.Result, res.Result}
+            { Properties.Result, res.Result},
+            { Properties.Signal, res.Signal}
         };
     }
 
@@ -73,7 +75,8 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         return new ExpandoObject()
         {
             { Properties.InstanceId, res.Id },
-            { Properties.Result, res.Result}
+            { Properties.Result, res.Result },
+            { Properties.Signal, res.Signal }
         };
     }
 

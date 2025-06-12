@@ -1,4 +1,4 @@
-// Copyright © 2021-2022 Oleksandr Kukhtin. All rights reserved.
+// Copyright © 2021-2025 Oleksandr Kukhtin. All rights reserved.
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,9 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-
-using A2v10.Workflow.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace A2v10.Workflow.WebHost;
 public class Startup
