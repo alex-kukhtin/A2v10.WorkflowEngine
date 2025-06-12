@@ -40,6 +40,15 @@ public class WorkflowEngine : IWorkflowEngine
         var inst = new Instance(workflow, instId, correlationId, parent);
         workflow.Root.OnEndInit(null);
         await _instanceStorage.Create(inst);
+        if (!String.IsNullOrEmpty(correlationId) && workflow.Root is IScoped scoped)
+        {
+            var cid = scoped.Variables?.FirstOrDefault(v => v.CorrelationId);
+            if (cid != null && cid.Type == VariableType.PersistentObject)
+            {
+                var proc = $"{workflow.Root.Id}.{cid.Name}.SetInstanceId";
+                await _instanceStorage.SetPersistentInstanceAsync(proc, correlationId, inst.Id);
+            }
+        }
         return inst;
     }
 

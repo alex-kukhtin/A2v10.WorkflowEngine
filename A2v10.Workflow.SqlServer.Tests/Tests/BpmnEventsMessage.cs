@@ -195,7 +195,7 @@ public class BpmnEventsMessage
 
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
-        await Task.Delay(1040); // 1
+        await Task.Delay(1050); // 1
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");

@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wf="clr-namespace:A2v10.Workflow;assembly=A2v10.Workflow" id="sid-38422fae-e03e-43a3-bef4-bd33b32041b2" targetNamespace="http://bpmn.io/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.5.0">
+	<process id="Persist" isExecutable="true">
+		<extensionElements>
+			<wf:Variables>
+				<wf:Variable Name="log" Type="Object" Dir="Out" External="false" Value="[]" />
+				<wf:Variable Name="Order" Type="PersistentObject" Dir="InOut" External="false" CorrelationId="true" Value="" />
+			</wf:Variables>
+		</extensionElements>
+		<startEvent id="StartEvent_1y45yut" name="start">
+			<extensionElements>
+				<wf:Script>log.push('start')</wf:Script>
+			</extensionElements>
+			<outgoing>SequenceFlow_0h21x7r</outgoing>
+		</startEvent>
+		<endEvent id="end" name="end">
+			<extensionElements>
+				<wf:Script>log.push('end')</wf:Script>
+			</extensionElements>
+			<incoming>Flow_0m9y0n7</incoming>
+		</endEvent>
+		<sequenceFlow id="SequenceFlow_0h21x7r" sourceRef="StartEvent_1y45yut" targetRef="Inbox" />
+		<sequenceFlow id="Flow_1mtt2co" sourceRef="Inbox" targetRef="Activity_1oxetjv" />
+		<UserTask id="Inbox" name="Inbox 1">
+			<extensionElements>
+				<wf:Inbox>
+					{
+					For: 'User',
+					ForUser: 123,
+					Model: 'Model1',
+					ModelId: 234
+					}
+				</wf:Inbox>
+				<wf:Script>
+					log.push('inbox');
+					log.push(JSON.stringify(Order));
+				</wf:Script>
+			</extensionElements>
+			<incoming>SequenceFlow_0h21x7r</incoming>
+			<outgoing>Flow_1mtt2co</outgoing>
+		</UserTask>
+		<sequenceFlow id="Flow_0m9y0n7" sourceRef="Activity_1oxetjv" targetRef="end" />
+		<scriptTask id="Activity_1oxetjv">
+			<incoming>Flow_1mtt2co</incoming>
+			<outgoing>Flow_0m9y0n7</outgoing>
+			<script>log.push(JSON.stringify(Order));</script>
+		</scriptTask>
+	</process>
+	<bpmndi:BPMNDiagram id="BpmnDiagram_1">
+		<bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="Persist">
+			<bpmndi:BPMNEdge id="Flow_1mtt2co_di" bpmnElement="Flow_1mtt2co">
+				<omgdi:waypoint x="388" y="210" />
+				<omgdi:waypoint x="460" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="SequenceFlow_0h21x7r_di" bpmnElement="SequenceFlow_0h21x7r">
+				<omgdi:waypoint x="188" y="210" />
+				<omgdi:waypoint x="288" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_0m9y0n7_di" bpmnElement="Flow_0m9y0n7">
+				<omgdi:waypoint x="560" y="210" />
+				<omgdi:waypoint x="642" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNShape id="StartEvent_1y45yut_di" bpmnElement="StartEvent_1y45yut">
+				<omgdc:Bounds x="152" y="192" width="36" height="36" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds x="159" y="235" width="23" height="14" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_0sk8619_di" bpmnElement="end">
+				<omgdc:Bounds x="642" y="192" width="36" height="36" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds x="651" y="235" width="19" height="14" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Activity_0n2mn2o_di" bpmnElement="Activity_1oxetjv">
+				<omgdc:Bounds x="460" y="170" width="100" height="80" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Activity_11qbotj_di" bpmnElement="Inbox">
+				<omgdc:Bounds x="288" y="170" width="100" height="80" />
+			</bpmndi:BPMNShape>
+		</bpmndi:BPMNPlane>
+	</bpmndi:BPMNDiagram>
+</definitions>

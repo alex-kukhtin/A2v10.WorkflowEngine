@@ -22,13 +22,14 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         public const String Body = nameof(Body);
         public const String Format = nameof(Format);
         public const String Version = nameof(Version);
+        public const String CorrelationId = nameof(CorrelationId);
     }
 
-    public async Task<ExpandoObject> CreateAsync(String workflowId, Int32 version = 0)
+    public async Task<ExpandoObject> CreateAsync(String workflowId, String? correlationId, Int32 version = 0)
     {
         if (String.IsNullOrEmpty(workflowId))
             throw new WorkflowException($"Start. WorkflowId is required");
-        var res = await _engine.CreateAsync(new WorkflowIdentity(workflowId, version));
+        var res = await _engine.CreateAsync(new WorkflowIdentity(workflowId, version), correlationId);
 
         return new ExpandoObject()
         {
@@ -93,11 +94,11 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
     }
 
 
-    public async Task<ExpandoObject> StartAsync(String workflowId, Int32 version, ExpandoObject? args)
+    public async Task<ExpandoObject> StartAsync(String workflowId, Int32 version, String? correlationId, ExpandoObject? args)
     {
         if (String.IsNullOrEmpty(workflowId))
             throw new WorkflowException($"Start. WorkflowId is required");
-        var resCreate = await CreateAsync(workflowId, version);
+        var resCreate = await CreateAsync(workflowId, correlationId, version);
         var instId = resCreate.Get<Guid>(Properties.InstanceId);
         return await RunAsync(instId, args);
     }
@@ -151,7 +152,8 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         return method switch
         {
             "Create" => await CreateAsync(
-                    parameters.GetNotNull<String>(Properties.WorkflowId)
+                    parameters.GetNotNull<String>(Properties.WorkflowId),
+                    parameters.Get<String>(Properties.CorrelationId)
                 ),
             "Run" => await RunAsync(
                     parameters.Get<Object>(Properties.InstanceId),
@@ -165,6 +167,7 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
             "Start" => await StartAsync(
                     parameters.GetNotNull<String>(Properties.WorkflowId),
                     parameters.Get<Int32>(Properties.Version),
+                    parameters.Get<String>(Properties.CorrelationId),
                     parameters.Get<ExpandoObject>(Properties.Args)
                 ),
             "Save" => await SaveAsync(

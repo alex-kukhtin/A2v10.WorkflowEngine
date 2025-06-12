@@ -1,16 +1,15 @@
 ﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
+using A2v10.Runtime.Interfaces;
+using A2v10.Workflow.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SqlServer.Server;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using A2v10.Runtime.Interfaces;
-using A2v10.Workflow.Interfaces;
-using System.Collections.Generic;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -227,5 +226,54 @@ public class InvokeTarget
 
         Assert.AreEqual(10.0, res.Eval<Double>("Result.X"));
         Assert.AreEqual(10.0, variables.Eval<Double>("Process_1.X"));
+    }
+
+    [TestMethod]
+    public async Task PersistentCorrelationId()
+    {
+        String wfId = "PersistentCorrelation";
+        var format = "xaml";
+
+        await TestEngine.PrepareDatabase(wfId);
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\persistentObject\\simplePersistentObjectCorrelation.bpmn");
+        var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
+
+        await target.InvokeAsync("Save", new ExpandoObject()
+        {
+            { "WorkflowId", wfId },
+            { "Format", format },
+            { "Body", xaml }
+        });
+
+        await target.InvokeAsync("Publish", new ExpandoObject()
+        {
+            {"WorkflowId", wfId }
+        });
+
+        var res = await target.InvokeAsync("Start", new ExpandoObject()
+        {
+            {"WorkflowId", wfId },
+            {"CorrelationId", 99 }
+        });
+
+        var resResume = await target.InvokeAsync("Resume", new ExpandoObject()
+        {
+            {"InstanceId", res.Get<Object>("InstanceId") },
+            {"Bookmark", "Inbox" },
+            {"Reply", new ExpandoObject()
+                {
+                    {"Value", 10.0 }
+                }
+            }
+        }) ?? throw new InvalidOperationException("resume is null");
+
+
+        var variables = await target.InvokeAsync("Variables", new ExpandoObject()
+        {
+            {"InstanceId", resResume.Get<Object>("InstanceId") }
+        });
+
+        Assert.AreEqual(99L, variables.Eval<Int64>("Persist.Order.Id"));
+
     }
 }

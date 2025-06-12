@@ -46,8 +46,8 @@ Available commands:
 |Save   | Save workflow   |WorkflowId, Format, Body   |                   |
 |Publish| Publish workflow|WorkflowId                 |WorkflowId, Version|
 |Start  | Start workflow  |WorkflowId, Version, Args  |InstanceId, Result |
-|Create | Create workflow |WorkflowId                 |InstanceId         |
-|Run    | Run workflow    |InstanceId, Args           |InstanceId, Result |
+|Create | Create workflow |WorkflowId, CorrelationId  |InstanceId         |
+|Run    | Run workflow    |InstanceId, CorrelationId, Args  |InstanceId, Result |
 |Resume | Resume workflow |InstanceId, Bookmark, Reply|InstanceId, Result |
 |Variables  | Get instance Variables   |InstanceId    |Result             |
 |CheckSyntax| Check script syntax|WorkflowId          |Errors: []         |

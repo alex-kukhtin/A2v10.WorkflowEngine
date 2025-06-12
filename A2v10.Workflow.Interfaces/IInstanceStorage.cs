@@ -20,5 +20,6 @@ public interface IInstanceStorage
     ValueTask<DateTime> GetNowTime();
     ExpandoObject LoadPersistentValue(String procedure, Object id);
     ExpandoObject SavePersistentValue(String procedure, ExpandoObject obj);
+    Task SetPersistentInstanceAsync(String procedure, String correlationId, Guid instanceId);
 }
 
