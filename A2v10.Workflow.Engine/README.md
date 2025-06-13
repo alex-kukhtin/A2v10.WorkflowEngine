@@ -32,7 +32,7 @@ services.AddInvokeTargets(a =>
 Targets in model.json:
 ```json
 {
-  commands:{
+  "commands":{
     "start": {
       "type": "invokeTarget",
       "target": "Workflow.{Command}",
@@ -73,6 +73,25 @@ All values (and section) are optional.
 # Related Packages
 
 * [A2v10.Workflow.WebAssets](https://www.nuget.org/packages/A2v10.Workflow.WebAssets)
+
+# Global Workflow Variables
+
+Available variables:
+
+* ***Instance*** is the current workflow instance
+```js 
+{
+    Id: string, 
+    CorrelationId: string, 
+    ExecutionStatus: string
+}
+```
+* ***LastResult*** is the last received result of an activity *Resume* or *CallActivity* invocation.
+```js 
+{
+  ... /*all reply properties*/
+}
+```
 
 # Feedback
 
