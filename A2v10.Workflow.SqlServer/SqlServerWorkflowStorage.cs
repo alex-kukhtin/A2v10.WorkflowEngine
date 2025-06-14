@@ -1,11 +1,11 @@
 ﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
+using A2v10.Data.Interfaces;
+using A2v10.Workflow.Interfaces;
+using Microsoft.SqlServer.Server;
 using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
-
-using A2v10.Data.Interfaces;
-using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer;
 
@@ -109,5 +109,16 @@ public class SqlServerWorkflowStorage(IDbContext dbContext, ISerializer serializ
             }
         }
         return wfIdentity;
+    }
+
+    public String GetProcessIdByKey(String key)
+    {
+        var prms = new ExpandoObject() {
+            { "Key", key },
+        };
+        var res = _dbContext.ReadExpando(DataSource, $"{SqlDefinitions.SqlSchema}.[Workflow.GetIdByKey]", prms)
+            ?? throw new WorkflowException("GetProcessNameByKey failed");
+        return res.Get<String>("Id")
+            ?? throw new WorkflowException("GetProcessNameByKey returns null");
     }
 }

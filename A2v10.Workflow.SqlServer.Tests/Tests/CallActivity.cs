@@ -1,12 +1,14 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
-using A2v10.Workflow.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -64,6 +66,41 @@ public class CallActivity
 
         var res0 = res.Result;
         Assert.AreEqual(4, res0.Get<Double>("R"));
+    }
+
+    [TestMethod]
+    public async Task CallCorrelationIdWithProcessKey()
+    {
+        String parentId = "CorrelationIdParent";
+        String childId = "CorrelationIdChild";
+
+        Int64 orderId = 224;
+
+        await TestEngine.PrepareDatabase(childId);
+        await TestEngine.PrepareDatabase(parentId);
+
+        var xamlChild = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\CorrelationIdChild.bpmn");
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(childId, xamlChild) { Key = "CorrelationChildKey" });
+        var childIdent = await _workflowStorage.PublishAsync(_workflowCatalog, childId);
+        Assert.AreEqual(1, childIdent.Version);
+
+        var xamlParent = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\CorrelationIdParent.bpmn");
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(parentId, xamlParent));
+        var parentIdent = await _workflowStorage.PublishAsync(_workflowCatalog, parentId);
+        Assert.AreEqual(1, parentIdent.Version);
+
+        var inst = await _workflowEngine.CreateAsync(new WorkflowIdentity(parentId), orderId.ToString());
+        inst = await _workflowEngine.RunAsync(inst.Id);
+
+        Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+
+        var res0 = inst.Result;
+        Assert.IsNotNull(res0);
+        Assert.AreEqual(6, res0.Get<Int32>("Result"));
+        Assert.AreEqual("FromChild", res0.Eval<String>("Order.State"));
+        Assert.AreEqual(6, res0.Eval<Int32>("Order.Count"));
+        Assert.AreEqual(orderId, res0.Eval<Int64>("Order.Id"));
+
     }
 }
 

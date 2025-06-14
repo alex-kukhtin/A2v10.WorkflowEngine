@@ -73,6 +73,15 @@ public class ActivityScriptBuilder(IActivity activity) : IScriptBuilder
                 mtds.Add($"Restore: (_arg_) => {{ {String.Join("; ", strest.Select(x => $"{x.Name} = {x.RestoreArgument()} "))}; }}");
             }
         }
+        // getPersistentValues
+        /*
+        {
+            var vars = variables.Where(v => v.Type == VariableType.PersistentObject)
+                .Select(v => $"{v.Name}: {v.Name}");
+            if (vars.Any())
+                mtds.Add($"GetPersistentValues: () => {{ return {{ {String.Join(',',vars)} }}; }}");
+        }
+        */
 
         // mtds.Add($"SetItem: (_arg_) => {{ item = _arg_; }}");
 

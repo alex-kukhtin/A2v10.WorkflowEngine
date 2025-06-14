@@ -11,12 +11,14 @@ public interface IWorkflowDescriptor
 
     String? ThumbFormat { get; }
     Stream? Thumb { get; }
+    String? Key { get; }
 }
 
 public record WorkflowDescriptor(String Id, String Body, String Format = "xaml") : IWorkflowDescriptor
 {
     public String? ThumbFormat { get; init; }
     public Stream? Thumb { get; init; }
+    public String? Key { get; init; }   
 }
 
 public record WorkflowElem

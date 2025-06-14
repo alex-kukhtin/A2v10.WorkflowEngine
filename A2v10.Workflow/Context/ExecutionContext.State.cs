@@ -173,6 +173,8 @@ public partial class ExecutionContext : IExecutionContext
         var val = rootValues.Get<Object>(corrId.Name);
         if (val == null)
             return null;
+        if (val is ExpandoObject valExp)
+            return valExp.Get<Object>("Id")?.ToString();
         return val.ToString();
     }
 

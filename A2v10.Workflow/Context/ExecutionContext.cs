@@ -308,16 +308,18 @@ public partial class ExecutionContext : IExecutionContext
         }
     }
 
-    public async ValueTask<IInstance> Call(String activity, ExpandoObject? prms)
+
+    public async ValueTask<IInstance> Call(String activity, String? correlationId, ExpandoObject? prms)
     {
         var ea = ExternalActivity.Parse(activity);
         if (ea.IsBpmn)
         {
             if (ea.WorkflowIdentity == null)
                 throw new InvalidProgramException("WorkflowIdentity is null");
-            var correlationId = prms.Get<String>("CorrelationId");
+            var vars = GetScriptVariables(); // ensure save persistent 
             var inst = await _engine.CreateAsync(ea.WorkflowIdentity, correlationId, _instance.Id);
             var result = await _engine.RunAsync(inst.Id, prms);
+            SetScriptVariables(vars); // ensure load persistent
             return result;
         }
         else

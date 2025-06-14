@@ -37,6 +37,7 @@ public class SqlServerWorkflowCatalog(IDbContext dbContext, IDataSourceProvider 
         {
             { "Id", workflow.Id },
             { "Body", workflow.Body},
+            { "Key", workflow.Key},
             { "Format", workflow.Format},
             { "ThumbFormat", workflow.ThumbFormat }
         };

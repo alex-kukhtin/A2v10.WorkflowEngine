@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2025 Alex Kukhtin
 
-Last updated : 29 may 2025
-module version : 8226
+Last updated : 14 jun 2025
+module version : 8233
 */
 ------------------------------------------------
 set nocount on;
@@ -12,6 +12,19 @@ go
 ------------------------------------------------
 grant execute on schema ::a2wf_test to public;
 go
+
+------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf_test' and TABLE_NAME=N'Order')
+create table a2wf_test.[Order]
+(
+	Id bigint not null,
+	InstanceId uniqueidentifier not null,
+	[Count] int,
+	[State] nvarchar(255),
+	[Log] nvarchar(max)
+);
+go
+
 ------------------------------------------------
 create or alter procedure a2wf_test.[Instance.Load.Unlocked]
 @UserId bigint = null,
@@ -194,6 +207,10 @@ begin
 	delete from a2wf.[Workflows] where Id = @Id;
 	delete from a2wf.[Catalog] where Id = @Id;
 	delete from a2wf.[AutoStart] where WorkflowId = @Id;
+
+	delete from a2wf_test.[Order];
+	insert into a2wf_test.[Order] (Id, InstanceId, [Count], [State], [Log]) values
+	(224, newid(), -1, N'Undefined', 'Set');
 end
 go
 ------------------------------------------------
@@ -280,7 +297,6 @@ begin
 	set transaction isolation level read uncommitted;
 end
 go
-
 ------------------------------------------------
 create or alter procedure a2wf.[AutoStartCorrelationIdObject.Order.SavePersistent]
 @Id bigint,
@@ -292,3 +308,51 @@ begin
 	set transaction isolation level read committed;
 end
 go
+
+
+------------------------------------------------
+create or alter procedure a2wf.[TestCorrelation.Order.SetInstanceId]
+@Id bigint,
+@InstanceId uniqueidentifier
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+
+	update a2wf_test.[Order] set InstanceId = @InstanceId where Id = @Id;
+end
+go
+
+------------------------------------------------
+create or alter procedure a2wf.[TestCorrelation.Order.LoadPersistent]
+@Id bigint
+as
+begin
+	set nocount on;
+	set transaction isolation level read uncommitted;
+
+	update a2wf_test.[Order] set [Log] = [Log] + N',Load' where Id = @Id;
+	select [Order!TOrder!Object] = null, [Id!!Id] = Id, [State], [Count]
+	from a2wf_test.[Order] where Id = @Id;
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[TestCorrelation.Order.SavePersistent]
+@Id bigint,
+@State nvarchar(255),
+@Count int
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+
+	update a2wf_test.[Order] set  [State] = @State, [Count] = @Count,
+		[Log] = [Log] + N',Save:' + cast(@Count as nvarchar(255))
+	where Id = @Id;
+
+end
+go
+
+select * from a2wf_test.[Order];
+
+

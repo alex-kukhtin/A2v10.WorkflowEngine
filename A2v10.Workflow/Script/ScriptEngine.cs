@@ -44,6 +44,7 @@ public class ScriptEngine
         _engine.SetValue("_loadPersistent", LoadPersistentValue);
         _engine.SetValue("_savePersistent", SavePersistentValue);
         _engine.SetValue("LastResult", instance.State.Get<Object>("LastResult"));
+        _engine.SetValue("Host", new JsWorkflowHost(_serviceProvider));
         //Console.WriteLine(script);
 
         var func = _engine.Evaluate(script);

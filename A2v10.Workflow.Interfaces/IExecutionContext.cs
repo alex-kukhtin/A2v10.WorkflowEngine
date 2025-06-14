@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 
 namespace A2v10.Workflow.Interfaces;
@@ -25,7 +25,7 @@ public interface IExecutionContext
     void SetLastResult(Object? result); 
     void SetVariable(String refer, String name, Object? value);
 
-    ValueTask<IInstance> Call(String activity, ExpandoObject? prms);
+    ValueTask<IInstance> Call(String activity, String? correlationId, ExpandoObject? prms);
 
     ValueTask HandleEvent(IWorkflowEvent evt);
     void ProcessEndEvent(IWorkflowEvent evt);

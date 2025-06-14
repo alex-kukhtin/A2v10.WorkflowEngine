@@ -82,5 +82,10 @@ public class InMemoryWorkflowStorage(ISerializer serializer) : IWorkflowStorage
         var ident = new WorkflowIdentity(id, v);
         return Task.FromResult<IWorkflowIdentity>(ident);
     }
+
+    public String GetProcessIdByKey(String key)
+    {
+        throw new NotImplementedException();
+    }
 }
 
