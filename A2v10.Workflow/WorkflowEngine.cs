@@ -12,15 +12,13 @@ public class WorkflowEngine : IWorkflowEngine
     private readonly IServiceProvider _serviceProvider;
     private readonly IWorkflowStorage _workflowStorage;
     private readonly IInstanceStorage _instanceStorage;
-    private readonly ITracker _tracker;
     private readonly ILogger<WorkflowEngine> _logger;
 
-    public WorkflowEngine(IServiceProvider serviceProvider, ITracker tracker, ILogger<WorkflowEngine> logger)
+    public WorkflowEngine(IServiceProvider serviceProvider, ILogger<WorkflowEngine> logger)
     {
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _workflowStorage = _serviceProvider.GetRequiredService<IWorkflowStorage>();
         _instanceStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
-        _tracker = tracker;
         _logger = logger;
     }
 
@@ -62,7 +60,7 @@ public class WorkflowEngine : IWorkflowEngine
     {
         if (instance.ExecutionStatus != WorkflowExecutionStatus.Init)
             throw new WorkflowException($"Instance (id={instance.Id}) is already running");
-        var context = new ExecutionContext(_serviceProvider, _tracker, instance, args);
+        var context = new ExecutionContext(_serviceProvider, instance, args);
         context.Schedule(instance.Workflow.Root, null);
         await context.RunAsync();
         SetInstanceState(instance, context);
@@ -161,7 +159,7 @@ public class WorkflowEngine : IWorkflowEngine
     {
         var inst = await _instanceStorage.LoadRaw(id);
         inst.Workflow.Root.OnEndInit(null);
-        var context = new ExecutionContext(_serviceProvider, _tracker, inst);
+        var context = new ExecutionContext(_serviceProvider, inst);
         context.SetState(inst.State);
         SetInstanceState(inst, context);
         return inst;
@@ -170,7 +168,7 @@ public class WorkflowEngine : IWorkflowEngine
     private async ValueTask<IInstance> Handle(IInstance inst, Func<ExecutionContext, ValueTask> action)
     {
         inst.Workflow.Root.OnEndInit(null);
-        var context = new ExecutionContext(_serviceProvider, _tracker, inst);
+        var context = new ExecutionContext(_serviceProvider, inst);
         context.SetState(inst.State);
         await action(context);
         await context.RunAsync();

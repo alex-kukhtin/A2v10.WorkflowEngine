@@ -45,10 +45,10 @@ public partial class ExecutionContext : IExecutionContext
 
     private ExpandoObject? _endEvent;
 
-    public ExecutionContext(IServiceProvider serviceProvider, ITracker tracker, IInstance instance, Object? args = null)
+    public ExecutionContext(IServiceProvider serviceProvider, IInstance instance, Object? args = null)
     {
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        _tracker = tracker;
+        _tracker = new InstanceTracker();
         _instance = instance;
         _root = instance.Workflow.Root;
         _engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
