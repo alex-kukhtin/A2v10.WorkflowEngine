@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Text.RegularExpressions;
 
@@ -19,7 +19,7 @@ internal class ExternalActivity
     public IWorkflowIdentity? WorkflowIdentity { get; init; }
     public static ExternalActivity Parse(String name)
     {
-        var regptrn = @"^\s*(bpmn|clr):\s*([\w|\.|\/]+)\s*(;\s*(\w+)\s*=\s*(\w+)\s*)*$";
+        var regptrn = @"^\s*(bpmn|clr):\s*([\w|\.|\/|\-]+)\s*(;\s*(\w+)\s*=\s*(\w+)\s*)*$";
         var match = Regex.Match(name, regptrn, RegexOptions.Compiled, TimeSpan.FromMilliseconds(100));
         if (match.Groups.Count != 6)
             throw new WorkflowException(ErrorMessage(name));

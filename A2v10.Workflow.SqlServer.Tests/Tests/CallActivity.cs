@@ -102,5 +102,40 @@ public class CallActivity
         Assert.AreEqual(orderId, res0.Eval<Int64>("Order.Id"));
 
     }
+
+    [TestMethod]
+    public async Task CallCorrelationIdWithProcessKeyGuid()
+    {
+        String parentId = "CorrelationIdParent2";
+        String childId = "4A33375A-6129-4BA7-8904-EC36085ECACB";
+
+        Int64 orderId = 291;
+
+        await TestEngine.PrepareDatabase(childId);
+        await TestEngine.PrepareDatabase(parentId);
+
+        var xamlChild = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\CorrelationIdChild.bpmn");
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(childId, xamlChild) { Key = "CorrelationChildKey" });
+        var childIdent = await _workflowStorage.PublishAsync(_workflowCatalog, childId);
+        Assert.AreEqual(1, childIdent.Version);
+
+        var xamlParent = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\CorrelationIdParent.bpmn");
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(parentId, xamlParent));
+        var parentIdent = await _workflowStorage.PublishAsync(_workflowCatalog, parentId);
+        Assert.AreEqual(1, parentIdent.Version);
+
+        var inst = await _workflowEngine.CreateAsync(new WorkflowIdentity(parentId), orderId.ToString());
+        inst = await _workflowEngine.RunAsync(inst.Id);
+
+        Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+
+        var res0 = inst.Result;
+        Assert.IsNotNull(res0);
+        Assert.AreEqual(6, res0.Get<Int32>("Result"));
+        Assert.AreEqual("FromChild", res0.Eval<String>("Order.State"));
+        Assert.AreEqual(6, res0.Eval<Int32>("Order.Count"));
+        Assert.AreEqual(orderId, res0.Eval<Int64>("Order.Id"));
+
+    }
 }
 

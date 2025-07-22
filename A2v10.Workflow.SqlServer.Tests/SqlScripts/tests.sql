@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2025 Alex Kukhtin
 
-Last updated : 14 jun 2025
-module version : 8233
+Last updated : 22 jul 2025
+module version : 8239
 */
 ------------------------------------------------
 set nocount on;
@@ -201,6 +201,9 @@ begin
 	delete from a2wf_test.Deferred 
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
 
+	update a2wf.Instances set Parent = null 
+	where Parent in (select Id from a2wf.Instances where WorkflowId = @Id);
+
 	delete from a2wf.[Instances] where WorkflowId = @Id;
 
 	delete from a2wf.WorkflowArguments where WorkflowId = @Id;
@@ -211,6 +214,9 @@ begin
 	delete from a2wf_test.[Order];
 	insert into a2wf_test.[Order] (Id, InstanceId, [Count], [State], [Log]) values
 	(224, newid(), -1, N'Undefined', 'Set');
+
+	insert into a2wf_test.[Order] (Id, InstanceId, [Count], [State], [Log]) values
+	(291, newid(), -1, N'Undefined', 'Set');
 end
 go
 ------------------------------------------------
@@ -352,7 +358,5 @@ begin
 
 end
 go
-
-select * from a2wf_test.[Order];
 
 
