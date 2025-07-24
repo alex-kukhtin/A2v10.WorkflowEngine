@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wf="clr-namespace:A2v10.Workflow;assembly=A2v10.Workflow">
+	<process id="CorrIdCollection" isExecutable="true">
+		<extensionElements>
+			<wf:Variables>
+				<wf:Variable Name="Request" Type="PersistentObject" Dir="Local" CorrelationId="true" />
+				<wf:Variable Name="row" Type="Object" Dir="Local" />
+				<wf:Variable Name="Result" Value="0" Type="Number" Dir="Out" />
+			</wf:Variables>
+		</extensionElements>
+		<startEvent id="StartEvent_1" name="Start">
+			<extensionElements>
+				<wf:Script>Result += 3;</wf:Script>
+			</extensionElements>
+			<outgoing>SequenceFlow_1</outgoing>
+		</startEvent>
+		<endEvent id="EndEvent_1" name="End">
+			<incoming>SequenceFlow_2</incoming>
+		</endEvent>
+		<sequenceFlow id="SequenceFlow_1" sourceRef="StartEvent_1" targetRef="Task_1" />
+		<sequenceFlow id="SequenceFlow_2" sourceRef="Task_1" targetRef="EndEvent_1" />
+		<CallActivity id="Task_1" name="Call Child CorrelationId" calledElement="bpmn:CorrCollectionChild" wf:correlationId="row.Value.Id">
+			<extensionElements>
+				<wf:Script>Result += LastResult.Result</wf:Script>
+			</extensionElements>
+			<incoming>SequenceFlow_1</incoming>
+			<outgoing>SequenceFlow_2</outgoing>
+			<MultiInstanceLoopCharacteristics wf:collection="Request.Rows" wf:variable="row" />
+		</CallActivity>
+	</process>
+	<bpmndi:BPMNDiagram id="BpmnDiagram_1">
+		<bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="CorrIdCollection">
+			<bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+				<omgdc:Bounds x="152" y="192" width="36" height="36" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds x="159" y="235" width="23" height="14" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Activity_03932yh_di" bpmnElement="Task_1">
+				<omgdc:Bounds x="290" y="170" width="100" height="80" />
+				<bpmndi:BPMNLabel />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_1_di" bpmnElement="EndEvent_1">
+				<omgdc:Bounds x="492" y="192" width="36" height="36" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds x="501" y="235" width="20" height="14" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNEdge id="SequenceFlow_1_di" bpmnElement="SequenceFlow_1">
+				<omgdi:waypoint x="188" y="210" />
+				<omgdi:waypoint x="290" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="SequenceFlow_2_di" bpmnElement="SequenceFlow_2">
+				<omgdi:waypoint x="390" y="210" />
+				<omgdi:waypoint x="492" y="210" />
+			</bpmndi:BPMNEdge>
+		</bpmndi:BPMNPlane>
+	</bpmndi:BPMNDiagram>
+</definitions>

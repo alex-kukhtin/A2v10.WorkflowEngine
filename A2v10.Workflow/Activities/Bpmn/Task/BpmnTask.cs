@@ -60,7 +60,7 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 
 		if (IsMultiInstance)
 		{
-			var coll = context.Evaluate<Object[]>(Id, MultiInstanceCollectionEval);
+			var coll = context.Evaluate<IEnumerable<Object>>(Id, MultiInstanceCollectionEval)?.ToArray();
 			if (coll == null)
 			{
 				await DoCompleteBody(context);
@@ -160,7 +160,7 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 			if (_tokens == null)
 				throw new WorkflowException("BPMNTask. Invalid Complete body status");
 			var ix = _tokens.FindIndex(x => x == _token);
-			var coll = context.Evaluate<Object[]>(Id, MultiInstanceCollectionEval) 
+			var coll = context.Evaluate<IEnumerable<Object>>(Id, MultiInstanceCollectionEval)?.ToArray()
 				?? throw new WorkflowException("BPMNTask. Collection is null");
             if (ix < 0 || ix >= coll.Length)
 				throw new WorkflowException("BPMNTask. Invalid Complete body index");

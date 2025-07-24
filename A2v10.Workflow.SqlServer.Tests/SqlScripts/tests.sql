@@ -358,5 +358,41 @@ begin
 
 end
 go
+------------------------------------------------
+create or alter procedure a2wf.[CorrIdCollection.Request.SetInstanceId]
+@Id bigint,
+@InstanceId uniqueidentifier
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[CorrIdCollection.Request.LoadPersistent]
+@Id bigint
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
 
+	select [Request!TRequest!Object] = null, [Id!!Id] = @Id,
+		[Rows!TRow!Array] = null;
 
+	declare @rows table(Id bigint);
+	insert into @rows(Id) values (@Id + 1, @Id + 2, @Id + 3);
+
+	select [!TRow!Array] = null, [Id!!Id] = Id,
+		[!TRequest.Rows!ParentId] = @Id
+	from @rows;
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[CorrIdCollection.Request.SavePersistent]
+@Id bigint
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+end
+go
