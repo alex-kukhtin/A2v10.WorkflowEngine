@@ -56,12 +56,12 @@ public class WorkflowEngine : IWorkflowEngine
         return await CreateAsync(wf, correlationId, parent, instanceId);
     }
 
-    public async ValueTask<IInstance> RunAsync(IInstance instance, Object? args = null)
+    public async ValueTask<IInstance> RunAsync(IInstance instance, Object? args = null, IToken? token = null)
     {
         if (instance.ExecutionStatus != WorkflowExecutionStatus.Init)
             throw new WorkflowException($"Instance (id={instance.Id}) is already running");
         var context = new ExecutionContext(_serviceProvider, instance, args);
-        context.Schedule(instance.Workflow.Root, null);
+        context.Schedule(instance.Workflow.Root, token);
         await context.RunAsync();
         SetInstanceState(instance, context);
         await _instanceStorage.Save(instance);
@@ -69,12 +69,12 @@ public class WorkflowEngine : IWorkflowEngine
         return instance;
     }
 
-    public async ValueTask<IInstance> RunAsync(Guid id, Object? args = null)
+    public async ValueTask<IInstance> RunAsync(Guid id, Object? args = null, IToken? token = null)
     {
         try
         {
             IInstance instance = await _instanceStorage.Load(id);
-            return await RunAsync(instance, args);
+            return await RunAsync(instance, args, token);
         }
         catch (Exception ex)
         {
@@ -88,9 +88,9 @@ public class WorkflowEngine : IWorkflowEngine
         return Handle(id, context => context.ResumeAsync(bookmark, reply));
     }
 
-    public ValueTask<IInstance> HandleEventsAsync(Guid id, IEnumerable<String> eventKeys)
+    public ValueTask<IInstance?> HandleEventsAsync(Guid id, IEnumerable<String> eventKeys)
     {
-        return Handle(id, async context =>
+        return Handle2(id, async context =>
         {
             foreach (var eventKey in eventKeys)
                 await context.HandleEventAsync(eventKey, null);
@@ -155,6 +155,22 @@ public class WorkflowEngine : IWorkflowEngine
         }
     }
 
+    private async ValueTask<IInstance?> Handle2(Guid id, Func<ExecutionContext, ValueTask> action)
+    {
+        try
+        {
+            var inst = await _instanceStorage.Load(id);
+            if (inst.ExecutionStatus == WorkflowExecutionStatus.Canceled)
+                return null;
+            return await Handle(inst, action);
+        }
+        catch (Exception ex)
+        {
+            await _instanceStorage.WriteException(id, ex);
+            throw;
+        }
+    }
+
     public async ValueTask<IInstance> LoadInstanceRaw(Guid id)
     {
         var inst = await _instanceStorage.LoadRaw(id);
@@ -199,6 +215,11 @@ public class WorkflowEngine : IWorkflowEngine
         {
             await _instanceStorage.WriteException(foundInst.Id, ex);
         }
+    }
+
+    public Task CancelChildren(Guid id, String workflow)
+    {
+        return _instanceStorage.CancelChildren(id, workflow);
     }
 }
 

@@ -871,6 +871,23 @@ begin
 end
 go
 ------------------------------------------------
+create or alter procedure a2wf.[Instance.CancelChildren]
+@InstanceId uniqueidentifier,
+@Workflow nvarchar(255)
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+
+	declare @rtable table(Id uniqueidentifier);
+	update a2wf.Instances set ExecutionStatus = N'Canceled' 
+	output inserted.Id into @rtable(Id)
+	where Parent = @InstanceId and WorkflowId = @Workflow and ExecutionStatus = N'Idle';
+
+	-- TODO: remove inbox for all children
+end
+go
+------------------------------------------------
 create or alter procedure a2wf.[Workflow.GetIdByKey]
 @Key nvarchar(32)
 as

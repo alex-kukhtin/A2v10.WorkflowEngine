@@ -315,5 +315,15 @@ public class SqlServerInstanceStorage : IInstanceStorage
         };
         return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[{procedure}]", prms);
     }
+
+    public Task CancelChildren(Guid id, String workflow)
+    {
+        var prms = new ExpandoObject()
+        {
+            { "InstanceId", id },
+            { "Workflow", workflow.Replace("bpmn:", "") }
+        };
+        return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.CancelChildren]", prms);
+    }
 }
 

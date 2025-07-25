@@ -6,6 +6,7 @@
 				<wf:Variable Name="Request" Type="PersistentObject" Dir="Local" CorrelationId="true" />
 				<wf:Variable Name="row" Type="Object" Dir="Local" />
 				<wf:Variable Name="Result" Value="0" Type="Number" Dir="Out" />
+				<wf:Variable Name="RetValue" Type="String" Dir="Out" />
 			</wf:Variables>
 		</extensionElements>
 		<startEvent id="StartEvent_1" name="Start">
@@ -15,6 +16,9 @@
 			<outgoing>SequenceFlow_1</outgoing>
 		</startEvent>
 		<endEvent id="EndEvent_1" name="End">
+			<extensionElements>
+				<wf:Script>RetValue = "Success"</wf:Script>
+			</extensionElements>
 			<incoming>SequenceFlow_2</incoming>
 		</endEvent>
 		<sequenceFlow id="SequenceFlow_1" sourceRef="StartEvent_1" targetRef="Task_1" />
@@ -27,32 +31,54 @@
 			<outgoing>SequenceFlow_2</outgoing>
 			<MultiInstanceLoopCharacteristics wf:collection="Request.Rows" wf:variable="row" />
 		</CallActivity>
+		<boundaryEvent id="Event_0ohm2c9" attachedToRef="Task_1">
+			<outgoing>Flow_0x8rqgj</outgoing>
+			<errorEventDefinition id="ErrorEventDefinition_0p6l1we" errorRef="Error_0bi9ai8" />
+		</boundaryEvent>
+		<endEvent id="Event_0ai7ld3">
+			<extensionElements>
+				<wf:Script>RetValue = "Error1"</wf:Script>
+			</extensionElements>
+			<incoming>Flow_0x8rqgj</incoming>
+		</endEvent>
+		<sequenceFlow id="Flow_0x8rqgj" sourceRef="Event_0ohm2c9" targetRef="Event_0ai7ld3" />
 	</process>
+	<error id="Error_0bi9ai8" name="Error1" errorCode="1" />
 	<bpmndi:BPMNDiagram id="BpmnDiagram_1">
 		<bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="CorrIdCollection">
 			<bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
-				<omgdc:Bounds x="152" y="192" width="36" height="36" />
+				<omgdc:Bounds x="182" y="192" width="36" height="36" />
 				<bpmndi:BPMNLabel>
-					<omgdc:Bounds x="159" y="235" width="23" height="14" />
+					<omgdc:Bounds x="188" y="235" width="25" height="14" />
+				</bpmndi:BPMNLabel>
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_1_di" bpmnElement="EndEvent_1">
+				<omgdc:Bounds x="452" y="192" width="36" height="36" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds x="461" y="235" width="20" height="14" />
 				</bpmndi:BPMNLabel>
 			</bpmndi:BPMNShape>
 			<bpmndi:BPMNShape id="Activity_03932yh_di" bpmnElement="Task_1">
 				<omgdc:Bounds x="290" y="170" width="100" height="80" />
 				<bpmndi:BPMNLabel />
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape id="Event_1_di" bpmnElement="EndEvent_1">
-				<omgdc:Bounds x="492" y="192" width="36" height="36" />
-				<bpmndi:BPMNLabel>
-					<omgdc:Bounds x="501" y="235" width="20" height="14" />
-				</bpmndi:BPMNLabel>
+			<bpmndi:BPMNShape id="Event_0ai7ld3_di" bpmnElement="Event_0ai7ld3">
+				<omgdc:Bounds x="352" y="302" width="36" height="36" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_1ien62w_di" bpmnElement="Event_0ohm2c9">
+				<omgdc:Bounds x="352" y="232" width="36" height="36" />
 			</bpmndi:BPMNShape>
 			<bpmndi:BPMNEdge id="SequenceFlow_1_di" bpmnElement="SequenceFlow_1">
-				<omgdi:waypoint x="188" y="210" />
+				<omgdi:waypoint x="218" y="210" />
 				<omgdi:waypoint x="290" y="210" />
 			</bpmndi:BPMNEdge>
 			<bpmndi:BPMNEdge id="SequenceFlow_2_di" bpmnElement="SequenceFlow_2">
 				<omgdi:waypoint x="390" y="210" />
-				<omgdi:waypoint x="492" y="210" />
+				<omgdi:waypoint x="452" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_0x8rqgj_di" bpmnElement="Flow_0x8rqgj">
+				<omgdi:waypoint x="370" y="268" />
+				<omgdi:waypoint x="370" y="302" />
 			</bpmndi:BPMNEdge>
 		</bpmndi:BPMNPlane>
 	</bpmndi:BPMNDiagram>

@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Dynamic;
 
@@ -23,30 +23,22 @@ public class WorkflowErrorEvent : IWorkflowEvent
     }
 
     // State
-    public ExpandoObject ToExpando()
-    {
-        return new ExpandoObject()
+    public ExpandoObject ToExpando() => 
+        new ExpandoObject()
         {
             { "Kind", "Error"},
             { "Text", Ref}
         };
-    }
 
     // Instance Store
-    public ExpandoObject ToStore()
-    {
-        return new ExpandoObject()
+    public ExpandoObject ToStore() => 
+        new ExpandoObject()
         {
             { "Event", Key},
             { "Kind", "E" } /*E(rror)*/,
             { "Text", Ref }
         };
-    }
 
-    public override String ToString()
-    {
-        return $"{{key: '{Key}', kind: 'Error', ref:'{Ref}'}}";
-    }
-
+    public override String ToString() => $"{{key: '{Key}', kind: 'Error', ref:'{Ref}'}}";
 }
 

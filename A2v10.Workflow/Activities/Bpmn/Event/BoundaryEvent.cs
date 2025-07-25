@@ -45,6 +45,9 @@ public class BoundaryEvent : Event, IStorable
             var cancelable = ParentContainer.FindElement<BpmnActivity>(AttachedToRef);
             SetComplete(context);
             cancelable.Cancel(context);
+            var cancelableWf = cancelable.CalledElemName(context);
+            if (cancelableWf != null)
+                await context.CancelChildren(cancelableWf);
         }
         else
         {

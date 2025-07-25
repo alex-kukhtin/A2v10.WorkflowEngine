@@ -1,11 +1,11 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2024 Oleksandr Kukhtin. All rights reserved.
 
 
 namespace A2v10.Workflow.Bpmn;
 public class ScriptTask : BpmnTask
 {
     // bpmn:script
-    public String? Script => Children?.OfType<A2v10.Workflow.Bpmn.Script>().FirstOrDefault()?.Text;
+    public String? Script => Children?.OfType<Script>().FirstOrDefault()?.Text;
 
     public override ValueTask ExecuteBody(IExecutionContext context)
     {

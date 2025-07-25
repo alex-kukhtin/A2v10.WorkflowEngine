@@ -18,7 +18,7 @@ public class Process : ProcessBase
             return ValueTask.CompletedTask;
         var start = Elems<Event>().FirstOrDefault(ev => ev.IsStart) 
             ?? throw new WorkflowException($"Process (Id={Id}). Start event not found");
-        context.Schedule(start, token);
+        context.Schedule(start, _token);
         return ValueTask.CompletedTask;
     }
 

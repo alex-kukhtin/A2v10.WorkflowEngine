@@ -6,7 +6,8 @@ public enum WorkflowExecutionStatus
     Init,
     Idle,
     Complete,
-    Faulted
+    Faulted,
+    Canceled,
 }
 
 public interface IInstance

@@ -39,7 +39,8 @@ public class BpmnTimerEvents
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
         var evList = new List<String>() { "Event1" };
-        var instTimer = await wfe.HandleEventsAsync(inst.Id, evList);
+        var instTimer = await wfe.HandleEventsAsync(inst.Id, evList)
+            ?? throw new WorkflowException("HandleEventsAsync returned null");
         var res1 = instTimer.Result;
         Assert.AreEqual("Timer", res1.Get<String>("Result"));
         Assert.AreEqual(WorkflowExecutionStatus.Idle, instTimer.ExecutionStatus);

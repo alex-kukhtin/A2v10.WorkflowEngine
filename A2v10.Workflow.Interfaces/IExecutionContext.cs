@@ -12,6 +12,7 @@ public interface IExecutionContext
 
     void SetBookmark(String bookmark, IActivity activity, ResumeAction onComplete);
     void RemoveBookmark(String bookmark);
+    void RemoveBookmarks(String activity);
 
     void SetInbox(Guid id, ExpandoObject inbox, IActivity activity, String bookmark);
     void RemoveInbox(Guid? id);
@@ -25,8 +26,8 @@ public interface IExecutionContext
     void SetLastResult(Object? result); 
     void SetVariable(String refer, String name, Object? value);
 
-    ValueTask<IInstance> Call(String activity, String? correlationId, ExpandoObject? prms);
-
+    ValueTask<IInstance> Call(String activity, String? correlationId, ExpandoObject? prms, IToken? token = null);
+    ValueTask CancelChildren(String workflow);
     ValueTask HandleEvent(IWorkflowEvent evt);
     void ProcessEndEvent(IWorkflowEvent evt);
     ValueTask HandleEndEvent(ExpandoObject? evt);

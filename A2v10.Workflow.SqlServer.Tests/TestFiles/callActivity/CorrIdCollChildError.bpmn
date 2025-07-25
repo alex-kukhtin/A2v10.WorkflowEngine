@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wf="clr-namespace:A2v10.Workflow;assembly=A2v10.Workflow">
-	<process id="Process_1" isExecutable="true">
+	<process id="ChildError" isExecutable="true">
 		<extensionElements>
 			<wf:Variables>
 				<wf:Variable Name="Parameter" Type="String" Dir="In" CorrelationId="true" />
@@ -11,7 +11,7 @@
 			<outgoing>SequenceFlow_1</outgoing>
 		</startEvent>
 		<endEvent id="EndEvent_1" name="End">
-			<incoming>Flow_0m66al0</incoming>
+			<incoming>Flow_0d07l8l</incoming>
 		</endEvent>
 		<sequenceFlow id="SequenceFlow_1" sourceRef="StartEvent_1" targetRef="Task_1" />
 		<sequenceFlow id="SequenceFlow_2" sourceRef="Task_1" targetRef="Event_1bshcnn" />
@@ -20,7 +20,6 @@
 			<outgoing>SequenceFlow_2</outgoing>
 			<script>Result = +Parameter</script>
 		</scriptTask>
-		<sequenceFlow id="Flow_0m66al0" sourceRef="Event_1bshcnn" targetRef="EndEvent_1" />
 		<intermediateCatchEvent id="Event_1bshcnn">
 			<incoming>SequenceFlow_2</incoming>
 			<outgoing>Flow_0m66al0</outgoing>
@@ -28,9 +27,24 @@
 				<timeDuration xsi:type="tFormalExpression">00:00:01</timeDuration>
 			</timerEventDefinition>
 		</intermediateCatchEvent>
+		<sequenceFlow id="Flow_0m66al0" sourceRef="Event_1bshcnn" targetRef="Gateway_0j92bjn" />
+		<exclusiveGateway id="Gateway_0j92bjn" default="Flow_0yz8d4v">
+			<incoming>Flow_0m66al0</incoming>
+			<outgoing>Flow_0d07l8l</outgoing>
+			<outgoing>Flow_0yz8d4v</outgoing>
+		</exclusiveGateway>
+		<sequenceFlow id="Flow_0d07l8l" sourceRef="Gateway_0j92bjn" targetRef="EndEvent_1">
+			<conditionExpression xsi:type="tFormalExpression">Parameter == "292"</conditionExpression>
+		</sequenceFlow>
+		<sequenceFlow id="Flow_0yz8d4v" sourceRef="Gateway_0j92bjn" targetRef="Event_18ckpkz" />
+		<endEvent id="Event_18ckpkz">
+			<incoming>Flow_0yz8d4v</incoming>
+			<errorEventDefinition id="ErrorEventDefinition_06a5rei" errorRef="Error_199e907" />
+		</endEvent>
 	</process>
+	<error id="Error_199e907" name="Error1" errorCode="1" />
 	<bpmndi:BPMNDiagram id="BpmnDiagram_1">
-		<bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="Process_1">
+		<bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="ChildError">
 			<bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
 				<omgdc:Bounds x="152" y="192" width="36" height="36" />
 				<bpmndi:BPMNLabel>
@@ -40,14 +54,20 @@
 			<bpmndi:BPMNShape id="Activity_1hm6s4e_di" bpmnElement="Task_1">
 				<omgdc:Bounds x="250" y="170" width="100" height="80" />
 			</bpmndi:BPMNShape>
-			<bpmndi:BPMNShape id="Event_1_di" bpmnElement="EndEvent_1">
-				<omgdc:Bounds x="502" y="192" width="36" height="36" />
-				<bpmndi:BPMNLabel>
-					<omgdc:Bounds x="511" y="235" width="20" height="14" />
-				</bpmndi:BPMNLabel>
-			</bpmndi:BPMNShape>
 			<bpmndi:BPMNShape id="Event_0cbwdty_di" bpmnElement="Event_1bshcnn">
-				<omgdc:Bounds x="392" y="192" width="36" height="36" />
+				<omgdc:Bounds x="422" y="192" width="36" height="36" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Gateway_0j92bjn_di" bpmnElement="Gateway_0j92bjn" isMarkerVisible="true">
+				<omgdc:Bounds x="525" y="185" width="50" height="50" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_10eu0za_di" bpmnElement="Event_18ckpkz">
+				<omgdc:Bounds x="532" y="302" width="36" height="36" />
+			</bpmndi:BPMNShape>
+			<bpmndi:BPMNShape id="Event_1_di" bpmnElement="EndEvent_1">
+				<omgdc:Bounds x="662" y="192" width="36" height="36" />
+				<bpmndi:BPMNLabel>
+					<omgdc:Bounds x="671" y="235" width="20" height="14" />
+				</bpmndi:BPMNLabel>
 			</bpmndi:BPMNShape>
 			<bpmndi:BPMNEdge id="SequenceFlow_1_di" bpmnElement="SequenceFlow_1">
 				<omgdi:waypoint x="188" y="210" />
@@ -55,11 +75,19 @@
 			</bpmndi:BPMNEdge>
 			<bpmndi:BPMNEdge id="SequenceFlow_2_di" bpmnElement="SequenceFlow_2">
 				<omgdi:waypoint x="350" y="210" />
-				<omgdi:waypoint x="392" y="210" />
+				<omgdi:waypoint x="422" y="210" />
 			</bpmndi:BPMNEdge>
 			<bpmndi:BPMNEdge id="Flow_0m66al0_di" bpmnElement="Flow_0m66al0">
-				<omgdi:waypoint x="428" y="210" />
-				<omgdi:waypoint x="502" y="210" />
+				<omgdi:waypoint x="458" y="210" />
+				<omgdi:waypoint x="525" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_0d07l8l_di" bpmnElement="Flow_0d07l8l">
+				<omgdi:waypoint x="575" y="210" />
+				<omgdi:waypoint x="662" y="210" />
+			</bpmndi:BPMNEdge>
+			<bpmndi:BPMNEdge id="Flow_0yz8d4v_di" bpmnElement="Flow_0yz8d4v">
+				<omgdi:waypoint x="550" y="235" />
+				<omgdi:waypoint x="550" y="302" />
 			</bpmndi:BPMNEdge>
 		</bpmndi:BPMNPlane>
 	</bpmndi:BPMNDiagram>

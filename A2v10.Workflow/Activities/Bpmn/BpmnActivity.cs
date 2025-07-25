@@ -26,6 +26,11 @@ public abstract class BpmnActivity : BaseElement, IActivity
 
     public abstract ValueTask ExecuteAsync(IExecutionContext context, IToken? token);
 
+    public virtual String? CalledElemName(IExecutionContext context)
+    {
+        return null;
+    }
+
     public virtual void OnEndInit(IActivity? parent)
     {
         Parent = parent;

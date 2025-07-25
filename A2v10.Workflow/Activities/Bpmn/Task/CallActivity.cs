@@ -15,20 +15,27 @@ public class CallActivity : BpmnTask
 
     String CalledElemEvaluate => $"{Id}_CalledElement";
 
-    public override async ValueTask ExecuteBody(IExecutionContext context)
+    public override String? CalledElemName(IExecutionContext context)
     {
         if (CalledElement == null)
-            throw new WorkflowException("Called element is null");
+            return null;
+        if (CalledElement.IsVariable())
+            return context.Evaluate<String>(Id, CalledElemEvaluate)
+                ?? throw new WorkflowException("Expression: Called element is null");
+        return CalledElement;
+    }
+
+    public override async ValueTask ExecuteBody(IExecutionContext context)
+    {
+        var calledElem = CalledElemName(context)
+            ?? throw new WorkflowException("Called element is null");
+
         var prms = context.Evaluate<ExpandoObject>(Id, nameof(Parameters));
         var correlationId = CorrelationId != null 
              ? context.Evaluate<String>(Id, nameof(CorrelationId))
              : null;
-        var calledElem = CalledElement;
-        if (calledElem.IsVariable())
-            calledElem = context.Evaluate<String>(Id, CalledElemEvaluate)
-                ?? throw new WorkflowException("Expression: Called element is null");
 
-        var result = await context.Call(calledElem, correlationId, prms);
+        var result = await context.Call(calledElem, correlationId, prms, _token);
         if (result.ExecutionStatus == WorkflowExecutionStatus.Complete)
         {
             await context.HandleEndEvent(result.State?.Get<ExpandoObject>("EndEvent"));
@@ -54,11 +61,12 @@ public class CallActivity : BpmnTask
         context.RemoveBookmark(bookmark);
         if (IsComplete)
             return;
-        CompleteTask(context);
         context.SetLastResult(result);
         if (!String.IsNullOrEmpty(Script))
             context.ExecuteResult(Id, nameof(Script), result);
         await CompleteBody(context);
+        if (!IsMultiInstance || _tokens == null || _tokens.Count == 0)
+            CompleteTask(context);
     }
 
     public override void BuildScriptBody(IScriptBuilder builder)

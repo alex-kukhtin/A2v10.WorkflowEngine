@@ -5,5 +5,6 @@ public interface IToken
 {
     public String ToString();
     public Boolean IsEmpty { get; }
+    public void SetEmpty();
 }
 

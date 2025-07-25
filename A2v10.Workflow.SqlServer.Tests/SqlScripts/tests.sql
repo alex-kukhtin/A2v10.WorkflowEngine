@@ -380,7 +380,7 @@ begin
 		[Rows!TRow!Array] = null;
 
 	declare @rows table(Id bigint);
-	insert into @rows(Id) values (@Id + 1, @Id + 2, @Id + 3);
+	insert into @rows(Id) values (@Id + 1), (@Id + 2), (@Id + 3);
 
 	select [!TRow!Array] = null, [Id!!Id] = Id,
 		[!TRequest.Rows!ParentId] = @Id

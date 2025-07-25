@@ -171,4 +171,9 @@ public class InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage wo
     {
         throw new NotImplementedException();
     }
+
+    public Task CancelChildren(Guid id, String workflow)
+    {
+        return Task.CompletedTask;
+    }
 }

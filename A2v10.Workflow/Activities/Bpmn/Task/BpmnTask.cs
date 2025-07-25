@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Dynamic;
@@ -9,7 +9,6 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 	protected IToken? _token;
 	protected Int32 _loopCounter;
 	protected List<IToken>? _tokens;
-
 	public Boolean IsComplete { get; protected set; }
 
 	protected virtual Boolean CanInduceIdle => false;
@@ -85,10 +84,10 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 				}
 				else
 				{
-					for (int i = 0; i < coll.Length; i++)
+                    IsComplete = false;
+                    for (int i = 0; i < coll.Length; i++)
 					{
-						context.SetVariable(Id, MultiInstanceVariableSet, CreateVariable(i, coll[i]));
-						IsComplete = false;
+						//context.SetVariable(Id, MultiInstanceVariableSet, CreateVariable(i, coll[i]));
 						context.Schedule(this, _tokens[i]);
 					}
 				}
@@ -96,7 +95,7 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 			else
 			{
 				// next run
-				var ix = _tokens.FindIndex(x => x == token);
+				var ix = _tokens.FindIndex(x => x.ToString() == token?.ToString());
 				if (ix < 0 || ix > coll.Length)
 					throw new WorkflowException("BPMNTask. Invalid token index");
 				context.SetVariable(Id, MultiInstanceVariableSet, CreateVariable(ix, coll[ix]));
@@ -138,14 +137,14 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 	public override void Cancel(IExecutionContext context)
 	{
 		CompleteTask(context);
-		context.RemoveBookmark(Id);
+		context.RemoveBookmarks(Id);
 		base.Cancel(context);
-	}
+    }
 
 
 	protected virtual ValueTask CompleteBody(IExecutionContext context)
 	{
-		if (IsLoop)
+        if (IsLoop)
 		{
 			if (TestBefore || CanCountinue(context))
 			{
@@ -158,15 +157,20 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 		else if (IsMultiInstance)
 		{
 			if (_tokens == null)
+				//return ValueTask.CompletedTask; // no tokens, nothing to do
 				throw new WorkflowException("BPMNTask. Invalid Complete body status");
-			var ix = _tokens.FindIndex(x => x == _token);
-			var coll = context.Evaluate<IEnumerable<Object>>(Id, MultiInstanceCollectionEval)?.ToArray()
-				?? throw new WorkflowException("BPMNTask. Collection is null");
-            if (ix < 0 || ix >= coll.Length)
-				throw new WorkflowException("BPMNTask. Invalid Complete body index");
-			_tokens[ix] = Token.Empty();
-			ParentContainer.KillToken(_token);
-			if (!CanCountinue(context))
+
+            var idx = _tokens.FindIndex(x => x.ToString() == _token?.ToString());
+			if (idx != -1)
+				_tokens[idx].SetEmpty();
+			else
+			{
+                var tok = _tokens.FirstOrDefault(x => !x.IsEmpty);
+                if (tok != null)
+                    tok.SetEmpty();
+            }
+            ParentContainer.KillToken(_token);
+            if (!CanCountinue(context))
 			{
 				_token = ParentContainer.NewToken();
 				return DoCompleteBody(context);
@@ -177,9 +181,9 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 				if (mi.IsSequential)
 				{
 					// first non empty index
-					ix = _tokens.FindIndex(x => !x.IsEmpty);
+					var ne1 = _tokens.FindIndex(x => !x.IsEmpty);
 					IsComplete = false;
-					context.Schedule(this, _tokens[ix]);
+					context.Schedule(this, _tokens[ne1]);
 				}
 			}
 			return ValueTask.CompletedTask;
@@ -217,10 +221,7 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 		return ValueTask.CompletedTask;
 	}
 
-	public virtual ValueTask ExecuteBody(IExecutionContext context)
-	{
-		return CompleteBody(context);
-	}
+	public virtual ValueTask ExecuteBody(IExecutionContext context) => CompleteBody(context);
 
 	public virtual void BuildScriptBody(IScriptBuilder builder)
 	{
@@ -228,19 +229,19 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 
 	protected virtual void CompleteTask(IExecutionContext context)
 	{
-		ParentContainer.KillToken(_token);
-		if (_tokens != null)
-		{
-			foreach (var t in _tokens)
-			{
-				if (t != null)
-					ParentContainer.KillToken(t);
-			}
-			_tokens = null;
-		}
-		_token = null;
-		IsComplete = true;
-		RemoveBoundaryEvents(context);
+        ParentContainer.KillToken(_token);
+        if (_tokens != null)
+        {
+            foreach (var t in _tokens)
+            {
+                if (t != null)
+                    ParentContainer.KillToken(t);
+            }
+            _tokens = null;
+        }
+        _token = null;
+        IsComplete = true;
+        RemoveBoundaryEvents(context);
 	}
 
 	#region IScriptable

@@ -17,6 +17,7 @@ public interface IInstanceStorage
     Task<PendingElement?> GetPendingAsync();
     Task AutoStartComplete(Int64 Id, Guid instanceId);
     Task<IInstance?> LoadBookmark(String bookmark);
+    Task CancelChildren(Guid id, String workflow);
     ValueTask<DateTime> GetNowTime();
     ExpandoObject LoadPersistentValue(String procedure, Object id);
     ExpandoObject SavePersistentValue(String procedure, ExpandoObject obj);

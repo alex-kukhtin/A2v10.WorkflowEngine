@@ -133,6 +133,11 @@ public partial class ExecutionContext : IExecutionContext
     {
         _bookmarks.Remove(bookmark);
     }
+    public void RemoveBookmarks(String activity)
+    {
+        foreach (var k in _bookmarks.Where(b => b.Value.Activity == activity).Select(b => b.Key).ToList()) 
+            _bookmarks.Remove(k);
+    }
 
     public void SetInbox(Guid id, ExpandoObject inbox, IActivity activity, String bookmark)
     {
@@ -308,8 +313,12 @@ public partial class ExecutionContext : IExecutionContext
         }
     }
 
+    public async ValueTask CancelChildren(String workflow)
+    {
+        await _engine.CancelChildren(_instance.Id, workflow);
+    }
 
-    public async ValueTask<IInstance> Call(String activity, String? correlationId, ExpandoObject? prms)
+    public async ValueTask<IInstance> Call(String activity, String? correlationId, ExpandoObject? prms, IToken? token = null)
     {
         var ea = ExternalActivity.Parse(activity);
         if (ea.IsBpmn)
@@ -318,7 +327,7 @@ public partial class ExecutionContext : IExecutionContext
                 throw new InvalidProgramException("WorkflowIdentity is null");
             var vars = GetScriptVariables(); // ensure save persistent 
             var inst = await _engine.CreateAsync(ea.WorkflowIdentity, correlationId, _instance.Id);
-            var result = await _engine.RunAsync(inst.Id, prms);
+            var result = await _engine.RunAsync(inst.Id, prms, token);
             SetScriptVariables(vars); // ensure load persistent
             return result;
         }
