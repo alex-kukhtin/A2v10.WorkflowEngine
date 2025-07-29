@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
 
@@ -21,6 +21,6 @@ public interface IInstanceStorage
     ValueTask<DateTime> GetNowTime();
     ExpandoObject LoadPersistentValue(String procedure, Object id);
     ExpandoObject SavePersistentValue(String procedure, ExpandoObject obj);
-    Task SetPersistentInstanceAsync(String procedure, String correlationId, Guid instanceId);
+    Task SetPersistentInstanceAsync(String procedure, String correlationId, Guid instanceId, String workflowId);
 }
 

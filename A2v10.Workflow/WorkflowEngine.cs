@@ -44,7 +44,7 @@ public class WorkflowEngine : IWorkflowEngine
             if (cid != null && cid.Type == VariableType.PersistentObject)
             {
                 var proc = $"{workflow.Root.Id}.{cid.Name}.SetInstanceId";
-                await _instanceStorage.SetPersistentInstanceAsync(proc, correlationId, inst.Id);
+                await _instanceStorage.SetPersistentInstanceAsync(proc, correlationId, inst.Id, inst.Workflow.Identity.Id);
             }
         }
         return inst;

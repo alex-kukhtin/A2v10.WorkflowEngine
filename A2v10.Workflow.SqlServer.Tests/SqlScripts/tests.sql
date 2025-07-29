@@ -275,7 +275,8 @@ go
 ------------------------------------------------
 create or alter procedure a2wf.[Persist.Order.SetInstanceId]
 @Id bigint,
-@InstanceId uniqueidentifier
+@InstanceId uniqueidentifier,
+@WorkflowId nvarchar(255)
 as
 begin
 	set nocount on;
@@ -296,7 +297,8 @@ go
 ------------------------------------------------
 create or alter procedure a2wf.[AutoStartCorrelationIdObject.Order.SetInstanceId]
 @Id bigint,
-@InstanceId uniqueidentifier
+@InstanceId uniqueidentifier,
+@WorkflowId nvarchar(255)
 as
 begin
 	set nocount on;
@@ -319,7 +321,8 @@ go
 ------------------------------------------------
 create or alter procedure a2wf.[TestCorrelation.Order.SetInstanceId]
 @Id bigint,
-@InstanceId uniqueidentifier
+@InstanceId uniqueidentifier,
+@WorkflowId nvarchar(255)
 as
 begin
 	set nocount on;
@@ -361,11 +364,14 @@ go
 ------------------------------------------------
 create or alter procedure a2wf.[CorrIdCollection.Request.SetInstanceId]
 @Id bigint,
-@InstanceId uniqueidentifier
+@InstanceId uniqueidentifier,
+@WorkflowId nvarchar(255)
 as
 begin
 	set nocount on;
 	set transaction isolation level read committed;
+
+	--throw 60000, @WorkflowId, 0;
 end
 go
 ------------------------------------------------

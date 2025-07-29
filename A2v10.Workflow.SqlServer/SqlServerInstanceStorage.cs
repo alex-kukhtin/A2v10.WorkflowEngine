@@ -305,12 +305,13 @@ public class SqlServerInstanceStorage : IInstanceStorage
         return obj;
     }
 
-    public Task SetPersistentInstanceAsync(String procedure, String correlationId, Guid instanceId)
+    public Task SetPersistentInstanceAsync(String procedure, String correlationId, Guid instanceId, String workflowId)
     {
         var prms = new ExpandoObject()
         {
             { "Id", correlationId },
-            { "InstanceId", instanceId}
+            { "InstanceId", instanceId},
+            { "WorkflowId", workflowId}
 
         };
         return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[{procedure}]", prms);

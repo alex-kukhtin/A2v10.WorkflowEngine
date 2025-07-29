@@ -167,7 +167,7 @@ public class InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage wo
         throw new NotImplementedException();
     }
 
-    public Task SetPersistentInstanceAsync(String procedure, String correlationId, Guid instanceId)
+    public Task SetPersistentInstanceAsync(String procedure, String correlationId, Guid instanceId, String workflowId)
     {
         throw new NotImplementedException();
     }
