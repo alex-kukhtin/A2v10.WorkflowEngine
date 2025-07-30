@@ -35,7 +35,7 @@ public class InvokeTarget
     {
         var id = "DummyWorkflow";
         var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
-        var ex = await Assert.ThrowsExceptionAsync<SqlServerStorageException>(() =>
+        var ex = await Assert.ThrowsExactlyAsync<SqlServerStorageException>(() =>
         {
             return target.InvokeAsync("Start", new ExpandoObject()
             {
@@ -49,7 +49,7 @@ public class InvokeTarget
     public async Task RunWorkflow_Error()
     {
         var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
-        var ex = await Assert.ThrowsExceptionAsync<WorkflowException>(() =>
+        var ex = await Assert.ThrowsExactlyAsync<WorkflowException>(() =>
         {
             return target.InvokeAsync("Run", new ExpandoObject()
             {
@@ -64,7 +64,7 @@ public class InvokeTarget
     {
         var id = "DummyWorkflow";
         var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
-        var ex = await Assert.ThrowsExceptionAsync<SqlServerStorageException>(() =>
+        var ex = await Assert.ThrowsExactlyAsync<SqlServerStorageException>(() =>
         {
             return target.InvokeAsync("Create", new ExpandoObject()
             {
