@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2025 Oleksandr Kukhtin
 
-Last updated : 26 jul 2025
-module version : 8233
+Last updated : 12 aug 2025
+module version : 8234
 */
 
 /* WF TABLES
@@ -44,7 +44,7 @@ go
 begin
 	set nocount on;
 	declare @version int;
-	set @version = 8233;
+	set @version = 8234;
 	if exists(select * from a2wf.Versions where Module = N'main')
 		update a2wf.Versions set [Version] = @version where Module = N'main';
 	else
@@ -92,6 +92,10 @@ go
 ------------------------------------------------
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = N'a2wf' and TABLE_NAME = N'Catalog' and COLUMN_NAME = N'Key')
 	alter table a2wf.[Catalog] add [Key] nvarchar(32);
+go
+------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = N'a2wf' and TABLE_NAME = N'Catalog' and COLUMN_NAME = N'Archive')
+	alter table a2wf.[Catalog] add Archive bit constraint DF_Catalog_Archive default(0) with values;
 go
 ------------------------------------------------
 if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'Workflows')
@@ -905,7 +909,7 @@ begin
 
 	select top(1) w.Id 
 	from a2wf.[Catalog] c inner join a2wf.Workflows w on c.Id = w.Id
-	where c.[Key] = @Key;
+	where c.[Key] = @Key and c.Archive = 0;
 end
 go
 ------------------------------------------------
