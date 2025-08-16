@@ -49,6 +49,7 @@ Available commands:
 |Create | Create workflow |WorkflowId, CorrelationId  |InstanceId         |
 |Run    | Run workflow    |InstanceId, CorrelationId, Args  |InstanceId, Result |
 |Resume | Resume workflow |InstanceId, Bookmark, Reply|InstanceId, Result |
+|Message | Send message to workflow |InstanceId, Message|InstanceId |
 |Variables  | Get instance Variables   |InstanceId    |Result             |
 |CheckSyntax| Check script syntax|WorkflowId          |Errors: []         |
 

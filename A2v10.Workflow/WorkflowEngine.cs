@@ -97,6 +97,14 @@ public class WorkflowEngine : IWorkflowEngine
         });
     }
 
+    public ValueTask<IInstance?> HandleMessageAsync(Guid id, String message)
+    {
+        return Handle2(id, async context =>
+        {
+             await context.HandleMessageAsync(message);
+        });
+    }
+
     static void SetInstanceState(IInstance inst, ExecutionContext context)
     {
         inst.Result = context.GetResult();
@@ -127,8 +135,13 @@ public class WorkflowEngine : IWorkflowEngine
         }
         foreach (var pi in pend.Pending)
         {
-            _logger.LogInformation("Process pending at {Time}, InstanceId {instanceId}", DateTime.Now, pi.InstanceId);
+            _logger.LogInformation("Process pending at {Time}, InstanceId {instanceId}", DateTime.UtcNow, pi.InstanceId);
             await HandleEventsAsync(pi.InstanceId, pi.EventKeys);
+        }
+        foreach (var mi in pend.Messages) {
+            _logger.LogInformation("Process message at {Time}, InstanceId {instanceId}", DateTime.UtcNow, mi.InstanceId);
+            await HandleMessageAsync(mi.InstanceId, mi.Message);
+            await _instanceStorage.PendingMessageComplete(mi.Id, mi.InstanceId);
         }
     }
 

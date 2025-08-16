@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace A2v10.Workflow.SqlServer.Tests;
@@ -279,5 +280,57 @@ public class InvokeTarget
 
         Assert.AreEqual(99L, variables.Eval<Int64>("Persist.Order.Id"));
 
+    }
+
+
+    [TestMethod]
+    public async Task MessageWorkflow_Success()
+    {
+        var id = "SimpleTarget";
+        await TestEngine.PrepareDatabase(id);
+
+        var target = _serviceProvider.GetRequiredService<IRuntimeInvokeTarget>();
+
+        var format = "xaml";
+        var xaml = File.ReadAllText("..\\..\\..\\TestFiles\\messages\\boundary.bpmn");
+
+        await target.InvokeAsync("Save", new ExpandoObject()
+        {
+            { "WorkflowId", id },
+            { "Format", format },
+            { "Body", xaml }
+        });
+
+        await target.InvokeAsync("Publish", new ExpandoObject()
+        {
+            {"WorkflowId", id }
+        });
+
+        var res = await target.InvokeAsync("Start", new ExpandoObject()
+        {
+            {"WorkflowId", id }
+        }) ?? throw new InvalidOperationException("result is null");
+
+        String? instanceId = res.Get<Object>("InstanceId")?.ToString();
+
+        var resMessage = await target.InvokeAsync("Message", new ExpandoObject()
+        {
+            {"InstanceId", instanceId },
+            {"Message", "Message1" },
+        }) ?? throw new InvalidOperationException("message is null");
+
+        String? resInstanceId = resMessage.Get<Object>("InstanceId")?.ToString();
+
+        Assert.AreEqual(instanceId, resInstanceId);
+
+        var variables = await target.InvokeAsync("Variables", new ExpandoObject()
+        {
+            {"InstanceId", resInstanceId }
+        });
+
+        var log = variables.Eval<Object[]>("Process_1.log")?.Select(x => x.ToString()).ToArray();
+        Assert.IsNotNull(log);
+        Assert.AreEqual(4L, log.Length);
+        Assert.AreEqual("endBoundary", log[3]);
     }
 }

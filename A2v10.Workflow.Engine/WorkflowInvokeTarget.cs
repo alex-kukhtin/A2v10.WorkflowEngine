@@ -17,6 +17,7 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         public const String InstanceId = nameof(InstanceId);
         public const String Args = nameof(Args);
         public const String Bookmark = nameof(Bookmark);
+        public const String Message = nameof(Message);
         public const String Reply = nameof(Reply);
         public const String Result = nameof(Result);
         public const String Signal = nameof(Signal);
@@ -76,6 +77,26 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         {
             { Properties.InstanceId, res.Id },
             { Properties.Result, res.Result },
+            { Properties.Signal, res.Signal }
+        };
+    }
+
+    public async Task<ExpandoObject> SendMessageAsync(Object? instanceId, String message)
+    {
+        if (instanceId == null)
+            throw new WorkflowException($"SendMessage. InstanceId is required");
+        Guid instanceGuid = instanceId switch
+        {
+            Guid guidVal => guidVal,
+            String strVal => Guid.Parse(strVal),
+            _ => throw new WorkflowException($"SendMessage.InstanceId invalid type")
+        };
+        if (instanceGuid == Guid.Empty)
+            throw new WorkflowException($"SendMessage. InstanceId is required");
+        var res = await _engine.SendMessageAsync(instanceGuid, message);
+        return new ExpandoObject()
+        {
+            { Properties.InstanceId, res.Id },
             { Properties.Signal, res.Signal }
         };
     }
@@ -167,6 +188,10 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
                     parameters.GetNotNull<String>(Properties.Bookmark),
                     parameters.Get<ExpandoObject>(Properties.Reply)
                 ),
+            "Message" => await SendMessageAsync(
+                    parameters.Get<Object>(Properties.InstanceId),
+                    parameters.GetNotNull<String>(Properties.Message)
+                ),
             "Start" => await StartAsync(
                     parameters.GetNotNull<String>(Properties.WorkflowId),
                     parameters.Get<Int32>(Properties.Version),
@@ -187,7 +212,7 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
             "Variables" => await Variables(
                     parameters.GetNotNull<Object>(Properties.InstanceId)
                 ),
-            _ => throw new WorkflowException($"Invalid target method '{method}'. Expected: Save, Publish, Create, Run, Start, Resume, CheckSyntax")
+            _ => throw new WorkflowException($"Invalid target method '{method}'. Expected: Save, Publish, Create, Run, Start, Resume, Message, CheckSyntax, Variables")
         };
     }
 }

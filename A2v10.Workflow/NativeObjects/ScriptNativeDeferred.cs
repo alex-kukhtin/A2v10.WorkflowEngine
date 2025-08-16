@@ -12,13 +12,13 @@ public class ScriptNativeDeferred : IInjectable
     {
     }
 
-		public void SetDeferred(IDeferredTarget deferredTarget)
+    public void SetDeferred(IDeferredTarget deferredTarget)
     {
-			_deferredTarget = deferredTarget;
-		}
+        _deferredTarget = deferredTarget;
+    }
 
 #pragma warning disable IDE1006 // Naming Styles
-		public void executeSql(String procedure, ExpandoObject? prms = null)
+    public void executeSql(String procedure, ExpandoObject? prms = null)
 #pragma warning restore IDE1006 // Naming Styles
     {
         if (_deferredTarget == null)

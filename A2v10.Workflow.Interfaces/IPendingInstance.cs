@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
 public interface IPendingInstance
@@ -7,3 +7,9 @@ public interface IPendingInstance
     IEnumerable<String> EventKeys { get; }
 }
 
+public interface IPendingMessage
+{
+    Int64 Id { get; }
+    Guid InstanceId { get; }
+    String Message { get; }
+}

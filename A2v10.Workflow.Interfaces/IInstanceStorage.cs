@@ -2,7 +2,11 @@
 
 namespace A2v10.Workflow.Interfaces;
 
-public record PendingElement(IEnumerable<IPendingInstance> Pending, IEnumerable<IAutoStartInstance> AutoStart);
+public record PendingElement(
+    IEnumerable<IPendingInstance> Pending, 
+    IEnumerable<IAutoStartInstance> AutoStart,
+    IEnumerable<IPendingMessage> Messages
+);
 
 public interface IInstanceStorage
 {
@@ -16,6 +20,7 @@ public interface IInstanceStorage
 
     Task<PendingElement?> GetPendingAsync();
     Task AutoStartComplete(Int64 Id, Guid instanceId);
+    Task PendingMessageComplete(Int64 Id, Guid instanceId);
     Task<IInstance?> LoadBookmark(String bookmark);
     Task CancelChildren(Guid id, String workflow);
     ValueTask<DateTime> GetNowTime();

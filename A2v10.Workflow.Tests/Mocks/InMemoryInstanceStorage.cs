@@ -124,11 +124,17 @@ public class InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage wo
             }
         }
         var autoStartList = new List<IAutoStartInstance>();
-        var res = new PendingElement(Pending: pendingList, AutoStart: autoStartList);
+        var res = new PendingElement(Pending: pendingList, AutoStart: autoStartList, 
+            Messages: new List<IPendingMessage>());
         return Task.FromResult<PendingElement?>(res);
     }
 
     public Task AutoStartComplete(Int64 Id, Guid instanceId)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task PendingMessageComplete(Int64 Id, Guid instanceId)
     {
         return Task.CompletedTask;
     }

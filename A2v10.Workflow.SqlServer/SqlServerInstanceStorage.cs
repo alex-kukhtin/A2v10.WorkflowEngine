@@ -201,6 +201,24 @@ public class SqlServerInstanceStorage : IInstanceStorage
             result.Add(pi);
         return result;
     }
+    static List<IPendingMessage> MessagesFromModel(ExpandoObject root)
+    {
+        var result = new List<IPendingMessage>();
+        var msgList = root.Get<List<ExpandoObject>>("Messages");
+        if (msgList == null)
+            return result;
+        foreach (var me in msgList)
+        {
+            if (me is not ExpandoObject mee)
+                continue;
+            var instId = mee.GetNotNull<Guid>("InstanceId");
+            var id = mee.GetNotNull<Int64>("Id");
+            var message = mee.Get<String>("Message") ?? throw new WorkflowException("Invalid message");
+            var inst = new MessageInstance() { Id = id, InstanceId = instId, Message = message };
+            result.Add(inst);
+        }
+        return result;
+    }
 
     static List<IAutoStartInstance> AutoStartFromModel(ExpandoObject root)
     {
@@ -233,7 +251,10 @@ public class SqlServerInstanceStorage : IInstanceStorage
         if (dm == null || dm.Root == null)
             return null;
 
-        return new PendingElement(Pending: PendingFromModel(dm.Root), AutoStart: AutoStartFromModel(dm.Root));
+        return new PendingElement(
+            Pending: PendingFromModel(dm.Root), 
+            AutoStart: AutoStartFromModel(dm.Root),
+            Messages: MessagesFromModel(dm.Root));
     }
 
     public Task AutoStartComplete(Int64 Id, Guid instanceId)
@@ -244,6 +265,16 @@ public class SqlServerInstanceStorage : IInstanceStorage
             { "InstanceId", instanceId }
         };
         return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[AutoStart.Complete]", prms);
+    }
+
+    public Task PendingMessageComplete(Int64 Id, Guid instanceId)
+    {
+        var prms = new ExpandoObject()
+        {
+            { "Id", Id },
+            { "InstanceId", instanceId }
+        };
+        return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[PendingMessage.Complete]", prms);
     }
 
     public async Task<IInstance?> LoadBookmark(String bookmark)

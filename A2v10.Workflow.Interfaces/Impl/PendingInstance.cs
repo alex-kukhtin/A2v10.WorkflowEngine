@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
 public class PendingInstance : IPendingInstance
@@ -14,4 +14,11 @@ public class PendingInstance : IPendingInstance
     {
         _eventKeys.Add(key);
     }
+}
+
+public class MessageInstance : IPendingMessage
+{
+    public Int64 Id { get; init; }
+    public Guid InstanceId { get; init; }
+    public String Message { get; init; } = default!;
 }
