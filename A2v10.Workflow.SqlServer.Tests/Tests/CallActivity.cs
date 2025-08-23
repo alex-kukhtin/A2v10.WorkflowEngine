@@ -4,6 +4,7 @@ using System;
 using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -219,6 +220,86 @@ public class CallActivity
         Assert.AreEqual("Error1", res0.Get<String>("RetValue"));
 
         Assert.AreEqual(295, res0.Get<Int32>("Result"));
+    }
+
+
+    [TestMethod]
+    public async Task CallActivityBoundaryEvent()
+    {
+        String parentId = "ParentBE";
+        String childId = "ChildBE";
+
+        await TestEngine.PrepareDatabase(childId);
+        await TestEngine.PrepareDatabase(parentId);
+
+        var xamlChild = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\ChildBE.bpmn");
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(childId, xamlChild));
+        var childIdent = await _workflowStorage.PublishAsync(_workflowCatalog, childId);
+        Assert.AreEqual(1, childIdent.Version);
+
+        var xamlParent = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\ParentBE.bpmn");
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(parentId, xamlParent));
+        var parentIdent = await _workflowStorage.PublishAsync(_workflowCatalog, parentId);
+        Assert.AreEqual(1, parentIdent.Version);
+
+        {
+            var inst = await _workflowEngine.CreateAsync(new WorkflowIdentity(parentId));
+            inst = await _workflowEngine.RunAsync(inst.Id, new ExpandoObject()
+            {
+                { "Input", "OK" }
+            });
+
+            Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+            await Task.Delay(1010);
+
+            await _workflowEngine.ProcessPending();
+            inst = await _instanceStorage.LoadRaw(inst.Id);
+
+            Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+            //var log = inst.Result.Get<Object[]>("Log")?.Select(x => x.ToString());
+            var log = inst.State?.Eval<Object[]>("Variables.Process_1.Log")?.Select(x => x.ToString());
+            CollectionAssert.AreEqual(
+                new String[]
+                {
+                    "4",
+                    "6",
+                    "2",
+                    "Normal",
+                },
+                log?.ToArray());
+        }
+
+        {
+            var inst = await _workflowEngine.CreateAsync(new WorkflowIdentity(parentId));
+            inst = await _workflowEngine.RunAsync(inst.Id, new ExpandoObject()
+            {
+                { "Input", "Fail" }
+            });
+
+            Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
+
+            var log = inst.Result.Get<Object[]>("Log")?.Select(x => x.ToString());
+
+            CollectionAssert.AreEqual(
+                new String[]
+                {
+                    "Error",
+                },
+                log?.ToArray());
+        }
+    }
+
+    [TestMethod]
+    public Task CallActivityBoundaryEvent20()
+    {
+        /*
+        for (var i = 0; i < 20; i++)
+        {
+            await CallActivityBoundaryEvent();
+        } 
+        */
+        return Task.CompletedTask;
     }
 }
 

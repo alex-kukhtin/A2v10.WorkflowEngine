@@ -19,7 +19,11 @@ public record QueueItem
     Func<IExecutionContext, IToken?, ValueTask> Action,
     IActivity Activity,
     IToken? Token
-);
+)
+{
+    public Boolean IsCanceled { get; set; }
+}
+
 
 public record EventItem(EventAction Action, IWorkflowEvent Event);
 
@@ -197,6 +201,8 @@ public partial class ExecutionContext : IExecutionContext
         while (_commandQueue.Count > 0)
         {
             var queueItem = _commandQueue.Dequeue();
+            if (queueItem.IsCanceled)
+                continue;
             _tracker.Track(new ActivityTrackRecord(ActivityTrackAction.Execute, queueItem.Activity, queueItem.Token));
             await queueItem.Action(this, queueItem.Token);
         }
@@ -246,7 +252,14 @@ public partial class ExecutionContext : IExecutionContext
                 break;
             case EventKind.Message:
                 var msg = _instance?.Workflow?.Wrapper?.FindElement<Message>(m => m.Id == evt.Ref);
-                //throw new NotImplementedException("EndEvent (Message)");
+                if (msg != null)
+                {
+                    _endEvent = new ExpandoObject()
+                    {
+                        { "Kind", "Message" },
+                        { "Message", msg.Name },
+                    };
+                }
                 break;
         }
     }
@@ -316,6 +329,13 @@ public partial class ExecutionContext : IExecutionContext
     public async ValueTask CancelChildren(String workflow)
     {
         await _engine.CancelChildren(_instance.Id, workflow);
+    }
+
+    public void CancelActivity(IActivity activity)
+    {
+        var list = _commandQueue.Where(x => x.Activity == activity);
+        foreach (var ca in list)
+            ca.IsCanceled = true;
     }
 
     public async ValueTask<IInstance> Call(String activity, String? correlationId, ExpandoObject? prms, IToken? token = null)

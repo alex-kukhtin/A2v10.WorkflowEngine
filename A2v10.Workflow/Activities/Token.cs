@@ -13,6 +13,7 @@ public struct Token : IToken
 
     public static IToken Empty() => new Token(Guid.Empty);
     public static IToken Create() => new Token(Guid.NewGuid());
+    public IToken Clone() => new Token(this.Id);
     public Boolean IsEmpty => Id == Guid.Empty;
     public void SetEmpty() => Id = Guid.Empty;
     public override String ToString() => Id.ToString();

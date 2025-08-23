@@ -25,13 +25,17 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 		if (IsLoop)
 			storage.Set<Int32>(LOOP_COUNTER, _loopCounter);
 		else if (IsMultiInstance && _tokens != null)
-			storage.SetTokenList(MULTI_INSTANCE_TOKENS, _tokens);
+		{
+			var actualTokens = _tokens.Where(t => !t.IsEmpty).ToList();
+			if (actualTokens.Count > 0)
+				storage.SetTokenList(MULTI_INSTANCE_TOKENS, actualTokens);
+		}
 	}
 
 	public virtual void Restore(IActivityStorage storage)
 	{
 		if (!CanInduceIdle) return;
-		_token = storage.GetToken(TOKEN);
+        _token = storage.GetToken(TOKEN);
 		if (IsLoop)
 			_loopCounter = storage.Get<Int32>(LOOP_COUNTER);
 		else if (IsMultiInstance)
@@ -136,9 +140,10 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 
 	public override void Cancel(IExecutionContext context)
 	{
-		CompleteTask(context);
+        CompleteTask(context);
 		context.RemoveBookmarks(Id);
 		base.Cancel(context);
+		context.CancelActivity(this);
     }
 
 
@@ -166,13 +171,14 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 			else
 			{
                 var tok = _tokens.FirstOrDefault(x => !x.IsEmpty);
-                if (tok != null)
-                    tok.SetEmpty();
+				if (tok != null)
+				{
+					_token = tok.Clone();
+					tok.SetEmpty();
+				}
             }
-            ParentContainer.KillToken(_token);
             if (!CanCountinue(context))
 			{
-				_token = ParentContainer.NewToken();
 				return DoCompleteBody(context);
 			}
 			else
@@ -194,7 +200,8 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 
 	ValueTask DoCompleteBody(IExecutionContext context)
 	{
-		if (Outgoing == null)
+		RemoveBoundaryEvents(context);
+        if (Outgoing == null)
 		{
 			return ValueTask.CompletedTask;
 		}

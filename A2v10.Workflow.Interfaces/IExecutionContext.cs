@@ -28,6 +28,7 @@ public interface IExecutionContext
 
     ValueTask<IInstance> Call(String activity, String? correlationId, ExpandoObject? prms, IToken? token = null);
     ValueTask CancelChildren(String workflow);
+    void CancelActivity(IActivity activity);  
     ValueTask HandleEvent(IWorkflowEvent evt);
     void ProcessEndEvent(IWorkflowEvent evt);
     ValueTask HandleEndEvent(ExpandoObject? evt);
