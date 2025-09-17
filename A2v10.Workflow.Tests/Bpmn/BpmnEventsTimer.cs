@@ -73,7 +73,7 @@ public class BpmnTimerEvents
         Assert.AreEqual("Start", res0.Get<String>("Result"));
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
-        await Task.Delay(1001);
+        await Task.Delay(1010);
         await wfe.ProcessPending();
         var instAfter = await ins.Load(inst.Id);
         var res1 = instAfter.Result;
