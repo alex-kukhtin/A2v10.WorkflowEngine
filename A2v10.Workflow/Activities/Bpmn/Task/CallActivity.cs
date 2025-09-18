@@ -47,6 +47,8 @@ public class CallActivity : BpmnTask
         }
         else if (result.ExecutionStatus == WorkflowExecutionStatus.Idle)
             context.SetBookmark($"{result.Workflow.Identity.Id}:{result.Id}", this, OnActivityComplete);
+
+        context.AppendSignal(result.Signal);
     }
 
     [StoreName("OnActivityComplete")]

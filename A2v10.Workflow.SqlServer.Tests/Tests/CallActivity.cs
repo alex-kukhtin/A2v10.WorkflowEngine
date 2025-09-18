@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using A2v10.Workflow.Interfaces;
+using System.Collections.Generic;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -300,6 +301,49 @@ public class CallActivity
         } 
         */
         return Task.CompletedTask;
+    }
+
+    [TestMethod]
+    public async Task CallActivitySignalR()
+    {
+        String parentId = "SimpleParent";
+        String childId = "SimpleChild";
+
+        await TestEngine.PrepareDatabase(childId);
+        await TestEngine.PrepareDatabase(parentId);
+
+        var xamlChild = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\ChildInboxTimer.bpmn");
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(childId, xamlChild));
+        var childIdent = await _workflowStorage.PublishAsync(_workflowCatalog, childId);
+        Assert.AreEqual(1, childIdent.Version);
+
+        var xamlParent = File.ReadAllText("..\\..\\..\\TestFiles\\CallActivity\\SimpleParent.bpmn");
+        await _workflowCatalog.SaveAsync(new WorkflowDescriptor(parentId, xamlParent));
+        var parentIdent = await _workflowStorage.PublishAsync(_workflowCatalog, parentId);
+        Assert.AreEqual(1, parentIdent.Version);
+
+        var prms = new ExpandoObject()
+        {
+            {"A", 2 },
+            {"B", 2 },
+        };
+        var inst = await _workflowEngine.CreateAsync(new WorkflowIdentity(parentId));
+        inst = await _workflowEngine.RunAsync(inst.Id, prms);
+
+        Assert.AreEqual(2, inst.Signal?.Count);
+        Assert.AreEqual(22, inst.Signal?[0].Get<Int64>("User"));
+        Assert.AreEqual(23, inst.Signal?[1].Get<Int64>("User"));
+
+        Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
+
+        await Task.Delay(1010);
+        await _workflowEngine.ProcessPending();
+
+        var res = await _workflowEngine.LoadInstanceRaw(inst.Id);
+
+        Assert.IsNull(res.Signal);
+        var res0 = res.Result;
+        Assert.AreEqual(4 + 7, res0.Get<Double>("R"));
     }
 }
 

@@ -46,6 +46,7 @@ public partial class ExecutionContext : IExecutionContext
     private readonly ITracker _tracker;
     private readonly IWorkflowEngine _engine;
     private readonly IInstanceStorage _instanceStorage;
+    private List<ExpandoObject>? _signals;
 
     private ExpandoObject? _endEvent;
 
@@ -57,6 +58,7 @@ public partial class ExecutionContext : IExecutionContext
         _root = instance.Workflow.Root;
         _engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
         _instanceStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
+        _signals = null;
 
         // store all activites
         var toMapArg = new TraverseArg()
@@ -359,5 +361,21 @@ public partial class ExecutionContext : IExecutionContext
 	{
         return _instanceStorage.GetNowTime();
 	}
+
+    public void AppendSignal(List<ExpandoObject>? signals)
+    {
+        if (signals == null)
+            return;
+        _signals ??= new List<ExpandoObject>();
+        _signals.AddRange(signals);
+    }
+
+    public void MergeSignal(IInstance instance)
+    {
+        if (_signals == null || _signals.Count == 0) 
+            return;
+        instance.Signal ??= new List<ExpandoObject>(); 
+        instance.Signal.AddRange(_signals);
+    }
 }
 

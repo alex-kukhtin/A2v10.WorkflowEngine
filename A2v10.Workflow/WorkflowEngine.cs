@@ -66,6 +66,7 @@ public class WorkflowEngine : IWorkflowEngine
         SetInstanceState(instance, context);
         await _instanceStorage.Save(instance);
         await CheckParent(instance);
+        context.MergeSignal(instance);
         return instance;
     }
 
@@ -204,6 +205,7 @@ public class WorkflowEngine : IWorkflowEngine
         SetInstanceState(inst, context);
         await _instanceStorage.Save(inst);
         await CheckParent(inst);
+        context.MergeSignal(inst);
         return inst;
     }
 

@@ -34,5 +34,7 @@ public interface IExecutionContext
     ValueTask HandleEndEvent(ExpandoObject? evt);
 
     ValueTask<DateTime> Now();
+    void AppendSignal(List<ExpandoObject>? signals);
+    void MergeSignal(IInstance instance);
 }
 
