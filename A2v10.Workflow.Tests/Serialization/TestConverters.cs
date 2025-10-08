@@ -38,7 +38,7 @@ namespace A2v10.Workflow.Tests.Serialization
             Assert.AreEqual(s.x, z.x);
             Assert.AreEqual(s.y, z.y);
             Assert.AreEqual(s.n, z.n);
-            Assert.AreEqual(z.n, Double.NaN);
+            Assert.AreEqual(Double.NaN, z.n);
         }
     }
 }

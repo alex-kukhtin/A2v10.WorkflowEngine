@@ -1,12 +1,14 @@
 ﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
-using A2v10.Workflow.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Dynamic;
 using System.IO;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using A2v10.Workflow.Interfaces;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -50,7 +52,7 @@ public class PersistentObjects
 
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(1, log!.Length);
+        Assert.HasCount(1, log);
         Assert.AreEqual("start", String.Join('|', log));
 
         var order = inst.Result?.GetNotNull<ExpandoObject>("Order");
@@ -65,7 +67,7 @@ public class PersistentObjects
 
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(5, log!.Length);
+        Assert.HasCount(5, log);
         order = inst.Result?.GetNotNull<ExpandoObject>("Order");
         Assert.AreEqual((Int64)77, order.Get<Int64>("Id"));
         Assert.AreEqual("Data from SQL", order.Get<String>("Name"));

@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.System.Xaml;
 using A2v10.Workflow.Bpmn;
@@ -50,7 +50,7 @@ namespace A2v10.Workflow.Tests.Serialization
             Assert.IsNotNull(r);
 
             Assert.AreEqual(r!.Id, p.Id);
-            Assert.AreEqual(r.Children!.Count, p.Children.Count);
+            Assert.HasCount(r.Children!.Count, p.Children);
 
             var pEvent = p.FindElement<Event>("start");
             var rEvent = r.FindElement<Event>("start");
@@ -85,14 +85,14 @@ namespace A2v10.Workflow.Tests.Serialization
 
             Assert.IsNotNull(r);
             Assert.AreEqual(r!.Id, s.Id);
-            Assert.AreEqual(r.Variables!.Count, s.Variables.Count);
-            Assert.AreEqual(r.Activities!.Count, s.Activities.Count);
+            Assert.HasCount(r.Variables!.Count, s.Variables);
+            Assert.HasCount(r.Activities!.Count, s.Activities);
 
             Assert.AreEqual(r.Activities[0].Id, s.Activities[0].Id);
             Assert.AreEqual(r.Activities[1].Id, s.Activities[1].Id);
-            Assert.AreEqual(r.Activities[0].GetType(), typeof(Code));
-            Assert.AreEqual(r.Activities[1].GetType(), typeof(Wait));
-            Assert.AreEqual(r.Activities[2].GetType(), typeof(Code));
+            Assert.AreEqual(typeof(Code), r.Activities[0].GetType());
+            Assert.AreEqual(typeof(Wait), r.Activities[1].GetType());
+            Assert.AreEqual(typeof(Code), r.Activities[2].GetType());
         }
     }
 }

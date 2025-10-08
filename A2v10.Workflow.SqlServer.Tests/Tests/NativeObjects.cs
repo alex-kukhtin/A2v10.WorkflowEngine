@@ -39,7 +39,7 @@ public class NativeObjects
         var res0 = res.Result;
         var log = res0?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(5, log!.Length);
+        Assert.HasCount(5, log);
         Assert.AreEqual("start|task|res:5|success:true|end", String.Join('|', log));
     }
 }

@@ -24,7 +24,7 @@ public class BpmnLanes
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         var log = res0.Get<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(3, log!.Length);
+        Assert.HasCount(3, log);
         Assert.AreEqual("start|task|end", String.Join('|', log));
     }
 }

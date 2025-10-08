@@ -45,7 +45,7 @@ public class PendingMessage
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log!.Length);
+        Assert.HasCount(2, log);
         Assert.AreEqual("startProcess|startSub", String.Join('|', log));
 
 
@@ -62,7 +62,7 @@ public class PendingMessage
 
         log = instRaw.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(4, log!.Length);
+        Assert.HasCount(4, log);
         Assert.AreEqual("startProcess|startSub|messageBoundary|endBoundary", String.Join('|', log));
     }
 }

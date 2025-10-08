@@ -80,7 +80,7 @@ public class BpmnEscalationEvents
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(1, log!.Length);
+        Assert.HasCount(1, log);
         Assert.AreEqual("start", String.Join('|', log));
 
         await Task.Delay(1010);
@@ -91,7 +91,7 @@ public class BpmnEscalationEvents
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst2.ExecutionStatus);
         log = inst2.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log!.Length);
+        Assert.HasCount(2, log);
         Assert.AreEqual("start|endBoundary", String.Join('|', log));
 
     }

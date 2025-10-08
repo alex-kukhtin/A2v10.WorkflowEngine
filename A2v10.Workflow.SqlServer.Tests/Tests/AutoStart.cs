@@ -145,7 +145,7 @@ public class AutoStart
         Assert.IsNotNull(instModel.Root.Get<Object>("Instance"));
         var instanceId = instModel.Root.Eval<Guid>("Instance.Id");
         var wfInst = await _workflowEngine.LoadInstanceRaw(instanceId);
-        Assert.AreEqual(wfInst.ExecutionStatus, WorkflowExecutionStatus.Complete);
+        Assert.AreEqual(WorkflowExecutionStatus.Complete, wfInst.ExecutionStatus);
         Assert.AreEqual(10F, wfInst.Result?.Eval<Double>("X"));
     }
 
@@ -187,7 +187,7 @@ public class AutoStart
         Assert.IsNotNull(instModel.Root.Get<Object>("Instance"));
         var instanceId = instModel.Root.Eval<Guid>("Instance.Id");
         var wfInst = await _workflowEngine.LoadInstanceRaw(instanceId);
-        Assert.AreEqual(wfInst.ExecutionStatus, WorkflowExecutionStatus.Complete);
+        Assert.AreEqual(WorkflowExecutionStatus.Complete, wfInst.ExecutionStatus);
         Assert.AreEqual(10F, wfInst.Result?.Eval<Double>("X"));
     }
 
@@ -214,7 +214,7 @@ public class AutoStart
 
         var tracks = asModel.Root.Get<List<ExpandoObject>>("Track");
         Assert.IsNotNull(tracks);
-        Assert.AreEqual(3, tracks!.Count);
+        Assert.HasCount(3, tracks);
 	}
 
     [TestMethod]

@@ -1,16 +1,17 @@
 ﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
-using A2v10.Runtime.Interfaces;
-using A2v10.Workflow.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.SqlServer.Server;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using A2v10.Workflow.Interfaces;
+using A2v10.Runtime.Interfaces;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -143,7 +144,7 @@ public class InvokeTarget
         List<ExpandoObject>? signal = res.Get<List<ExpandoObject>>("Signal");
 
         Assert.IsNotNull(signal);
-        Assert.AreEqual(2, signal.Count);
+        Assert.HasCount(2, signal);
 
         var resResume = await target.InvokeAsync("Resume", new ExpandoObject()
         {
@@ -188,7 +189,7 @@ public class InvokeTarget
         var errors = res.Get<List<ExpandoObject>>("Errors")
             ?? throw new InvalidOperationException("errors is null");    
 
-        Assert.AreEqual(2, errors.Count);
+        Assert.HasCount(2, errors);
     }
 
     [TestMethod]
@@ -330,7 +331,7 @@ public class InvokeTarget
 
         var log = variables.Eval<Object[]>("Process_1.log")?.Select(x => x.ToString()).ToArray();
         Assert.IsNotNull(log);
-        Assert.AreEqual(4L, log.Length);
+        Assert.HasCount(4, log);
         Assert.AreEqual("endBoundary", log[3]);
     }
 }

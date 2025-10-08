@@ -1,19 +1,21 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
-
-using System;
-using System.Dynamic;
-using System.Threading.Tasks;
-
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using A2v10.Data.Interfaces;
 using A2v10.Runtime.Interfaces;
 using A2v10.Workflow.Engine;
 using A2v10.Workflow.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Dynamic;
+using System.Threading.Tasks;
+
+[assembly: DoNotParallelize]
 
 namespace A2v10.Workflow.SqlServer.Tests;
+
 public static class TestEngine
 {
     private static IServiceProvider? _provider;

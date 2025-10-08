@@ -88,7 +88,7 @@ public class ExternalVariables
 
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(3, log!.Length);
+        Assert.HasCount(3, log);
         Assert.AreEqual("start|task|end", String.Join('|', log));
     }
 
@@ -115,7 +115,7 @@ public class ExternalVariables
 
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(3, log!.Length);
+        Assert.HasCount(3, log);
         Assert.AreEqual("start|task|end", String.Join('|', log));
     }
 
@@ -142,7 +142,7 @@ public class ExternalVariables
 
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(1, log!.Length);
+        Assert.HasCount(1, log);
         Assert.AreEqual("start", String.Join('|', log));
 
 
@@ -150,7 +150,7 @@ public class ExternalVariables
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(3, log!.Length);
+        Assert.HasCount(3, log);
         Assert.AreEqual("start|task|end", String.Join('|', log));
     }
 }

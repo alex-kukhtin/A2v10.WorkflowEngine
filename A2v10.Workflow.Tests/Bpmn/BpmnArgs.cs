@@ -46,7 +46,7 @@ namespace A2v10.Workflow.Tests
             var res0 = inst.Result;
             Assert.AreEqual(10, res0.Get<Double>("X"));
             Assert.AreEqual("88", res0.Get<String>("S"));
-            Assert.AreEqual(false, res0.Get<Boolean>("B"));
+            Assert.IsFalse(res0.Get<Boolean>("B"));
             Assert.AreEqual(77, res0.Get<Int64>("I"));
             var rdDate = res0.Get<DateTime>("D");
             Assert.AreEqual(0, (Int32)(rdDate - now).TotalMilliseconds);
@@ -80,7 +80,7 @@ namespace A2v10.Workflow.Tests
             var inst = await TestEngine.SimpleRun(wfId, xaml, prms);
 
             var res0 = inst.Result;
-            Assert.AreEqual(true, res0.Get<Boolean>("B"));
+            Assert.IsTrue(res0.Get<Boolean>("B"));
             Assert.AreEqual(106, res0.Get<Int64>("I"));
             Assert.AreEqual("S8", res0.Get<String>("S"));
             Assert.AreEqual(7 + 5, res0.Get<Double>("X"));

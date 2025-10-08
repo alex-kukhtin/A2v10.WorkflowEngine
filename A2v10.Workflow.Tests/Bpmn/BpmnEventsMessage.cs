@@ -22,7 +22,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log!.Length);
+        Assert.HasCount(2, log);
         Assert.AreEqual("startProcess|startSub", String.Join('|', log));
 
         var sp = TestEngine.ServiceProvider();
@@ -32,7 +32,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(4, log!.Length);
+        Assert.HasCount(4, log);
         Assert.AreEqual("startProcess|startSub|messageBoundary|endBoundary", String.Join('|', log));
 
         inst = await wfe.ResumeAsync(inst.Id, "MainTask");
@@ -40,7 +40,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(6, log!.Length);
+        Assert.HasCount(6, log);
         Assert.AreEqual("startProcess|startSub|messageBoundary|endBoundary|endSub|endProcess", String.Join('|', log));
     }
 
@@ -54,7 +54,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(2, log!.Length);
+        Assert.HasCount(2, log);
         Assert.AreEqual("startProcess|startSub", String.Join('|', log));
 
         var sp = TestEngine.ServiceProvider();
@@ -64,7 +64,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(5, log!.Length);
+        Assert.HasCount(5, log);
         Assert.AreEqual("startProcess|startSub|messageBoundary|endBoundary|endProcess", String.Join('|', log));
     }
 
@@ -78,7 +78,7 @@ public class BpmnEventsMessage
         Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
         var log = inst.Result?.GetNotNull<Object[]>("log");
         Assert.IsNotNull(log);
-        Assert.AreEqual(5, log!.Length);
+        Assert.HasCount(5, log);
         Assert.AreEqual("start|task1|endMessage|task2|end", String.Join('|', log));
     }
 }

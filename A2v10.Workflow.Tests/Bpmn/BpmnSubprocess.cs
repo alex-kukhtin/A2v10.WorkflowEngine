@@ -26,7 +26,7 @@ namespace A2v10.Workflow.Tests
             Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
             Assert.IsNotNull(res0);
             var log = res0!.GetNotNull<Object[]>("Log");
-            Assert.AreEqual(5, log.Length);
+            Assert.HasCount(5, log);
             Assert.AreEqual("start|startSub|task|endSub|end", String.Join('|', log));
         }
 
@@ -43,7 +43,7 @@ namespace A2v10.Workflow.Tests
             Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
             var log = res0.Get<Object[]>("Log");
             Assert.IsNotNull(log);
-            Assert.AreEqual(11, log!.Length);
+            Assert.HasCount(11, log);
             Assert.AreEqual("start|startSub|task|endSub|startSub|task|endSub|startSub|task|endSub|end", String.Join('|', log));
         }
 
@@ -60,7 +60,7 @@ namespace A2v10.Workflow.Tests
             Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
             var log = res0.Get<Object[]>("Log");
             Assert.IsNotNull(log);
-            Assert.AreEqual(17, log!.Length);
+            Assert.HasCount(17, log);
             Assert.AreEqual("start|startSub|task1|task2|endSub1|endSub2|startSub|task1|task2|endSub1|endSub2|startSub|task1|task2|endSub1|endSub2|end", String.Join('|', log));
         }
 
@@ -78,7 +78,7 @@ namespace A2v10.Workflow.Tests
                 Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
                 var log = res0.Get<Object[]>("Log");
                 Assert.IsNotNull(log);
-                Assert.AreEqual(5, log!.Length);
+                Assert.HasCount(5, log);
                 Assert.AreEqual("start|startSub|task1|task2|endSub2", String.Join('|', log));
             }
 
@@ -90,7 +90,7 @@ namespace A2v10.Workflow.Tests
                 Assert.AreEqual(WorkflowExecutionStatus.Idle, inst1.ExecutionStatus);
                 var log1 = res1.Get<Object[]>("Log");
                 Assert.IsNotNull(log1);
-                Assert.AreEqual(10, log1!.Length);
+                Assert.HasCount(10, log1);
                 Assert.AreEqual("start|startSub|task1|task2|endSub2|endSub1|startSub|task1|task2|endSub2", String.Join('|', log1));
             }
 
@@ -100,7 +100,7 @@ namespace A2v10.Workflow.Tests
                 var res2 = inst2.Result;
                 Assert.IsNotNull(res2);
                 var log1 = res2!.GetNotNull<Object[]>("Log");
-                Assert.AreEqual(15, log1!.Length);
+                Assert.HasCount(15, log1);
                 Assert.AreEqual("start|startSub|task1|task2|endSub2|endSub1|startSub|task1|task2|endSub2|endSub1|startSub|task1|task2|endSub2", String.Join('|', log1));
                 Assert.AreEqual(29, res2.Get<Double>("X"));
             }
@@ -112,7 +112,7 @@ namespace A2v10.Workflow.Tests
                 Assert.AreEqual(WorkflowExecutionStatus.Complete, inst3.ExecutionStatus);
                 Assert.IsNotNull(res3);
                 var log1 = res3!.GetNotNull<Object[]>("Log");
-                Assert.AreEqual(18, log1!.Length);
+                Assert.HasCount(18, log1);
                 Assert.AreEqual("start|startSub|task1|task2|endSub2|endSub1|startSub|task1|task2|endSub2|endSub1|startSub|task1|task2|endSub2|endSub1|task3|end", String.Join('|', log1));
             }
         }
@@ -130,7 +130,7 @@ namespace A2v10.Workflow.Tests
             Assert.AreEqual(WorkflowExecutionStatus.Complete, inst.ExecutionStatus);
             Assert.IsNotNull(res0);
             var log = res0!.GetNotNull<Object[]>("Log");
-            Assert.AreEqual(9, log!.Length);
+            Assert.HasCount(9, log);
             Assert.AreEqual("start|startSub|task|startNestedSub|nestedTask|endNestedSub|endSub|end|20", String.Join('|', log));
         }
 

@@ -127,7 +127,7 @@ namespace A2v10.Workflow.Tests
                 Assert.AreEqual(2000, valEo.Get<Int64>("a3"));
             }
             else
-                Assert.Fail(val?.GetType().ToString());
+                Assert.Fail(val?.GetType().ToString()!);
         }
 
 
