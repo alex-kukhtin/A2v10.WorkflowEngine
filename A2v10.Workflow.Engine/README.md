@@ -48,7 +48,7 @@ Available commands:
 |Start  | Start workflow  |WorkflowId, Version, Args  |InstanceId, Result |
 |Create | Create workflow |WorkflowId, CorrelationId  |InstanceId         |
 |Run    | Run workflow    |InstanceId, CorrelationId, Args  |InstanceId, Result |
-|Resume | Resume workflow |InstanceId, Bookmark, Reply|InstanceId, Result |
+|Resume | Resume workflow |InstanceId, Bookmark, Reply[<sup>1</sup>](#note1)|InstanceId, Result |
 |Message | Send message to workflow |InstanceId, Message|InstanceId |
 |Variables  | Get instance Variables   |InstanceId    |Result             |
 |CheckSyntax| Check script syntax|WorkflowId          |Errors: []         |
@@ -57,6 +57,9 @@ The *Start* command is equivalent to *Create* + *Run*.
 The *Version* is optional. If not specified - the max version will be used.
 
 
+<a name="note1"></a><sup>1</sup> When the **Reply**  object includes the **UserId** property 
+with the value **$(UserId)**, the system substitutes this placeholder with the current user Id."
+ 
 # appsettings.json section
 
 ```json

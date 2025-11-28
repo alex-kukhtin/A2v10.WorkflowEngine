@@ -19,6 +19,7 @@ public interface IExecutionContext
 
     void AddEvent(IWorkflowEvent wfEvent, IActivity activity, EventAction onComplete);
     void RemoveEvent(String eventKey);
+    void AddTrack(ExpandoObject? track, IActivity activity);
 
     T? Evaluate<T>(String refer, String name);
     void Execute(String refer, String name);

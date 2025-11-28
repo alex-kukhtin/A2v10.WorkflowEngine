@@ -29,22 +29,9 @@ public record DbDate
     public DateTime CurrentDate { get; set; }
 }
 
-public class SqlServerInstanceStorage : IInstanceStorage
+public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _workflowStorage, ISerializer _serializer,
+    IDataSourceProvider _dataSourceProvider) : IInstanceStorage
 {
-    private readonly IDbContext _dbContext;
-    private readonly IWorkflowStorage _workflowStorage;
-    private readonly ISerializer _serializer;
-    private readonly IDataSourceProvider _dataSourceProvider;
-
-    public SqlServerInstanceStorage(IDbContext dbContext, IWorkflowStorage workflowStorage, ISerializer serializer,
-        IDataSourceProvider dataSouceProvider)
-    {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        _workflowStorage = workflowStorage ?? throw new ArgumentNullException(nameof(workflowStorage));
-        _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-        _dataSourceProvider = dataSouceProvider ?? throw new ArgumentNullException(nameof(dataSouceProvider));
-    }
-
     private String? DataSource => _dataSourceProvider.DataSource;
 
     #region IInstanceStorage
@@ -114,7 +101,8 @@ public class SqlServerInstanceStorage : IInstanceStorage
             { "Variables", instanceData?.ExternalVariables },
             { "Bookmarks", instanceData?.ExternalBookmarks},
             { "Events", instanceData?.ExternalEvents},
-            { "TrackRecords", instanceData?.TrackRecords }
+            { "TrackRecords", instanceData?.TrackRecords },
+            { "UserTrack", instanceData?.UserTrack }
         };
 
         var root = new ExpandoObject()
@@ -125,7 +113,7 @@ public class SqlServerInstanceStorage : IInstanceStorage
         List<BatchProcedure>? batches = null;
         if (instanceData?.HasBatches == true)
         {
-            batches = new List<BatchProcedure>();
+            batches = [];
             if (instanceData?.Deferred != null)
             {
                 foreach (var defer in instanceData.Deferred.Where(d => d.Type == DeferredElementType.Sql))
@@ -154,6 +142,17 @@ public class SqlServerInstanceStorage : IInstanceStorage
                     eo.Set("Id", inboxDelete);
                     eo.Set("InstanceId", instance.Id);
                     batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Remove]", eo));
+                }
+            }
+            var userTracks = instanceData?.UserTrack;
+            if (userTracks != null)
+            {
+                foreach (var userTrack in userTracks)
+                {
+                    var eo = userTrack.Clone();
+                    _dataSourceProvider.SetIdentityParams(eo);
+                    eo.Set("InstanceId", instance.Id);
+                    batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.UserTrack.Add]", eo));
                 }
             }
         }

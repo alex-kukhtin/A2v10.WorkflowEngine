@@ -292,5 +292,12 @@ public partial class ExecutionContext : IExecutionContext
             return null;
         return new DeferredInboxes(_inboxCreate, _inboxRemove);
     }
+
+    public List<ExpandoObject>? GetUserTrack()
+    {
+        if (_userTrack.Count == 0 && _userTrack.Count == 0)
+            return null;
+        return _userTrack;
+    }
 }
 

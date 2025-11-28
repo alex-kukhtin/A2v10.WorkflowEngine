@@ -10,12 +10,22 @@
 		<startEvent id="StartEvent_1y45yut" name="start">
 			<extensionElements>
 				<wf:Script>log.push('start')</wf:Script>
+				<wf:Track>
+					{
+						Message:'Start'
+					}
+				</wf:Track>
 			</extensionElements>
 			<outgoing>SequenceFlow_0h21x7r</outgoing>
 		</startEvent>
 		<endEvent id="end" name="end">
 			<extensionElements>
 				<wf:Script>log.push('end')</wf:Script>
+				<wf:Track>
+					{
+						Message:'End'
+					}
+				</wf:Track>
 			</extensionElements>
 			<incoming>Flow_0m9y0n7</incoming>
 		</endEvent>
@@ -35,6 +45,12 @@
 					log.push('inbox');
 					log.push(JSON.stringify(Order));
 				</wf:Script>
+				<wf:Track>
+					{
+					Message:'UserTask',
+					UserId: LastResult.UserId
+					}
+				</wf:Track>
 			</extensionElements>
 			<incoming>SequenceFlow_0h21x7r</incoming>
 			<outgoing>Flow_1mtt2co</outgoing>

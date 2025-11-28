@@ -112,7 +112,7 @@ public class BpmnInbox
         });
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
-        await Task.Delay(1020); // 1
+        await Task.Delay(1020, TestContext.CancellationToken); // 1
         await engine.ProcessPending();
 
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
@@ -120,5 +120,7 @@ public class BpmnInbox
         lr = inst.State.Get<ExpandoObject>("LastResult");
         Assert.AreEqual("OK", lr?.Get<String>("Answer"));
     }
+
+    public TestContext TestContext { get; set; }
 }
 

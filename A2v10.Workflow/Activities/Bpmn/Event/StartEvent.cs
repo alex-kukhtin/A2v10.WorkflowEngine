@@ -1,5 +1,7 @@
 ﻿// Copyright © 2020-2022 Oleksandr Kukhtin. All rights reserved.
 
+using System.Dynamic;
+
 namespace A2v10.Workflow.Bpmn;
 
 public class StartEvent : Event
@@ -30,6 +32,9 @@ public class StartEvent : Event
             context.Execute(Id, nameof(Script));
         if (Outgoing == null)
             return;
+        var track = context.Evaluate<ExpandoObject>(Id, nameof(Track));
+        context.AddTrack(track, this);
+
         foreach (var flow in Outgoing)
         {
             var flowElem = ParentContainer.FindElement<SequenceFlow>(flow.Text);

@@ -10,8 +10,9 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 	protected Int32 _loopCounter;
 	protected List<IToken>? _tokens;
 	public Boolean IsComplete { get; protected set; }
+    public String? Track => ExtensionElements<A2v10.Workflow.Track>()?.FirstOrDefault()?.Text;
 
-	protected virtual Boolean CanInduceIdle => false;
+    protected virtual Boolean CanInduceIdle => false;
 
 	#region IStorable 
 	const String TOKEN = "Token";
@@ -200,7 +201,10 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 
 	ValueTask DoCompleteBody(IExecutionContext context)
 	{
-		RemoveBoundaryEvents(context);
+        var track = context.Evaluate<ExpandoObject>(Id, nameof(Track));
+        context.AddTrack(track, this);
+
+        RemoveBoundaryEvents(context);
         if (Outgoing == null)
 		{
 			return ValueTask.CompletedTask;
@@ -270,7 +274,8 @@ public class BpmnTask : FlowElement, IStorable, ICanComplete, IScriptable, ILoop
 			builder.BuildEvaluate(MultiInstanceCollectionEval, coll);
 			builder.BuildSetVariable(MultiInstanceVariableSet, item);
 		}
-		BuildScriptBody(builder);
+        builder.BuildEvaluate(nameof(Track), Track);
+        BuildScriptBody(builder);
 	}
 	#endregion
 

@@ -25,6 +25,7 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         public const String Format = nameof(Format);
         public const String Version = nameof(Version);
         public const String CorrelationId = nameof(CorrelationId);
+        public const String UserId = nameof(UserId);
     }
 
     public async Task<ExpandoObject> CreateAsync(String workflowId, String? correlationId, Int32 version = 0)
@@ -169,6 +170,26 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         };
     }
 
+    private Task<ExpandoObject> ResumeInternalAsync(ExpandoObject parameters)
+    {
+        // set current user reply if needed
+        var userId = parameters.Get<Object>(Properties.UserId);
+
+        var reply = parameters.Get<ExpandoObject>(Properties.Reply);
+        if (reply != null)
+        {
+            var d = (IDictionary<String, Object?>)reply;
+            if (d.TryGetValue(Properties.UserId, out var userVal) && userVal is String strUser && strUser == $"$({Properties.UserId})")
+                d[Properties.UserId] = userId;
+        }
+
+        return ResumeAsync(
+                parameters.Get<Object>(Properties.InstanceId),
+                parameters.GetNotNull<String>(Properties.Bookmark),
+                reply
+            );        
+    }
+
     public async Task<ExpandoObject> InvokeAsync(String method, ExpandoObject? parameters)
     {
         if (parameters == null)
@@ -183,11 +204,7 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
                     parameters.Get<Object>(Properties.InstanceId),
                     parameters.Get<ExpandoObject>(Properties.Args)
                 ),
-            "Resume" => await ResumeAsync(
-                    parameters.Get<Object>(Properties.InstanceId),
-                    parameters.GetNotNull<String>(Properties.Bookmark),
-                    parameters.Get<ExpandoObject>(Properties.Reply)
-                ),
+            "Resume" => await ResumeInternalAsync(parameters),
             "Message" => await SendMessageAsync(
                     parameters.Get<Object>(Properties.InstanceId),
                     parameters.GetNotNull<String>(Properties.Message)

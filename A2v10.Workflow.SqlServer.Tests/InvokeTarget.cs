@@ -259,16 +259,19 @@ public class InvokeTarget
         var res = await target.InvokeAsync("Start", new ExpandoObject()
         {
             {"WorkflowId", wfId },
-            {"CorrelationId", 99 }
+            {"CorrelationId", 99 },
+            {"UserId", 55 }
         });
 
         var resResume = await target.InvokeAsync("Resume", new ExpandoObject()
         {
+            {"UserId", 199 },
             {"InstanceId", res.Get<Object>("InstanceId") },
             {"Bookmark", "Inbox" },
             {"Reply", new ExpandoObject()
                 {
-                    {"Value", 10.0 }
+                    { "Value",  10.0 },
+                    { "UserId", "$(UserId)"}
                 }
             }
         }) ?? throw new InvalidOperationException("resume is null");

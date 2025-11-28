@@ -79,7 +79,7 @@ public class BpmnInbox
         var sp = TestEngine.ServiceProvider();
         var engine = sp.GetRequiredService<IWorkflowEngine>();
 
-        await Task.Delay(1020);
+        await Task.Delay(1020, TestContext.CancellationToken);
         await engine.ProcessPending();
 
         inst = await engine.LoadInstanceRaw(inst.Id);
@@ -91,5 +91,7 @@ public class BpmnInbox
         Assert.AreEqual("start|endTimer", String.Join('|', log));
         Assert.IsNull(inst.InstanceData?.Inboxes);
     }
+
+    public TestContext TestContext { get; set; }
 }
 

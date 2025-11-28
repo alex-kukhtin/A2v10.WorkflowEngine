@@ -19,9 +19,8 @@ public interface IInstanceData
     List<Object>? ExternalEvents { get; }
 
     List<DeferredElement>? Deferred { get; }
-
     DeferredInboxes? Inboxes { get; }
-
+    List<ExpandoObject>? UserTrack { get; }
     Boolean HasBatches { get; }
 }
 

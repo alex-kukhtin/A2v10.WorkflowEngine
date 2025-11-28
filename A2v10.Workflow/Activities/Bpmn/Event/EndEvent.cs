@@ -1,6 +1,8 @@
 ﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
 
 
+using System.Dynamic;
+
 namespace A2v10.Workflow.Bpmn;
 
 public class EndEvent : Event
@@ -11,6 +13,9 @@ public class EndEvent : Event
             context.Execute(Id, nameof(Script));
 
         ParentContainer.KillToken(token);
+
+        var track = context.Evaluate<ExpandoObject>(Id, nameof(Track));
+        context.AddTrack(track, this);
 
         var ed = EventDefinition;
         if (ed != null)

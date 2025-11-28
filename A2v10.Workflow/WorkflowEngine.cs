@@ -119,7 +119,8 @@ public class WorkflowEngine : IWorkflowEngine
             ExternalEvents = context.GetExternalEvents(),
             TrackRecords = context.GetTrackRecords(),
             Deferred = context.GetDeferred(),
-            Inboxes = context.GetInboxes()
+            Inboxes = context.GetInboxes(),
+            UserTrack = context.GetUserTrack()
         };
         inst.InstanceData = instData;
     }
@@ -136,11 +137,13 @@ public class WorkflowEngine : IWorkflowEngine
         }
         foreach (var pi in pend.Pending)
         {
-            _logger.LogInformation("Process pending at {Time}, InstanceId {instanceId}", DateTime.UtcNow, pi.InstanceId);
+            if (_logger?.IsEnabled(LogLevel.Information) == true)
+                _logger.LogInformation("Process pending at {Time}, InstanceId {instanceId}", DateTime.UtcNow, pi.InstanceId);
             await HandleEventsAsync(pi.InstanceId, pi.EventKeys);
         }
         foreach (var mi in pend.Messages) {
-            _logger.LogInformation("Process message at {Time}, InstanceId {instanceId}", DateTime.UtcNow, mi.InstanceId);
+            if (_logger?.IsEnabled(LogLevel.Information) == true)
+                _logger.LogInformation("Process message at {Time}, InstanceId {instanceId}", DateTime.UtcNow, mi.InstanceId);
             await HandleMessageAsync(mi.InstanceId, mi.Message);
             await _instanceStorage.PendingMessageComplete(mi.Id, mi.InstanceId);
         }
@@ -148,7 +151,8 @@ public class WorkflowEngine : IWorkflowEngine
 
     private async ValueTask<IInstance> AutoStartAsync(IAutoStartInstance autoStart)
     {
-        _logger.LogInformation("Auto start process at {Time}, WorkflowId {WorkflowId}", DateTime.Now, autoStart.WorkflowId);
+        if (_logger.IsEnabled(LogLevel.Information))
+            _logger.LogInformation("Auto start process at {Time}, WorkflowId {WorkflowId}", DateTime.Now, autoStart.WorkflowId);
         if (String.IsNullOrEmpty(autoStart.WorkflowId))
             throw new InvalidProgramException("WorkflowId is null");
         var inst = await CreateAsync(new WorkflowIdentity(id: autoStart.WorkflowId, ver: autoStart.Version), autoStart.CorrelationId, null, autoStart.InstanceId);

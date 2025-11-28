@@ -13,14 +13,16 @@ public abstract class Event : BpmnActivity, IScriptable
 
     public EventDefinition? EventDefinition => Children?.OfType<EventDefinition>().FirstOrDefault();
 
-
-    // wf:Script here
+    // wf:Script
     public String? Script => ExtensionElements<A2v10.Workflow.Script>()?.FirstOrDefault()?.Text;
+    // wf:Track
+    public String? Track => ExtensionElements<A2v10.Workflow.Track>()?.FirstOrDefault()?.Text;
 
     #region IScriptable
     public void BuildScript(IScriptBuilder builder)
     {
         builder.BuildExecute(nameof(Script), Script);
+        builder.BuildEvaluate(nameof(Track), Track);
     }
     #endregion
 

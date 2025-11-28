@@ -1,13 +1,12 @@
 ﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
+using A2v10.Workflow.Bpmn;
+using A2v10.Workflow.Tracker;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Text.Json;
-
-using Microsoft.Extensions.DependencyInjection;
-
-using A2v10.Workflow.Bpmn;
-using A2v10.Workflow.Tracker;
 
 namespace A2v10.Workflow;
 
@@ -36,6 +35,7 @@ public partial class ExecutionContext : IExecutionContext
     private readonly Dictionary<String, BookmarkItem> _bookmarks = [];
     private readonly Dictionary<String, EventItem> _events = [];
     private readonly List<ExpandoObject> _inboxCreate = [];
+    private readonly List<ExpandoObject> _userTrack = [];
     private readonly List<Guid> _inboxRemove = [];
 
     private readonly IActivity _root;
@@ -43,7 +43,7 @@ public partial class ExecutionContext : IExecutionContext
 
     private readonly ScriptEngine _script;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ITracker _tracker;
+    private readonly InstanceTracker _tracker;
     private readonly IWorkflowEngine _engine;
     private readonly IInstanceStorage _instanceStorage;
     private List<ExpandoObject>? _signals;
@@ -143,6 +143,15 @@ public partial class ExecutionContext : IExecutionContext
     {
         foreach (var k in _bookmarks.Where(b => b.Value.Activity == activity).Select(b => b.Key).ToList()) 
             _bookmarks.Remove(k);
+    }
+
+    public void AddTrack(ExpandoObject? track, IActivity activity)
+    {
+        if (track == null)
+            return;
+        var eo = track.Clone();
+        eo.SetOrReplace("Activity", activity.Id);
+        _userTrack.Add(eo);
     }
 
     public void SetInbox(Guid id, ExpandoObject inbox, IActivity activity, String bookmark)
@@ -366,7 +375,7 @@ public partial class ExecutionContext : IExecutionContext
     {
         if (signals == null)
             return;
-        _signals ??= new List<ExpandoObject>();
+        _signals ??= [];
         _signals.AddRange(signals);
     }
 
@@ -374,7 +383,7 @@ public partial class ExecutionContext : IExecutionContext
     {
         if (_signals == null || _signals.Count == 0) 
             return;
-        instance.Signal ??= new List<ExpandoObject>(); 
+        instance.Signal ??= []; 
         instance.Signal.AddRange(_signals);
     }
 }

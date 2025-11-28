@@ -93,6 +93,20 @@ if not exists (select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = N'a
 	alter table a2wf.Inbox add [Activity] nvarchar(255) null;
 go
 ------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'UserTrack')
+create table a2wf.[UserTrack]
+(
+	Id bigint identity(100, 1) not null,
+	InstanceId uniqueidentifier not null,
+	Activity nvarchar(255),
+	UserId bigint,
+	UtcDateCreated datetime not null
+		constraint DF_UserTrack_UtcDateCreated default(getutcdate()),
+	[Message] nvarchar(255)
+	constraint PK_UserTrack primary key clustered(Id, InstanceId)
+);
+go
+------------------------------------------------
 create or alter procedure a2wf.[Instance.Inbox.Create]
 @UserId bigint = null,
 @Id uniqueidentifier,
@@ -199,6 +213,8 @@ begin
 	delete from a2wf.Inbox
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
 	delete from a2wf_test.Deferred 
+		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
+	delete from a2wf.UserTrack
 		where InstanceId in (select Id from a2wf.Instances where WorkflowId = @Id);
 
 	update a2wf.Instances set Parent = null 
@@ -402,3 +418,21 @@ begin
 	set transaction isolation level read committed;
 end
 go
+------------------------------------------------
+create or alter procedure a2wf.[Instance.UserTrack.Add]
+@UserId bigint = null,
+@InstanceId uniqueidentifier,
+@Message nvarchar(255),
+@Activity nvarchar(255)
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+	set xact_abort on;
+
+	insert into a2wf.[UserTrack] (InstanceId, UserId, UtcDateCreated, Activity, [Message])
+	values (@InstanceId, @UserId, getutcdate(), @Activity, @Message);
+end
+go
+
+

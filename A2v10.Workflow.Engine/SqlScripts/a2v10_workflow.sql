@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2025 Oleksandr Kukhtin
 
-Last updated : 16 aug 2025
-module version : 8235
+Last updated : 28 nov 2025
+module version : 8304
 */
 
 /* WF TABLES
@@ -20,6 +20,7 @@ a2wf.AutoStart
 a2wf.PendingMessages
 -- Custom Table
 a2wf.[Inbox]
+a2wf.[UserTrack]
 */
 ------------------------------------------------
 set nocount on;
@@ -45,7 +46,7 @@ go
 begin
 	set nocount on;
 	declare @version int;
-	set @version = 8235;
+	set @version = 8304;
 	if exists(select * from a2wf.Versions where Module = N'main')
 		update a2wf.Versions set [Version] = @version where Module = N'main';
 	else
@@ -1040,6 +1041,20 @@ create table a2wf.[Inbox]
 );
 go
 ------------------------------------------------
+if not exists(select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA=N'a2wf' and TABLE_NAME=N'UserTrack')
+create table a2wf.[UserTrack]
+(
+	Id bigint identity(100, 1) not null,
+	InstanceId uniqueidentifier not null,
+	Activity nvarchar(255),
+	UserId bigint,
+	UtcDateCreated datetime not null
+		constraint DF_UserTrack_UtcDateCreated default(getutcdate()),
+	-- other fields
+	constraint PK_UserTrack primary key clustered(Id, InstanceId)
+);
+go
+------------------------------------------------
 create or alter procedure a2wf.[Instance.Inbox.Create]
 @UserId bigint = null,
 @Id uniqueidentifier,
@@ -1084,5 +1099,24 @@ begin
 	where i.Parent = @InstanceId;
 end
 go
+
+------------------------------------------------
+create or alter procedure a2wf.[Instance.UserTrack.Add]
+@UserId bigint = null,
+@InstanceId uniqueidentifier,
+@Activity nvarchar(255)
+-- other fields
+@Message nvarchar(255),
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+	set xact_abort on;
+
+	insert into a2wf.[UserTrack] (InstanceId, UserId, UtcDateCreated, Activity, [Message])
+	values (@InstanceId, @UserId, getutcdate(), @Activity, @Message);
+end
+go
+
 */
 

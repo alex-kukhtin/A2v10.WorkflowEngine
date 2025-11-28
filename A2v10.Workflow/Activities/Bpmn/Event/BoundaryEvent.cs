@@ -1,5 +1,7 @@
 ﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
 
+using System.Dynamic;
+
 namespace A2v10.Workflow.Bpmn;
 public class BoundaryEvent : Event, IStorable
 {
@@ -26,6 +28,8 @@ public class BoundaryEvent : Event, IStorable
 
     public async override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
     {
+        var track = context.Evaluate<ExpandoObject>(Id, nameof(Track));
+        context.AddTrack(track, this);
         _token = token;
         var eventDef = EventDefinition;
         if (eventDef != null)
