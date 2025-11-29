@@ -1,5 +1,5 @@
 ﻿# About
-A2v10.Workflow.Engine is a simple BPMN 2.0 workflow engine 
+**A2v10.Workflow.Engine** is a simple BPMN 2.0 workflow engine 
 for the A2v10 platform applications.
 
 
@@ -48,7 +48,7 @@ Available commands:
 |Start  | Start workflow  |WorkflowId, Version, Args  |InstanceId, Result |
 |Create | Create workflow |WorkflowId, CorrelationId  |InstanceId         |
 |Run    | Run workflow    |InstanceId, CorrelationId, Args  |InstanceId, Result |
-|Resume | Resume workflow |InstanceId, Bookmark, Reply[<sup>1</sup>](#note1)|InstanceId, Result |
+|Resume | Resume workflow |InstanceId, Bookmark, Reply¹|InstanceId, Result |
 |Message | Send message to workflow |InstanceId, Message|InstanceId |
 |Variables  | Get instance Variables   |InstanceId    |Result             |
 |CheckSyntax| Check script syntax|WorkflowId          |Errors: []         |
@@ -57,7 +57,7 @@ The *Start* command is equivalent to *Create* + *Run*.
 The *Version* is optional. If not specified - the max version will be used.
 
 
-<a name="note1"></a><sup>1</sup> When the **Reply**  object includes the **UserId** property 
+¹ When the **Reply**  object includes the **UserId** property 
 with the value **$(UserId)**, the system substitutes this placeholder with the current user Id."
  
 # appsettings.json section
@@ -77,6 +77,7 @@ All values (and section) are optional.
 # Related Packages
 
 * [A2v10.Workflow.WebAssets](https://www.nuget.org/packages/A2v10.Workflow.WebAssets)
+* [A2v10.Module.Workflow](https://www.nuget.org/packages/A2v10.Module.Workflow)
 
 # Global Workflow Variables
 
@@ -99,5 +100,5 @@ Available variables:
 
 # Feedback
 
-A2v10.Workflow.Engine is released as open source under the MIT license. 
+**A2v10.Workflow.Engine** is released as open source under the MIT license. 
 Bug reports and contributions are welcome at the GitHub repository.
