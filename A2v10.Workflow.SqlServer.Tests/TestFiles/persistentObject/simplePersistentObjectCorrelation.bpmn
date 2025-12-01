@@ -48,7 +48,7 @@
 				<wf:Track>
 					{
 					Message:'UserTask',
-					UserId: reply.UserId
+					UserId: LastResult.UserId
 					}
 				</wf:Track>
 			</extensionElements>
