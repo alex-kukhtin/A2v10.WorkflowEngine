@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2025 Oleksandr Kukhtin
 
-Last updated : 28 nov 2025
-module version : 8304
+Last updated : 02 dec 2025
+module version : 8305
 */
 
 /* WF TABLES
@@ -46,7 +46,7 @@ go
 begin
 	set nocount on;
 	declare @version int;
-	set @version = 8304;
+	set @version = 8305;
 	if exists(select * from a2wf.Versions where Module = N'main')
 		update a2wf.Versions set [Version] = @version where Module = N'main';
 	else
@@ -832,6 +832,21 @@ begin
 		set @retval = getutcdate();
 	else
 		set @retval = @retval + cast(cast(getutcdate() as time) as datetime);
+	return @retval;
+end
+go
+------------------------------------------------
+create or alter function a2wf.fn_rootInstance(@InstanceId uniqueidentifier)
+returns uniqueidentifier as
+begin
+	declare @retval uniqueidentifier;
+	with TX as (
+		select Id, Parent from a2wf.Instances where Id = @InstanceId
+		union all
+		select i.Id, i.Parent from a2wf.Instances i
+			inner join TX on i.Id = TX.Parent
+	)
+	select @retval = Id from TX where Parent is null
 	return @retval;
 end
 go

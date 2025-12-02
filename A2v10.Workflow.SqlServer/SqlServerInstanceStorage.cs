@@ -125,6 +125,21 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
                     batches.Add(new BatchProcedure(defer.Name, epxParam));
                 }
             }
+
+            // BEFORE INBOXES!!!!
+            var userTracks = instanceData?.UserTrack;
+            if (userTracks != null)
+            {
+                foreach (var userTrack in userTracks)
+                {
+                    var eo = userTrack.Clone();
+                    _dataSourceProvider.SetIdentityParams(eo);
+                    eo.Set("InstanceId", instance.Id);
+                    batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.UserTrack.Add]", eo));
+                }
+            }
+
+
             var inboxes = instanceData?.Inboxes;
             if (inboxes != null)
             {
@@ -142,17 +157,6 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
                     eo.Set("Id", inboxDelete);
                     eo.Set("InstanceId", instance.Id);
                     batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Remove]", eo));
-                }
-            }
-            var userTracks = instanceData?.UserTrack;
-            if (userTracks != null)
-            {
-                foreach (var userTrack in userTracks)
-                {
-                    var eo = userTrack.Clone();
-                    _dataSourceProvider.SetIdentityParams(eo);
-                    eo.Set("InstanceId", instance.Id);
-                    batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.UserTrack.Add]", eo));
                 }
             }
         }
