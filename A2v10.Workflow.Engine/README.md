@@ -98,6 +98,8 @@ Available variables:
 }
 ```
 
+* ***CurrentUser*** is the current user identifier.
+ 
 # Feedback
 
 **A2v10.Workflow.Engine** is released as open source under the MIT license. 
