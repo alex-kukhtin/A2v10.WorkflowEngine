@@ -42,17 +42,24 @@ public class UserTask : BpmnTask
     {
         CompleteTask(context);
         context.RemoveBookmark(bookmark);
-        context.RemoveInbox(_inboxId);
+        context.RemoveInbox(_inboxId, GetAnswer(result));
         context.SetLastResult(result);
         if (!String.IsNullOrEmpty(Script))
             context.ExecuteResult(Id, nameof(Script), result);
         return CompleteBody(context);
     }
 
+    private static String? GetAnswer(Object? result)
+    {
+        if (result != null && result is ExpandoObject exp)
+            return exp.Get<String>("Answer");
+        return null;
+    }
+
     public override void Cancel(IExecutionContext context)
     {
         base.Cancel(context);
-        context.RemoveInbox(_inboxId);
+        context.RemoveInbox(_inboxId, null);
     }
 
     String BookmarkEvaluate => $"{Id}_Bookmark";

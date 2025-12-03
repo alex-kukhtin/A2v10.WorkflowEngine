@@ -52,7 +52,7 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
             { "Id", instanceId }
         };
         _dataSourceProvider.SetIdentityParams(prms);
-        var dbi = await _dbContext.LoadAsync<DatabaseInstance>(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.{suffix}]", prms) 
+        var dbi = await _dbContext.LoadAsync<DatabaseInstance>(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.{suffix}]", prms)
             ?? throw new SqlServerStorageException($"Instance '{instanceId}' not found");
         var identity = new WorkflowIdentity(
             dbi.WorkflowId ?? throw new InvalidProgramException("WorkflowId is null"),
@@ -114,19 +114,25 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
         if (instanceData?.HasBatches == true)
         {
             batches = [];
-            if (instanceData?.Deferred != null)
+
+            var inboxes = instanceData?.Inboxes;
+            if (inboxes != null && inboxes.InboxRemove.Count != 0)
             {
-                foreach (var defer in instanceData.Deferred.Where(d => d.Type == DeferredElementType.Sql))
+                foreach (var inboxDelete in inboxes.InboxRemove)
                 {
-                    var epxParam = defer.Parameters.Clone();
-                    _dataSourceProvider.SetIdentityParams(epxParam);
-                    epxParam.Add("InstanceId", instance.Id);
-                    epxParam.Add("Activity", defer.Refer);
-                    batches.Add(new BatchProcedure(defer.Name, epxParam));
+                    var eo = new ExpandoObject();
+                    _dataSourceProvider.SetIdentityParams(eo);
+                    eo.Set("Id", inboxDelete.InboxId);
+                    eo.Set("InstanceId", instance.Id);
+                    eo.SetNotNull("UserId", inboxDelete.UserId);
+                    eo.SetNotNull("Answer", inboxDelete.Answer);
+                    batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Remove]", eo));
                 }
             }
 
-            // BEFORE INBOXES!!!!
+
+
+            // BEFORE CREATE INBOXES!!!!
             var userTracks = instanceData?.UserTrack;
             if (userTracks != null)
             {
@@ -140,8 +146,7 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
             }
 
 
-            var inboxes = instanceData?.Inboxes;
-            if (inboxes != null)
+            if (inboxes != null && inboxes.InboxCreate.Count != 0)
             {
                 foreach (var inboxCreate in inboxes.InboxCreate)
                 {
@@ -150,13 +155,17 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
                     eo.Set("InstanceId", instance.Id);
                     batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Create]", eo));
                 }
-                foreach (var inboxDelete in inboxes.InboxRemove)
+            }
+
+            if (instanceData?.Deferred != null)
+            {
+                foreach (var defer in instanceData.Deferred.Where(d => d.Type == DeferredElementType.Sql))
                 {
-                    var eo = new ExpandoObject();
-                    _dataSourceProvider.SetIdentityParams(eo);
-                    eo.Set("Id", inboxDelete);
-                    eo.Set("InstanceId", instance.Id);
-                    batches.Add(new BatchProcedure($"{SqlDefinitions.SqlSchema}.[Instance.Inbox.Remove]", eo));
+                    var epxParam = defer.Parameters.Clone();
+                    _dataSourceProvider.SetIdentityParams(epxParam);
+                    epxParam.Add("InstanceId", instance.Id);
+                    epxParam.Add("Activity", defer.Refer);
+                    batches.Add(new BatchProcedure(defer.Name, epxParam));
                 }
             }
         }
@@ -255,7 +264,7 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
             return null;
 
         return new PendingElement(
-            Pending: PendingFromModel(dm.Root), 
+            Pending: PendingFromModel(dm.Root),
             AutoStart: AutoStartFromModel(dm.Root),
             Messages: MessagesFromModel(dm.Root));
     }
@@ -308,10 +317,10 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
     }
 
     public async ValueTask<DateTime> GetNowTime()
-	{
+    {
         var dbDate = await _dbContext.LoadAsync<DbDate>(DataSource, "a2wf.[CurrentDate.Get]");
         return dbDate?.CurrentDate ?? throw new SqlServerStorageException("CurrentDate is null");
-	}
+    }
     #endregion
 
 

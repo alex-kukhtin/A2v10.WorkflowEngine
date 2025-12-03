@@ -1,12 +1,14 @@
 ﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
-using A2v10.Workflow.Bpmn;
-using A2v10.Workflow.Tracker;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Text.Json;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using A2v10.Workflow.Bpmn;
+using A2v10.Workflow.Tracker;
+
 
 namespace A2v10.Workflow;
 
@@ -36,7 +38,7 @@ public partial class ExecutionContext : IExecutionContext
     private readonly Dictionary<String, EventItem> _events = [];
     private readonly List<ExpandoObject> _inboxCreate = [];
     private readonly List<ExpandoObject> _userTrack = [];
-    private readonly List<Guid> _inboxRemove = [];
+    private readonly List<InboxResult> _inboxRemove = [];
 
     private readonly IActivity _root;
     private readonly IInstance _instance;
@@ -47,10 +49,11 @@ public partial class ExecutionContext : IExecutionContext
     private readonly IWorkflowEngine _engine;
     private readonly IInstanceStorage _instanceStorage;
     private List<ExpandoObject>? _signals;
+    private readonly Object? _currentUser; 
 
     private ExpandoObject? _endEvent;
 
-    public ExecutionContext(IServiceProvider serviceProvider, IInstance instance, Object? args = null)
+    public ExecutionContext(IServiceProvider serviceProvider, IInstance instance, Object? currentUser, Object? args = null)
     {
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _tracker = new InstanceTracker();
@@ -58,6 +61,7 @@ public partial class ExecutionContext : IExecutionContext
         _root = instance.Workflow.Root;
         _engine = _serviceProvider.GetRequiredService<IWorkflowEngine>();
         _instanceStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
+        _currentUser = currentUser;
         _signals = null;
 
         // store all activites
@@ -161,14 +165,16 @@ public partial class ExecutionContext : IExecutionContext
         eo.SetOrReplace("Id", id);
         eo.SetOrReplace("Bookmark", bookmark);
         eo.SetOrReplace("Activity", activity.Id);
+        if (_currentUser != null)
+            eo.SetOrReplace("UserId", _currentUser);
         _inboxCreate.Add(eo);
     }
 
-    public void RemoveInbox(Guid? id)
+    public void RemoveInbox(Guid? id, String? Answer)
     {
         if (id == null)
             return;
-        _inboxRemove.Add(id.Value);
+        _inboxRemove.Add(new InboxResult(id.Value, _currentUser, Answer));
     }
 
     public void AddEvent(IWorkflowEvent wfEvent, IActivity activity, EventAction onTrigger)

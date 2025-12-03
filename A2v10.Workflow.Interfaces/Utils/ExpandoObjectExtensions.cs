@@ -1,10 +1,10 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Text.RegularExpressions;
 
 namespace A2v10.Workflow.Interfaces;
 
-public static class ExpandoObjectExtensions
+public static partial class ExpandoObjectExtensions
 {
     public static T GetNotNull<T>(this ExpandoObject expobj, String name)
     {
@@ -109,7 +109,6 @@ public static class ExpandoObjectExtensions
     private static Object? EvalExpression(this ExpandoObject root, String expression, Boolean throwIfError = false)
     {
         Object currentContext = root;
-        const String arrayPattern = @"(\w+)\[(\d+)\]{1}";
         foreach (var exp in expression.Split('.'))
         {
             if (currentContext == null)
@@ -118,7 +117,7 @@ public static class ExpandoObjectExtensions
             var d = currentContext as IDictionary<String, Object>;
             if (prop.Contains('['))
             {
-                var match = Regex.Match(prop, arrayPattern);
+                var match = ArrayPattern().Match(prop);
                 prop = match.Groups[1].Value;
                 if ((d != null) && d.TryGetValue(prop, out Object? value))
                 {
@@ -146,5 +145,8 @@ public static class ExpandoObjectExtensions
         }
         return currentContext;
     }
+
+    [GeneratedRegex(@"(\w+)\[(\d+)\]{1}")]
+    private static partial Regex ArrayPattern();
 }
 

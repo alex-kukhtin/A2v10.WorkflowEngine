@@ -15,7 +15,7 @@ public interface IExecutionContext
     void RemoveBookmarks(String activity);
 
     void SetInbox(Guid id, ExpandoObject inbox, IActivity activity, String bookmark);
-    void RemoveInbox(Guid? id);
+    void RemoveInbox(Guid? id, String? Answer);
 
     void AddEvent(IWorkflowEvent wfEvent, IActivity activity, EventAction onComplete);
     void RemoveEvent(String eventKey);

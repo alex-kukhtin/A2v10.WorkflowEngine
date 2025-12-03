@@ -12,6 +12,7 @@ public interface ISyntaxError
 
 public interface IWorkflowEngine
 {
+    void SetCurrentUser(Object? userId);
     ValueTask<IInstance> CreateAsync(IWorkflowIdentity identity, String? correlationId = null, Guid? parent = null, Guid? instanceId = null);
     ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, String? correlationId = null, Guid? parent = null, Guid? instanceId = null);
     ValueTask<IInstance> CreateAsync(IWorkflow workflow, String? correlationId = null, Guid? parent = null, Guid? instanceId = null);

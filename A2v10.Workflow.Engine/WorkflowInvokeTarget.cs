@@ -115,7 +115,7 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
         if (instanceGuid == Guid.Empty)
             throw new WorkflowException($"Variables. InstanceId is required");
         var instance = await _engine.LoadInstanceRaw(instanceGuid);
-        return instance.State?.Get<ExpandoObject>("Variables") ?? new ExpandoObject();
+        return instance.State?.Get<ExpandoObject>("Variables") ?? [];
     }
 
 
@@ -192,8 +192,12 @@ public class WorkflowInvokeTarget(IWorkflowEngine _engine, IWorkflowStorage _sto
 
     public async Task<ExpandoObject> InvokeAsync(String method, ExpandoObject? parameters)
     {
-        if (parameters == null)
-            throw new ArgumentNullException(nameof(parameters));
+        ArgumentNullException.ThrowIfNull(parameters, nameof(parameters));
+
+        // set current user reply if needed
+        var userId = parameters.Get<Object>(Properties.UserId);
+        _engine.SetCurrentUser(userId);
+
         return method switch
         {
             "Create" => await CreateAsync(

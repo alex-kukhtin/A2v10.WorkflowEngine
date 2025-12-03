@@ -20,7 +20,7 @@ public class ScriptEngine
     private readonly IActivity _root;
     private readonly IServiceProvider _serviceProvider;
     private readonly ITracker _tracker;
-    private readonly IDeferredTarget _deferredTarget;
+    private readonly WorkflowDeferred _deferredTarget = new();
 
     private IDictionary<String, Object?> ScriptData => _scriptData ?? throw new InvalidProgramException("ScriptData is null");
 
@@ -30,7 +30,6 @@ public class ScriptEngine
         _serviceProvider = serviceProvider;
         _tracker = tracker;
         _engine = new Engine(EngineOptions);
-        _deferredTarget = new WorkflowDeferred();
 
         var nativeObjects = _serviceProvider.GetService<IScriptNativeObjectProvider>();
         if (nativeObjects != null)
@@ -91,7 +90,8 @@ public class ScriptEngine
     {
         return _engine.GetValue("LastResult").ToObject();
     }
-	public ExpandoObject? GetResult()
+
+    public ExpandoObject? GetResult()
     {
         var func = GetFunc(_root.Id, "Result");
         return func?.Invoke(JsValue.Undefined, null).ToObject() as ExpandoObject;
@@ -143,6 +143,10 @@ public class ScriptEngine
     {
         _engine.SetValue("LastResult", result ?? new ExpandoObject());
     }
+    public void SetCurrentUser(Object? result)
+    {
+        _engine.SetValue("CurrentUser", result ?? new ExpandoObject());
+    }
 
     public void ExecuteResult(String refer, String name, Object? result)
     {
@@ -181,7 +185,7 @@ public class ScriptEngine
     {
         var insStorage = _serviceProvider.GetRequiredService<IInstanceStorage>();
 
-        var id = variable.Eval<Object>("Id")
+        var _ = variable.Eval<Object>("Id")
             ?? throw new WorkflowException($"SavePersistentValue. Id is required. Name: '{key}'");
         var saveProcedure = $"{_root.Id}.{key}.SavePersistent";
         insStorage.SavePersistentValue(saveProcedure, variable);

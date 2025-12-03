@@ -85,6 +85,9 @@ create table a2wf.[Inbox]
 	ForUser bigint,
 	Model nvarchar(255),
 	ModelId bigint,
+	UserRemoved bigint,
+	Answer nvarchar(255),
+	DateRemoved datetime,
 	constraint PK_Inbox primary key clustered(Id, InstanceId)
 );
 go
@@ -135,14 +138,16 @@ go
 create or alter procedure a2wf.[Instance.Inbox.Remove]
 @UserId bigint = null,
 @Id uniqueidentifier,
-@InstanceId uniqueidentifier
+@InstanceId uniqueidentifier,
+@Answer nvarchar(255) = null
 as
 begin
 	set nocount on;
 	set transaction isolation level read committed;
 	set xact_abort on;
 
-	update a2wf.Inbox set Void = 1 where Id=@Id and InstanceId=@InstanceId;
+	update a2wf.Inbox set Void = 1, UserRemoved = @UserId, Answer = @Answer, DateRemoved = getutcdate() 
+		where Id=@Id and InstanceId=@InstanceId;
 end
 go
 ------------------------------------------------

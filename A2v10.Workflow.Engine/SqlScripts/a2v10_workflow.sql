@@ -1,8 +1,8 @@
 ﻿/*
 Copyright © 2020-2025 Oleksandr Kukhtin
 
-Last updated : 02 dec 2025
-module version : 8305
+Last updated : 03 dec 2025
+module version : 8306
 */
 
 /* WF TABLES
@@ -46,7 +46,7 @@ go
 begin
 	set nocount on;
 	declare @version int;
-	set @version = 8305;
+	set @version = 8306;
 	if exists(select * from a2wf.Versions where Module = N'main')
 		update a2wf.Versions set [Version] = @version where Module = N'main';
 	else
@@ -1051,6 +1051,9 @@ create table a2wf.[Inbox]
 	DateRemoved datetime null,
 	Void bit not null
 		constraint DF_Inbox_Void default(0),
+	UserCompleted bigint,
+	Answer nvarchar(255),
+	UtcDateCompleted datetime,
 	-- other fields
 	constraint PK_Inbox primary key clustered(Id, InstanceId)
 );
@@ -1091,7 +1094,8 @@ go
 create or alter procedure a2wf.[Instance.Inbox.Remove]
 @UserId bigint = null,
 @Id uniqueidentifier,
-@InstanceId uniqueidentifier
+@InstanceId uniqueidentifier,
+@Answer nvarchar(255) = null
 as
 begin
 	set nocount on;

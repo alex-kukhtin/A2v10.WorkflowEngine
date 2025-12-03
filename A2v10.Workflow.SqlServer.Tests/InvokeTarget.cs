@@ -137,7 +137,8 @@ public class InvokeTarget
 
         var res = await target.InvokeAsync("Start", new ExpandoObject()
         {
-            {"WorkflowId", id }
+            {"WorkflowId", id },
+            {"UserId", 100 }
         }) ?? throw new InvalidOperationException("result is null");
 
         String? instanceId = res.Get<Object>("InstanceId")?.ToString();
@@ -148,11 +149,13 @@ public class InvokeTarget
 
         var resResume = await target.InvokeAsync("Resume", new ExpandoObject()
         {
+            {"UserId", 55 },
             {"InstanceId", instanceId },
             {"Bookmark", "Inbox" },
             {"Reply", new ExpandoObject()
                 {
-                    {"Value", 10.0 }
+                    {"Value", 10.0 },
+                    {"Answer", "TEST" },
                 }
             }       
         })  ?? throw new InvalidOperationException("resume is null");
@@ -218,6 +221,7 @@ public class InvokeTarget
         var res = await target.InvokeAsync("Start", new ExpandoObject()
         {
             {"WorkflowId", id },
+            {"UserId", 150 },
             {"Args", new ExpandoObject()
                 {
                     {"X", 5 }

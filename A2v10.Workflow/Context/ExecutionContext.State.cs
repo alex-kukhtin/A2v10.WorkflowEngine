@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Dynamic;
@@ -46,6 +46,11 @@ public partial class ExecutionContext : IExecutionContext
     Object? GetLastResult()
     {
         return _script.GetLastResult();
+    }
+
+    Object? GetCurrentUser()
+    {
+        return _currentUser;
     }
 
     ExpandoObject? GetScriptVariables()
@@ -143,6 +148,7 @@ public partial class ExecutionContext : IExecutionContext
         res.SetNotNull("Events", GetEvents());
         res.SetNotNull("EndEvent", GetEndEvent());
         res.SetNotNull("LastResult", GetLastResult());
+        res.SetNotNull("CurrentUser", GetCurrentUser());
         return res;
     }
 
