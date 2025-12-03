@@ -24,7 +24,7 @@ public class ScriptEngine
 
     private IDictionary<String, Object?> ScriptData => _scriptData ?? throw new InvalidProgramException("ScriptData is null");
 
-    public ScriptEngine(IServiceProvider serviceProvider, ITracker tracker, IActivity root, String script, IInstance instance, Object? args = null)
+    public ScriptEngine(IServiceProvider serviceProvider, ITracker tracker, IActivity root, String script, IInstance instance, Object? currentUser, Object? args = null)
     {
         _root = root;
         _serviceProvider = serviceProvider;
@@ -43,6 +43,7 @@ public class ScriptEngine
         _engine.SetValue("_loadPersistent", LoadPersistentValue);
         _engine.SetValue("_savePersistent", SavePersistentValue);
         _engine.SetValue("LastResult", instance.State.Get<Object>("LastResult"));
+        _engine.SetValue("CurrentUser", currentUser);
         _engine.SetValue("Host", new JsWorkflowHost(_serviceProvider));
         //Console.WriteLine(script);
 
@@ -142,10 +143,6 @@ public class ScriptEngine
     public void SetLastResult(Object? result)
     {
         _engine.SetValue("LastResult", result ?? new ExpandoObject());
-    }
-    public void SetCurrentUser(Object? result)
-    {
-        _engine.SetValue("CurrentUser", result ?? new ExpandoObject());
     }
 
     public void ExecuteResult(String refer, String name, Object? result)

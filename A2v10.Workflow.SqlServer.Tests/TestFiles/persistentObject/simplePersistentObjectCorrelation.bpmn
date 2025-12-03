@@ -12,7 +12,8 @@
 				<wf:Script>log.push('start')</wf:Script>
 				<wf:Track>
 					{
-						Message:'Start'
+						Message:'Start',
+						UserId: CurrentUser
 					}
 				</wf:Track>
 			</extensionElements>
@@ -23,7 +24,8 @@
 				<wf:Script>log.push('end')</wf:Script>
 				<wf:Track>
 					{
-						Message:'End'
+						Message:'End',
+						UserId: CurrentUser
 					}
 				</wf:Track>
 			</extensionElements>

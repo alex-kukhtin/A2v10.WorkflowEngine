@@ -110,7 +110,7 @@ public partial class ExecutionContext : IExecutionContext
         };
         _root.Traverse(sbTraverseArg);
         sb.EndScript();
-        return new ScriptEngine(_serviceProvider, _tracker, _root, sb.Script, _instance, args);
+        return new ScriptEngine(_serviceProvider, _tracker, _root, sb.Script, _instance, _currentUser, args);
     }
 
     public ExpandoObject? GetResult()
