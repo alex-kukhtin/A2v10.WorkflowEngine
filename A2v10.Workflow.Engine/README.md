@@ -74,11 +74,6 @@ with the value **$(UserId)**, the system substitutes this placeholder with the c
 All values (and section) are optional.
 
 
-# Related Packages
-
-* [A2v10.Workflow.WebAssets](https://www.nuget.org/packages/A2v10.Workflow.WebAssets)
-* [A2v10.Module.Workflow](https://www.nuget.org/packages/A2v10.Module.Workflow)
-
 # Global Workflow Variables
 
 Available variables:
@@ -100,6 +95,12 @@ Available variables:
 
 * ***CurrentUser*** is the current user identifier.
  
+
+# Related Packages
+
+* [A2v10.Workflow.WebAssets](https://www.nuget.org/packages/A2v10.Workflow.WebAssets)
+* [A2v10.Module.Workflow](https://www.nuget.org/packages/A2v10.Module.Workflow)
+
 # Feedback
 
 **A2v10.Workflow.Engine** is released as open source under the MIT license. 
