@@ -64,6 +64,17 @@ public static class TestEngine
         return dbContext.ExecuteExpandoAsync(null, "a2wf_test.[Tests.Prepare]", prms);
     }
 
+
+    public static Task<IDataModel> GetTrackAsync(Guid id)
+    {
+        var dbContext = ServiceProvider().GetRequiredService<IDbContext>();
+        var prms = new ExpandoObject()
+        {
+            { "InstanceId", id }
+        };
+        return dbContext.LoadModelAsync(null, "a2wf_test.[GetTrack]", prms);
+    }
+
     public static async ValueTask<IInstance> SimpleRun(String id, String text, ExpandoObject? prms = null, String? correlationId = null)
     {
         var sp = ServiceProvider();

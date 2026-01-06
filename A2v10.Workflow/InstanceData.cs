@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2023 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2026 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Dynamic;
@@ -14,6 +14,6 @@ public class InstanceData : IInstanceData
     public List<DeferredElement>? Deferred { get; init; }
     public DeferredInboxes? Inboxes { get; init; }
     public List<ExpandoObject>? UserTrack { get; init; }
-    public Boolean HasBatches => Deferred != null || Inboxes != null;
+    public Boolean HasBatches => Deferred != null || Inboxes != null || UserTrack != null;
 }
 

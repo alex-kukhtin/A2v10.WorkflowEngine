@@ -288,6 +288,16 @@ public class InvokeTarget
 
         Assert.AreEqual(99L, variables.Eval<Int64>("Persist.Order.Id"));
 
+        var inst = res.Get<Object>("InstanceId");
+        var track = await TestEngine.GetTrackAsync(Guid.Parse(inst!.ToString()!));
+        var list = track.Eval<List<ExpandoObject>>("Track")
+            ?? throw new InvalidOperationException("List is null");
+        Assert.HasCount(3, list);
+
+        Assert.AreEqual("Start", list[0].Get<String>("Message"));
+        Assert.AreEqual("UserTask", list[1].Get<String>("Message"));
+        Assert.AreEqual("End", list[2].Get<String>("Message"));
+
     }
 
 

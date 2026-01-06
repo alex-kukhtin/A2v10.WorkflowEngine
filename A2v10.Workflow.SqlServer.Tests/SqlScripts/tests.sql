@@ -440,4 +440,14 @@ begin
 end
 go
 
-
+------------------------------------------------
+create or alter procedure a2wf_test.[GetTrack]
+@InstanceId uniqueidentifier
+as
+begin
+	select [Track!TTrack!Array] = null, Id, Activity, [Message]
+	from a2wf.UserTrack
+	where InstanceId = @InstanceId
+	order by Id;
+end
+go
