@@ -439,7 +439,6 @@ begin
 	values (@InstanceId, @UserId, getutcdate(), @Activity, @Message);
 end
 go
-
 ------------------------------------------------
 create or alter procedure a2wf_test.[GetTrack]
 @InstanceId uniqueidentifier
