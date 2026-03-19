@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2026 Oleksandr Kukhtin. All rights reserved.
 
 using System;
 using System.Collections.Generic;
@@ -125,7 +125,7 @@ public class InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage wo
         }
         var autoStartList = new List<IAutoStartInstance>();
         var res = new PendingElement(Pending: pendingList, AutoStart: autoStartList, 
-            Messages: new List<IPendingMessage>());
+            Messages: []);
         return Task.FromResult<PendingElement?>(res);
     }
 
@@ -134,7 +134,7 @@ public class InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage wo
         return Task.CompletedTask;
     }
 
-    public Task PendingMessageComplete(Int64 Id, Guid instanceId)
+    public Task PendingMessageComplete(Int64 Id, Guid instanceId, Boolean success)
     {
         return Task.CompletedTask;
     }

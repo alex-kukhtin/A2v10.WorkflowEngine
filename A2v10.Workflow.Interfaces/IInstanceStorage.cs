@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2026 Oleksandr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Interfaces;
 
@@ -20,7 +20,7 @@ public interface IInstanceStorage
 
     Task<PendingElement?> GetPendingAsync();
     Task AutoStartComplete(Int64 Id, Guid instanceId);
-    Task PendingMessageComplete(Int64 Id, Guid instanceId);
+    Task PendingMessageComplete(Int64 Id, Guid instanceId, Boolean success);
     Task<IInstance?> LoadBookmark(String bookmark);
     Task CancelChildren(Guid id, String workflow);
     ValueTask<DateTime> GetNowTime();

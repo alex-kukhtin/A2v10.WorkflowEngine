@@ -1,8 +1,8 @@
 ﻿/*
-Copyright © 2020-2025 Alex Kukhtin
+Copyright © 2020-2026 Oleksandr Kukhtin
 
-Last updated : 22 jul 2025
-module version : 8239
+Last updated : 19 mar 2025
+module version : 8330
 */
 ------------------------------------------------
 set nocount on;
@@ -148,6 +148,19 @@ begin
 
 	update a2wf.Inbox set Void = 1, UserRemoved = @UserId, Answer = @Answer, DateRemoved = getutcdate() 
 		where Id=@Id and InstanceId=@InstanceId;
+end
+go
+------------------------------------------------
+create or alter procedure a2wf.[Instance.OnDelete]
+@UserId bigint = null,
+@Id uniqueidentifier
+as
+begin
+	set nocount on;
+	set transaction isolation level read committed;
+	set xact_abort on;
+
+	delete from a2wf.UserTrack where InstanceId = @Id;
 end
 go
 ------------------------------------------------

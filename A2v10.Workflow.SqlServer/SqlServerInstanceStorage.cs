@@ -279,12 +279,13 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
         return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[AutoStart.Complete]", prms);
     }
 
-    public Task PendingMessageComplete(Int64 Id, Guid instanceId)
+    public Task PendingMessageComplete(Int64 Id, Guid instanceId, Boolean success)
     {
         var prms = new ExpandoObject()
         {
             { "Id", Id },
-            { "InstanceId", instanceId }
+            { "InstanceId", instanceId },
+            { "Complete", success ? 1 : -1}
         };
         return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[PendingMessage.Complete]", prms);
     }

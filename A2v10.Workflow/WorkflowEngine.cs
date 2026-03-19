@@ -131,6 +131,22 @@ public class WorkflowEngine : IWorkflowEngine
         inst.InstanceData = instData;
     }
 
+    private async Task HandlePendingMessageAsync(IPendingMessage mi)
+    {
+        if (_logger?.IsEnabled(LogLevel.Information) == true)
+            _logger.LogInformation("Process message at {Time}, InstanceId {instanceId}", DateTime.UtcNow, mi.InstanceId);
+        try
+        {
+            await HandleMessageAsync(mi.InstanceId, mi.Message);
+            await _instanceStorage.PendingMessageComplete(mi.Id, mi.InstanceId, true);
+        }
+        catch (Exception)
+        {
+            // exception alread logged
+            await _instanceStorage.PendingMessageComplete(mi.Id, mi.InstanceId, false);
+        }
+    }
+
     public async ValueTask ProcessPending()
     {
         var pend = await _instanceStorage.GetPendingAsync();
@@ -148,10 +164,7 @@ public class WorkflowEngine : IWorkflowEngine
             await HandleEventsAsync(pi.InstanceId, pi.EventKeys);
         }
         foreach (var mi in pend.Messages) {
-            if (_logger?.IsEnabled(LogLevel.Information) == true)
-                _logger.LogInformation("Process message at {Time}, InstanceId {instanceId}", DateTime.UtcNow, mi.InstanceId);
-            await HandleMessageAsync(mi.InstanceId, mi.Message);
-            await _instanceStorage.PendingMessageComplete(mi.Id, mi.InstanceId);
+            await HandlePendingMessageAsync(mi);
         }
     }
 
