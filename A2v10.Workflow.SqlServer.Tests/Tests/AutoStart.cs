@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 
 using A2v10.Data.Interfaces;
 using A2v10.Workflow.Interfaces;
+using System.Threading;
 
 namespace A2v10.Workflow.SqlServer.Tests;
 
@@ -139,7 +140,7 @@ public class AutoStart
         var instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast", prms);
         Assert.IsNull(instModel.Root.Get<Object>("Instance"));
 
-        await Task.Delay(1100);
+        await Task.Delay(1100, CancellationToken.None);
         await _workflowEngine.ProcessPending();
         instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast", prms);
         Assert.IsNotNull(instModel.Root.Get<Object>("Instance"));
@@ -181,7 +182,7 @@ public class AutoStart
         var instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast", prms);
         Assert.IsNull(instModel.Root.Get<Object>("Instance"));
 
-        await Task.Delay(1100);
+        await Task.Delay(1100, CancellationToken.None);
         await _workflowEngine.ProcessPending();
         instModel = await _dbContext.LoadModelAsync(null, "a2wf_test.AutoStartLast", prms);
         Assert.IsNotNull(instModel.Root.Get<Object>("Instance"));
