@@ -129,7 +129,7 @@ public class BpmnEventsMessage
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE", String.Join('|', log));
         Assert.AreEqual(WorkflowExecutionStatus.Idle, inst.ExecutionStatus);
 
-        await Task.Delay(1000); // 1
+        await Task.Delay(1100); // 1
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
@@ -137,7 +137,7 @@ public class BpmnEventsMessage
         Assert.HasCount(6, log);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI", String.Join('|', log));
 
-        await Task.Delay(1000); // 2
+        await Task.Delay(1100); // 2
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
@@ -145,7 +145,7 @@ public class BpmnEventsMessage
         Assert.HasCount(7, log);
         Assert.AreEqual("start|timerNI|timerNI|timerI|Bookmark2:CONTINUE|timerNI|timerNI", String.Join('|', log));
 
-        await Task.Delay(1000); // 3
+        await Task.Delay(1100); // 3
         await wfe.ProcessPending();
         inst = await wfe.LoadInstanceRaw(inst.Id);
         log = inst.Result?.GetNotNull<Object[]>("log");
