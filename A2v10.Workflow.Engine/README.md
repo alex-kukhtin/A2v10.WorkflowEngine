@@ -7,16 +7,23 @@ for the A2v10 platform applications.
 
 ```csharp
 services.AddWorkflowEngineScoped(opts => {
-   opts.NativeTypes = ...
+  opts.NativeTypes = ...
 });
 
 // or 
 services.AddWorkflowEngineSingleton(opts => {
-   opts.NativeTypes = ...
+  opts.NativeTypes = ...
 });
 
 // optional
 services.ConfigureWorkflow(Configuration);
+
+// scheduled job handlers
+services.UseScheduling(Configuration, factory =>
+{
+  factory.RegisterJobHandler<WorkflowPendingJobHandler>("WorkflowPending");
+    .RegisterJobHandler<WorkflowSweepJobHandler>("WorkflowSweep");
+}
 ```
 
 # How to use for A2v10 applications

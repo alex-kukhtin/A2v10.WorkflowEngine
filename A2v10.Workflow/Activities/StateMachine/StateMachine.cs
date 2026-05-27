@@ -49,7 +49,7 @@ namespace A2v10.Workflow
         public override void TryComplete(IExecutionContext context, IActivity activity)
         {
             if (activity is not StateBase stateBase)
-                throw new InvalidProgramException("Invalid cast 'StateBase'");
+                throw new WorkflowException("Invalid cast 'StateBase'");
             var nextState = States?.Find(st => st.Id == stateBase.NextState);
             if (nextState != null)
             {

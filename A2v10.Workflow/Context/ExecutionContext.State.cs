@@ -114,7 +114,7 @@ public partial class ExecutionContext : IExecutionContext
             return;
         foreach (var k in marks.Keys())
         {
-            var ebm = marks.Get<ExpandoObject>(k) ?? throw new InvalidProgramException("Bookmark is null");
+            var ebm = marks.Get<ExpandoObject>(k) ?? throw new WorkflowException("Bookmark is null");
             var cb = CallbackItem.FromExpando(ebm);
             if (_activities.TryGetValue(cb.Ref, out IActivity? activity))
                 _bookmarks.Add(k, new BookmarkItem(activity.Id, cb.ToBookmark(activity)));

@@ -15,7 +15,7 @@ namespace A2v10.Workflow
 
         internal String? NextState { get; set; }
 
-        private State ParentState => Parent as State ?? throw new InvalidProgramException("State");
+        private State ParentState => Parent as State ?? throw new WorkflowException("State");
 
         public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
         {

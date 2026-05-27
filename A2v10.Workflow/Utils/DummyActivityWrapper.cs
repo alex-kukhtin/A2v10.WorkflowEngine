@@ -1,8 +1,8 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2026 Oleksandr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow;
 
-internal class DymmyActivityWrapper : IActivityWrapper
+internal class DummyActivityWrapper : IActivityWrapper
 {
     public T? FindElement<T>(Func<T, bool> predicate) where T : class
     {

@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2026 Oleksandr Kukhtin. All rights reserved.
 
 namespace A2v10.Workflow.Bpmn;
 public class SequenceFlow : BpmnActivity, IScriptable
@@ -8,12 +8,12 @@ public class SequenceFlow : BpmnActivity, IScriptable
 
     public String SourceRef
     {
-        get => _sourceRef ?? throw new InvalidProgramException("SourceRef is null");
+        get => _sourceRef ?? throw new WorkflowException("SourceRef is null");
         init => _sourceRef = value;
     }
     public String TargetRef
     {
-        get => _targetRef ?? throw new InvalidProgramException("TargetRef is null");
+        get => _targetRef ?? throw new WorkflowException("TargetRef is null");
         init => _targetRef = value;
     }
 

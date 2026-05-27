@@ -16,8 +16,8 @@ public class CallbackItem(String refer, String callbacName)
     public static CallbackItem FromExpando(ExpandoObject eobj)
     {
         var cb = new CallbackItem(
-            refer: eobj.Get<String>(nameof(Ref)) ?? throw new InvalidProgramException("Ref is null"),
-            callbacName: eobj.Get<String>(nameof(CallbackName)) ?? throw new InvalidProgramException("CallbackName is null")
+            refer: eobj.Get<String>(nameof(Ref)) ?? throw new WorkflowException("Ref is null"),
+            callbacName: eobj.Get<String>(nameof(CallbackName)) ?? throw new WorkflowException("CallbackName is null")
         );
         return cb;
     }

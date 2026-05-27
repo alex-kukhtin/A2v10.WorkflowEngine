@@ -95,6 +95,10 @@ public class InMemoryInstanceStorage(ISerializer serializer, IWorkflowStorage wo
         }
         return null;
     }
+    public Task ProcessSweepAsync()
+    {
+        return Task.CompletedTask;
+    }
 
     public Task<PendingElement?> GetPendingAsync()
     {

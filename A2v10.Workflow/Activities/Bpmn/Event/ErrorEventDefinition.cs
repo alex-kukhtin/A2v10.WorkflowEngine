@@ -9,7 +9,7 @@ public class ErrorEventDefinition : EventDefinition
 
     public override ValueTask<IWorkflowEvent> CreateEvent(string id, IExecutionContext context)
     {
-        var evt = new WorkflowErrorEvent(id, ErrorRef ?? throw new InvalidProgramException("ErrorRef is null"));
+        var evt = new WorkflowErrorEvent(id, ErrorRef ?? throw new WorkflowException("ErrorRef is null"));
         return ValueTask.FromResult<IWorkflowEvent>(evt);
     }
 }

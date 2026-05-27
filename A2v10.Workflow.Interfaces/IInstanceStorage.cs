@@ -19,6 +19,7 @@ public interface IInstanceStorage
     Task WriteException(Guid id, Exception ex);
 
     Task<PendingElement?> GetPendingAsync();
+    Task ProcessSweepAsync();
     Task AutoStartComplete(Int64 Id, Guid instanceId);
     Task PendingMessageComplete(Int64 Id, Guid instanceId, Boolean success);
     Task<IInstance?> LoadBookmark(String bookmark);

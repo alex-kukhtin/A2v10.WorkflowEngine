@@ -42,7 +42,7 @@ public class BoundaryEvent : Event, IStorable
     public async ValueTask OnTrigger(IExecutionContext context, IWorkflowEvent wfEvent, Object? result)
     {
         if (ParentContainer == null)
-            throw new InvalidProgramException("Invalid ParentContainer");
+            throw new WorkflowException("Invalid ParentContainer");
         ScheduleOutgoing(context, _token);
         if (CancelActivity == null || CancelActivity.Value)
         {

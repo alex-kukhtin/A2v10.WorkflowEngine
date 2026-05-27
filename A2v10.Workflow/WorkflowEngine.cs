@@ -31,7 +31,7 @@ public class WorkflowEngine : IWorkflowEngine
     public async ValueTask<IInstance> CreateAsync(IActivity root, IWorkflowIdentity? identity, String? correlationId = null, Guid? parent = null, Guid? instanceId = null)
     {
         Guid instId = instanceId != null ? instanceId.Value : Guid.NewGuid();
-        var wf = new WorkflowElement(identity ?? new WorkflowIdentity(String.Empty), root, new DymmyActivityWrapper());
+        var wf = new WorkflowElement(identity ?? new WorkflowIdentity(String.Empty), root, new DummyActivityWrapper());
         var inst = new Instance(wf, instId, correlationId, parent);
         root.OnEndInit(null);
         await _instanceStorage.Create(inst);
@@ -82,6 +82,10 @@ public class WorkflowEngine : IWorkflowEngine
         {
             IInstance instance = await _instanceStorage.Load(id);
             return await RunAsync(instance, args, token);
+        }
+        catch (InstanceBusyException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -137,14 +141,30 @@ public class WorkflowEngine : IWorkflowEngine
             _logger.LogInformation("Process message at {Time}, InstanceId {instanceId}", DateTime.UtcNow, mi.InstanceId);
         try
         {
-            await HandleMessageAsync(mi.InstanceId, mi.Message);
-            await _instanceStorage.PendingMessageComplete(mi.Id, mi.InstanceId, true);
+            Boolean success = true;
+            var inst = await HandleMessageAsync(mi.InstanceId, mi.Message);
+            if (inst != null)
+            {
+                success = !inst.HandleSkipped;
+                if (!success && _logger?.IsEnabled(LogLevel.Information) == true)
+                    _logger.LogInformation("Skip message '{Message}' at {Time}, InstanceId {instanceId}", mi.Message, DateTime.UtcNow, mi.InstanceId);
+            }
+            await _instanceStorage.PendingMessageComplete(mi.Id, mi.InstanceId, success);
+        }
+        catch (InstanceBusyException)
+        {
+            // do nothing, Complete = 0
         }
         catch (Exception)
         {
-            // exception alread logged
+            // exception alread logged in db
             await _instanceStorage.PendingMessageComplete(mi.Id, mi.InstanceId, false);
         }
+    }
+
+    public async ValueTask ProcessSweep()
+    {
+        await _instanceStorage.ProcessSweepAsync();
     }
 
     public async ValueTask ProcessPending()
@@ -173,7 +193,7 @@ public class WorkflowEngine : IWorkflowEngine
         if (_logger.IsEnabled(LogLevel.Information))
             _logger.LogInformation("Auto start process at {Time}, WorkflowId {WorkflowId}", DateTime.Now, autoStart.WorkflowId);
         if (String.IsNullOrEmpty(autoStart.WorkflowId))
-            throw new InvalidProgramException("WorkflowId is null");
+            throw new WorkflowException("WorkflowId is null");
         var inst = await CreateAsync(new WorkflowIdentity(id: autoStart.WorkflowId, ver: autoStart.Version), autoStart.CorrelationId, null, autoStart.InstanceId);
         return await RunAsync(inst, autoStart.Params);
     }
@@ -184,6 +204,10 @@ public class WorkflowEngine : IWorkflowEngine
         {
             var inst = await _instanceStorage.Load(id);
             return await Handle(inst, action);
+        }
+        catch (InstanceBusyException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -200,6 +224,10 @@ public class WorkflowEngine : IWorkflowEngine
             if (inst.ExecutionStatus == WorkflowExecutionStatus.Canceled)
                 return null;
             return await Handle(inst, action);
+        }
+        catch (InstanceBusyException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -248,6 +276,10 @@ public class WorkflowEngine : IWorkflowEngine
         try
         {
             await Handle(foundInst, context => context.ResumeAsync(bookmarkName, inst.Result));
+        }
+        catch (InstanceBusyException)
+        {
+            throw;
         }
         catch (Exception ex)
         {

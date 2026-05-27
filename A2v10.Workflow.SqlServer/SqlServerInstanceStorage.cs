@@ -12,16 +12,17 @@ namespace A2v10.Workflow.SqlServer;
 
 public record DatabaseInstance
 {
-    public Guid? Id { get; set; }
-    public Guid? Parent { get; set; }
-    public Int32 Version { get; set; }
-    public String? WorkflowId { get; set; }
-    public String State { get; set; } = String.Empty;
-    public WorkflowExecutionStatus ExecutionStatus { get; set; }
+    public Guid? Id { get; init; }
+    public Guid? Parent { get; init; }
+    public Int32 Version { get; init; }
+    public String? WorkflowId { get; init; }
+    public String State { get; init; } = String.Empty;
+    public WorkflowExecutionStatus ExecutionStatus { get; init; }
 
-    public Guid? Lock { get; set; }
-
-    public String? CorrelationId { get; set; }
+    public Guid? Lock { get; init; }
+    public String? CorrelationId { get; init; }
+    public Boolean Halted { get; init; }
+    public Boolean Busy { get; init; }
 }
 
 public record DbDate
@@ -51,11 +52,19 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
         {
             { "Id", instanceId }
         };
+
         _dataSourceProvider.SetIdentityParams(prms);
         var dbi = await _dbContext.LoadAsync<DatabaseInstance>(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.{suffix}]", prms)
-            ?? throw new SqlServerStorageException($"Instance '{instanceId}' not found");
+            ?? throw new InstanceNotFoundException($"Instance '{instanceId}' not found");
+
+        // Halted = 0 and Busy = 0 -> Continue
+        if (dbi.Halted)
+            throw new InstanceHaltedException($"Instance '{instanceId}' is halted");
+        if (dbi.Busy)
+            throw new InstanceBusyException($"Instance '{instanceId}' is busy");
+
         var identity = new WorkflowIdentity(
-            dbi.WorkflowId ?? throw new InvalidProgramException("WorkflowId is null"),
+            dbi.WorkflowId ?? throw new WorkflowException("WorkflowId is null"),
             dbi.Version
         );
 
@@ -256,6 +265,10 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
         return result;
     }
 
+    public Task ProcessSweepAsync()
+    {
+        return _dbContext.ExecuteExpandoAsync(DataSource, $"{SqlDefinitions.SqlSchema}.[Instance.Locked.Sweep]", []);
+    }
 
     public async Task<PendingElement?> GetPendingAsync()
     {
@@ -302,12 +315,12 @@ public class SqlServerInstanceStorage(IDbContext _dbContext, IWorkflowStorage _w
             return null;
 
         var identity = new WorkflowIdentity(
-            dbi.WorkflowId ?? throw new InvalidProgramException("WorkflowId is null"),
+            dbi.WorkflowId ?? throw new WorkflowException("WorkflowId is null"),
             dbi.Version
         );
 
         var wf = await _workflowStorage.LoadAsync(identity);
-        return new Instance(wf, dbi.Id ?? throw new InvalidProgramException("InstanceId is null"))
+        return new Instance(wf, dbi.Id ?? throw new WorkflowException("InstanceId is null"))
         {
             Parent = dbi.Parent,
             State = _serializer.Deserialize(dbi.State),

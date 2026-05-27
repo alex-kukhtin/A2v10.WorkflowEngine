@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2025 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2026 Oleksandr Kukhtin. All rights reserved.
 
 using System.Collections.Generic;
 using System.Dynamic;
@@ -100,7 +100,7 @@ public partial class ExecutionContext : IExecutionContext
     ScriptEngine BuildScript(Object? args)
     {
         if (_root is not IScoped)
-            throw new InvalidProgramException("Root is not IScoped");
+            throw new WorkflowException("Root is not IScoped");
         var sb = new ScriptBuilder();
         var sbTraverseArg = new TraverseArg()
         {
@@ -286,15 +286,23 @@ public partial class ExecutionContext : IExecutionContext
         // MessageName => MessageId
         var msg = _instance?.Workflow?.Wrapper?.FindElement<Message>(m => m.Name == message);
         if (msg == null)
+        {
+            // msg skipped
+            _instance?.HandleSkipped = true;
             return;
-        foreach (var (eventKey, eventItem) in _events)
+        }
+        Boolean proceed = false;    
+        foreach (var (eventKey, eventItem) in _events.ToList())
         {
             if (eventItem.Event.Ref == msg.Id)
             {
                 _tracker.Track(new ActivityTrackRecord(ActivityTrackAction.HandleMessage, null, $"{{message:'{message}', event:{eventKey}}}"));
                 await eventItem.Action(this, eventItem.Event, null);
+                proceed = true;
             }
         }
+        if (!proceed)
+            _instance?.HandleSkipped = true;
     }
 
     public ValueTask HandleEventAsync(String eventKey, Object? result)
@@ -310,7 +318,7 @@ public partial class ExecutionContext : IExecutionContext
 
     public async ValueTask HandleEvent(IWorkflowEvent evt)
     {
-        foreach (var (eventKey, eventItem) in _events)
+        foreach (var (eventKey, eventItem) in _events.ToList())
         {
             if (eventItem.Event.Ref == evt.Ref)
             {
@@ -361,7 +369,7 @@ public partial class ExecutionContext : IExecutionContext
         if (ea.IsBpmn)
         {
             if (ea.WorkflowIdentity == null)
-                throw new InvalidProgramException("WorkflowIdentity is null");
+                throw new WorkflowException("WorkflowIdentity is null");
             var vars = GetScriptVariables(); // ensure save persistent 
             var inst = await _engine.CreateAsync(ea.WorkflowIdentity, correlationId, _instance.Id);
             var result = await _engine.RunAsync(inst.Id, prms, token);

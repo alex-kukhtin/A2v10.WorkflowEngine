@@ -22,7 +22,7 @@ public class ScriptNativeDeferred : IInjectable
 #pragma warning restore IDE1006 // Naming Styles
     {
         if (_deferredTarget == null)
-            throw new InvalidProgramException("DeferredTarget is null");
+            throw new WorkflowException("DeferredTarget is null");
         _deferredTarget.AddDeffered(new DeferredElement(DeferredElementType.Sql, procedure, prms, _deferredTarget.Refer));
     }
 }

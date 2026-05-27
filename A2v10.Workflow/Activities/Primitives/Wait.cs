@@ -8,7 +8,7 @@ public class Wait : Activity
     public override ValueTask ExecuteAsync(IExecutionContext context, IToken? token)
     {
         if (Bookmark == null)
-            throw new InvalidProgramException("Bookmark is null");
+            throw new WorkflowException("Bookmark is null");
         context.SetBookmark(Bookmark, this, OnBookmarkComplete);
         return ValueTask.CompletedTask;
     }

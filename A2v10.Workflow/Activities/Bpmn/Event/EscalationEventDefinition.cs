@@ -1,4 +1,4 @@
-﻿// Copyright © 2020-2021 Oleksandr Kukhtin. All rights reserved.
+﻿// Copyright © 2020-2026 Oleksandr Kukhtin. All rights reserved.
 
 
 namespace A2v10.Workflow.Bpmn;
@@ -10,7 +10,7 @@ public class EscalationEventDefinition : EventDefinition
 
     public override ValueTask<IWorkflowEvent> CreateEvent(string id, IExecutionContext context)
     {
-        var evt = new WorkflowEscalationEvent(id, EscalationRef ?? throw new InvalidProgramException("EscalationRef is null"));
+        var evt = new WorkflowEscalationEvent(id, EscalationRef ?? throw new WorkflowException("EscalationRef is null"));
         return ValueTask.FromResult<IWorkflowEvent>(evt);
     }
 }

@@ -28,5 +28,6 @@ public interface IWorkflowEngine
     Task CancelChildren(Guid id, String workflow);
 
     ValueTask ProcessPending();
+    ValueTask ProcessSweep();
 }
 

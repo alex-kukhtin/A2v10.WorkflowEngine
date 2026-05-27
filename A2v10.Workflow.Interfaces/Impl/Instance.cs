@@ -17,4 +17,5 @@ public class Instance(IWorkflow workflow, Guid id, String? correlationId = null,
     public String? CorrelationId { get; set; } = correlationId;
     public IInstanceData? InstanceData { get; set; }
     public List<ExpandoObject>? Signal { get; set; }
+    public Boolean HandleSkipped { get; set; }
 }

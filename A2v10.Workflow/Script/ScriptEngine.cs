@@ -22,7 +22,7 @@ public class ScriptEngine
     private readonly ITracker _tracker;
     private readonly WorkflowDeferred _deferredTarget = new();
 
-    private IDictionary<String, Object?> ScriptData => _scriptData ?? throw new InvalidProgramException("ScriptData is null");
+    private IDictionary<String, Object?> ScriptData => _scriptData ?? throw new WorkflowException("ScriptData is null");
 
     public ScriptEngine(IServiceProvider serviceProvider, ITracker tracker, IActivity root, String script, IInstance instance, Object? currentUser, Object? args = null)
     {

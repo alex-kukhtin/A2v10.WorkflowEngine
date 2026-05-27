@@ -63,7 +63,7 @@ public class WorkflowSerializer(IXamlReaderService? xamlCodeProvider = null) : I
         var res = format switch
         {
             "json" => new DeserializeResult(JsonConvert.DeserializeObject<ActivityWrapper>(text, _actititySettings)?.Root ??
-                throw new InvalidProgramException("Invalid activity"), null),
+                throw new WorkflowException("Invalid activity"), null),
             "xaml" or "text/xml" => DeserializeXaml(text),
             _ => throw new NotImplementedException($"Deserialize for format '{format}' is not supported"),
         };
@@ -92,7 +92,7 @@ public class WorkflowSerializer(IXamlReaderService? xamlCodeProvider = null) : I
             return new DeserializeResult(wrapper.Root(), wrapper);
         else if (obj is Activity activity)
             return new DeserializeResult(activity, null);
-        throw new InvalidProgramException($"Invalid Activity type {obj.GetType()}");
+        throw new WorkflowException($"Invalid Activity type {obj.GetType()}");
     }
 }
 
