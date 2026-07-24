@@ -1,8 +1,11 @@
 ﻿<Project>
-	<ItemGroup>
-		<Files Include="$(MSBuildThisFileDirectory)/../contentFiles/sql/*" />
-	</ItemGroup>
-	<Target Name="CopyFiles" AfterTargets="Build">
-		<Copy SourceFiles="@(Files)" DestinationFolder="$(ProjectDir)/_assets/sql" SkipUnchangedFiles="true"/>
+	<Target Name="A2v10WorkflowEngineCopySqlAssets" AfterTargets="Build"
+			Condition="'$(A2v10WorkflowEngineCopySql)' != 'false'">
+		<ItemGroup>
+			<A2v10WorkflowEngineSqlFiles Include="$(MSBuildThisFileDirectory)..\contentFiles\sql\*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(A2v10WorkflowEngineSqlFiles)"
+			  DestinationFolder="$(MSBuildProjectDirectory)\_assets\sql"
+			  SkipUnchangedFiles="true" />
 	</Target>
 </Project>
