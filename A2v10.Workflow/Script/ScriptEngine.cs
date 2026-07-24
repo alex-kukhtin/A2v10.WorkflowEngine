@@ -57,6 +57,9 @@ public class ScriptEngine
     private void EngineOptions(Options opts)
     {
         opts.Strict(true);
+        // Jint 4.14 changed the default to LiveView, which wraps CLR arrays as fixed-size.
+        // Scripts push to array variables, so a copy is required.
+        opts.Interop.ArrayConversion = ArrayConversionMode.Copy;
         opts.SetWrapObjectHandler((e, o, tp) =>
         {
             if (o is IInjectable injectable)

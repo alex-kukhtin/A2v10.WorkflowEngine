@@ -285,6 +285,7 @@ return __fmap__;
             var eng = new Engine(opts =>
             {
                 opts.Strict(true);
+                opts.Interop.ArrayConversion = ArrayConversionMode.Copy;
             });
 
             var strArray = "{x: [\"f\", \"2\"]}";
