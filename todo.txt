@@ -1,17 +1,17 @@
-
-Обработка Pending
+п»ї
+РћР±СЂР°Р±РѕС‚РєР° Pending
 =================
-!Events, AutoStart! (Messages уже сделано)
-Если возникает Exception, то все остальные элементы из очереди 
-остаются заблокированными. Locked уже есть. И они остаются необработаными
+!Events, AutoStart! (Messages СѓР¶Рµ СЃРґРµР»Р°РЅРѕ)
+Р•СЃР»Рё РІРѕР·РЅРёРєР°РµС‚ Exception, С‚Рѕ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ РёР· РѕС‡РµСЂРµРґРё 
+РѕСЃС‚Р°СЋС‚СЃСЏ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅС‹РјРё. Locked СѓР¶Рµ РµСЃС‚СЊ. Р РѕРЅРё РѕСЃС‚Р°СЋС‚СЃСЏ РЅРµРѕР±СЂР°Р±РѕС‚Р°РЅС‹РјРё
 
 
 BPMN
 =====
-5. EscalationCodeVariable - убрать?
+5. EscalationCodeVariable - СѓР±СЂР°С‚СЊ?
 7. Boundary: Any Error
 8. Script - single line comment
-9. x != null && x.T можно как "x is {T: true}" - попробовать.
+9. x != null && x.T РјРѕР¶РЅРѕ РєР°Рє "x is {T: true}" - РїРѕРїСЂРѕР±РѕРІР°С‚СЊ.
 10. MultiInstance SubProcess, CallActivity
 13. MultiInstance - Tests with UserTasks
 
